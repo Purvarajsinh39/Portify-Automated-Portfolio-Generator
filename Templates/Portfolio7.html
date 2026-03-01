@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purvarajsinh Vaghela | Creative Developer</title>
+    <meta name="description" content="Portfolio of Purvarajsinh Vaghela, a motivated BCA student and Web Developer.">
+    
+    <!-- Google Fonts for Skeuomorphic Typography (Typewriter, Handwriting, Digital) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Caveat:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --wood-dark: #2c1a0f;
+            --wood-light: #523420;
+            --paper-color: #f4efd3;
+            --paper-line: #a6bccc;
+            --leather: #4a2511;
+            --ink: #1a1a1a;
+            --ink-red: #c92a2a;
+            --plastic-light: #e0e0e0;
+            --plastic-dark: #888;
+            --lcd-bg: #8ba888;
+            --lcd-text: #1b261b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* Wooden Desk Background */
+            background-color: var(--wood-light);
+            background-image: repeating-linear-gradient(
+                90deg,
+                rgba(0,0,0,0.05) 0px,
+                rgba(0,0,0,0.05) 2px,
+                transparent 2px,
+                transparent 15px
+            ), repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.03) 0px,
+                rgba(0,0,0,0.03) 1px,
+                transparent 1px,
+                transparent 30px
+            ), radial-gradient(circle at 50% 50%, #523420, #2c1a0f);
+            color: var(--ink);
+            font-family: 'Courier Prime', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* --- SKEUOMORPHIC NOTEBOOK --- */
+        .desk-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .notebook-cover {
+            background-color: var(--leather);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.1"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23n)"/></svg>');
+            border-radius: 10px 15px 15px 10px;
+            box-shadow: 
+                inset -5px 0 10px rgba(0,0,0,0.4),
+                15px 15px 30px rgba(0,0,0,0.7),
+                5px 5px 15px rgba(0,0,0,0.5);
+            padding: 15px 15px 15px 45px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Leather stitching */
+        .notebook-cover::before {
+            content: '';
+            position: absolute;
+            top: 5px; bottom: 5px; left: 5px; right: 5px;
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 8px 12px 12px 8px;
+            pointer-events: none;
+        }
+
+        /* Metal Binder Rings */
+        .binder-spine {
+            position: absolute;
+            top: 0; bottom: 0; left: 10px;
+            width: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            z-index: 15;
+        }
+
+        .ring {
+            width: 45px;
+            height: 12px;
+            background: linear-gradient(to bottom, #f0f0f0 0%, #a0a0a0 40%, #ffffff 60%, #606060 100%);
+            border-radius: 6px;
+            box-shadow: 
+                2px 5px 5px rgba(0,0,0,0.5),
+                inset 0 1px 2px rgba(255,255,255,0.8);
+            position: relative;
+            left: 10px;
+        }
+
+        /* The Paper Pages */
+        .paper-stack {
+            background-color: #e6e0cc;
+            border-radius: 0 10px 10px 0;
+            box-shadow: 4px 0 0 #d1cbb8, 8px 0 0 #bdc3c7;
+        }
+
+        .page {
+            background-color: var(--paper-color);
+            min-height: 650px;
+            border-radius: 0 8px 8px 0;
+            padding: 40px 40px 40px 60px;
+            position: relative;
+            box-shadow: inset 0 0 30px rgba(139, 69, 19, 0.1);
+            background-image: 
+                linear-gradient(90deg, transparent 49px, rgba(200,50,50,0.3) 49px, rgba(200,50,50,0.3) 51px, transparent 51px), /* Red Margin */
+                linear-gradient(var(--paper-line) 1px, transparent 1px); /* Blue lines */
+            background-size: 100% 100%, 100% 32px;
+            background-position: 0 0, 0 8px;
+            display: none;
+            animation: turnPage 0.4s ease-out forwards;
+            overflow-y: auto;
+            max-height: 75vh;
+        }
+
+        /* Custom Scrollbar for Paper */
+        .page::-webkit-scrollbar { width: 12px; }
+        .page::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-left: 1px solid rgba(0,0,0,0.1); }
+        .page::-webkit-scrollbar-thumb { background: #dcd0a5; border: 1px solid #c4b581; box-shadow: inset 1px 1px 2px rgba(255,255,255,0.8); }
+
+        .page.active { display: block; }
+
+        @keyframes turnPage {
+            0% { transform: perspective(1000px) rotateY(-10deg); transform-origin: left; opacity: 0.5; }
+            100% { transform: perspective(1000px) rotateY(0deg); opacity: 1; }
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { font-family: 'Special Elite', cursive; color: var(--ink); margin-bottom: 20px; }
+        h1 { font-size: 2.8rem; text-shadow: 1px 1px 0px rgba(0,0,0,0.1); border-bottom: 2px solid var(--ink); display: inline-block; margin-bottom: 30px;}
+        h2 { font-size: 2.2rem; margin-top: 15px; position: relative;}
+        
+        .typewriter-text { line-height: 32px; font-size: 1.1rem; }
+        .handwriting { font-family: 'Caveat', cursive; font-size: 1.8rem; color: #000080; /* Blue ink */ transform: rotate(-2deg); display: inline-block;}
+        .red-ink { color: var(--ink-red); }
+        .stamped {
+            display: inline-block;
+            border: 3px solid var(--ink-red);
+            color: var(--ink-red);
+            font-family: 'Courier Prime', monospace;
+            font-weight: bold;
+            padding: 5px 10px;
+            transform: rotate(-5deg);
+            opacity: 0.8;
+            border-radius: 4px;
+        }
+
+        /* --- PHYSICAL BUTTONS & UI --- */
+        .mech-btn {
+            background: linear-gradient(to bottom, #f8f8f8, #d0d0d0);
+            border: 1px solid #999;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-family: 'Special Elite', cursive;
+            font-size: 1.1rem;
+            color: #333;
+            cursor: pointer;
+            box-shadow: 
+                0 4px 0 #888,
+                0 5px 5px rgba(0,0,0,0.4),
+                inset 0 1px 2px #fff;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+            transition: all 0.1s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .mech-btn:active {
+            transform: translateY(4px);
+            box-shadow: 
+                0 0 0 #888,
+                0 1px 2px rgba(0,0,0,0.4),
+                inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* --- SIDE TABS (NAVIGATION) --- */
+        .tabs {
+            position: absolute;
+            right: -60px;
+            top: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 5;
+        }
+
+        .tab {
+            background: #d4c49f; /* Cardboard color */
+            border: 1px solid #bba371;
+            padding: 15px 10px;
+            width: 75px;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 5px 5px 10px rgba(0,0,0,0.4), inset 1px 0 0 rgba(255,255,255,0.5);
+            font-family: 'Special Elite', cursive;
+            font-size: 0.9rem;
+            color: #444;
+            cursor: pointer;
+            transition: all 0.2s;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateX(-15px);
+        }
+
+        .tab:nth-child(1) { background-color: #fca5a5; } /* Reddish */
+        .tab:nth-child(2) { background-color: #bbf7d0; } /* Greenish */
+        .tab:nth-child(3) { background-color: #bfdbfe; } /* Blueish */
+        .tab:nth-child(4) { background-color: #fef08a; } /* Yellowish */
+        .tab:nth-child(5) { background-color: #e9d5ff; } /* Purplish */
+
+        .tab:hover { transform: translateX(0); }
+        .tab.active { transform: translateX(0); font-weight: bold; box-shadow: 8px 5px 10px rgba(0,0,0,0.4); z-index: 20;}
+
+        /* --- POLAROIDS (PROJECTS) --- */
+        .polaroid-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .polaroid {
+            background: #fff;
+            padding: 12px 12px 40px 12px;
+            box-shadow: 2px 4px 10px rgba(0,0,0,0.3);
+            border: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .polaroid:nth-child(even) { transform: rotate(3deg); }
+        .polaroid:nth-child(odd) { transform: rotate(-2deg); }
+        .polaroid:hover { transform: scale(1.05) rotate(0deg); z-index: 5; box-shadow: 5px 10px 20px rgba(0,0,0,0.4); }
+
+        .polaroid-img {
+            width: 100%;
+            height: 120px;
+            background: #222;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .polaroid-caption { font-family: 'Caveat', cursive; font-size: 1.4rem; text-align: center; color: #333; line-height: 1.2;}
+        .polaroid-tech { font-size: 0.75rem; color: #666; text-align: center; margin-top: 5px; }
+
+        /* Tape for Polaroids */
+        .tape {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-3deg);
+            width: 80px;
+            height: 25px;
+            background-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            backdrop-filter: blur(2px);
+            border-left: 2px dashed rgba(255,255,255,0.5);
+            border-right: 2px dashed rgba(255,255,255,0.5);
+        }
+
+        /* --- DYMO LABELS (SKILLS) --- */
+        .skills-container { margin-top: 20px; }
+        .skill-category { margin-bottom: 30px; }
+        .dymo-tags { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px;}
+        
+        .dymo {
+            background-color: #1a1a1a;
+            color: #fff;
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 5px 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.3), inset 1px 1px 2px rgba(255,255,255,0.2);
+            position: relative;
+            transform: rotate(random(-3deg, 3deg));
+        }
+        .dymo::before, .dymo::after {
+            content: ''; position: absolute; top: 0; bottom: 0; width: 4px; background: #333;
+        }
+        .dymo::before { left: -4px; border-radius: 3px 0 0 3px; }
+        .dymo::after { right: -4px; border-radius: 0 3px 3px 0; }
+        
+        .dymo:nth-child(odd) { transform: rotate(-1deg); }
+        .dymo:nth-child(even) { transform: rotate(1.5deg); }
+        
+        /* Raised text effect for Dymo */
+        .dymo span { text-shadow: -1px -1px 0 rgba(255,255,255,0.3), 1px 1px 0 rgba(0,0,0,0.8); }
+
+        /* --- CONTACT FORM (PAPER STYLE) --- */
+        .physical-form {
+            background: #fffdf5;
+            border: 1px solid #e0d8c0;
+            padding: 30px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .physical-form::before {
+            content: 'POSTCARD';
+            position: absolute;
+            top: 10px; right: 20px;
+            font-family: 'Special Elite', cursive;
+            font-size: 1.5rem;
+            color: #bbb;
+            letter-spacing: 5px;
+        }
+
+        .form-line {
+            border: none;
+            border-bottom: 2px solid var(--paper-line);
+            background: transparent;
+            width: 100%;
+            font-family: 'Caveat', cursive;
+            font-size: 1.5rem;
+            color: #000080;
+            padding: 5px 0;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        /* --- MISCELLANEOUS DECORATIONS --- */
+        .paperclip {
+            position: absolute;
+            top: -15px;
+            right: 50px;
+            width: 20px;
+            height: 60px;
+            border: 4px solid #b0b0b0;
+            border-radius: 10px;
+            box-shadow: 2px 2px 3px rgba(0,0,0,0.3), inset 1px 1px 2px #fff;
+            z-index: 20;
+            background: transparent;
+            border-bottom: none;
+        }
+        .paperclip::after {
+            content:''; position:absolute; top: 10px; right: -8px; width: 12px; height: 45px;
+            border: 4px solid #b0b0b0; border-radius: 10px; border-top:none;
+            box-shadow: 2px 2px 3px rgba(0,0,0,0.3);
+        }
+
+        .coffee-stain {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 150px;
+            height: 140px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="%23523420" stroke-width="4" opacity="0.3"/><circle cx="52" cy="48" r="40" fill="none" stroke="%23523420" stroke-width="2" opacity="0.2"/></svg>');
+            pointer-events: none;
+            transform: rotate(25deg);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 850px) {
+            .tabs {
+                position: static;
+                flex-direction: row;
+                justify-content: center;
+                margin-bottom: 0;
+                background: var(--leather);
+                padding: 10px 10px 0 10px;
+                border-radius: 10px 10px 0 0;
+            }
+            .tab {
+                writing-mode: horizontal-tb;
+                text-orientation: upright;
+                width: auto;
+                border-radius: 8px 8px 0 0;
+                transform: translateY(10px);
+                padding: 10px 15px;
+            }
+            .tab.active { transform: translateY(0); }
+            .notebook-cover {
+                padding: 10px;
+                border-radius: 0 0 10px 10px;
+            }
+            .binder-spine { display: none; } /* Hide rings on mobile */
+            .page { padding: 20px; border-radius: 5px; }
+            .desk-container { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="desk-container">
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="openPage('home')">Home</div>
+            <div class="tab" onclick="openPage('about')">Profile</div>
+            <div class="tab" onclick="openPage('skills')">Skills</div>
+            <div class="tab" onclick="openPage('projects')">Work</div>
+            <div class="tab" onclick="openPage('contact')">Contact</div>
+        </div>
+
+        <div class="notebook-cover">
+            <div class="binder-spine">
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <div class="ring"></div>
+            </div>
+
+            <div class="paper-stack">
+                <!-- HOME PAGE -->
+                <div id="home" class="page active">
+                    <div class="paperclip"></div>
+                    <div class="typewriter-text">
+                        <p>Date: <span id="current-date"></span></p>
+                        <p>File: <strong class="red-ink">001-PV-INTRO</strong></p>
+                        <hr style="border-top: 2px dashed #999; margin: 20px 0;">
+                        
+                        <h1>Purvarajsinh Vaghela</h1>
+                        <br>
+                        <span class="stamped">CREATIVE DEVELOPER</span>
+                        
+                        <p style="margin-top: 30px; font-size: 1.2rem; max-width: 500px;">
+                            Crafting immersive digital experiences with code, creativity, and precision.
+                        </p>
+                        
+                        <div style="margin-top: 40px;">
+                            <p><strong>Status:</strong> Motivated BCA Student</p>
+                            <p><strong>Objective:</strong> Bridging the gap between clean code and creative design.</p>
+                        </div>
+
+                        <div style="margin-top: 40px; display: flex; gap: 15px;">
+                            <a href="#" onclick="openPage('projects')" class="mech-btn"><i class="fas fa-folder-open"></i> Open Portfolio</a>
+                            <a href="#" onclick="openPage('contact')" class="mech-btn"><i class="fas fa-envelope"></i> Send Telegram</a>
+                        </div>
+                    </div>
+                    <div class="coffee-stain"></div>
+                </div>
+
+                <!-- ABOUT PAGE -->
+                <div id="about" class="page">
+                    <h2>Personnel File <i class="fas fa-id-card" style="color:#555"></i></h2>
+                    <div class="typewriter-text" style="margin-top:20px;">
+                        <p>I am a highly motivated <span style="background: yellow;">BCA student (Semester 5)</span> at <strong>LJ University</strong> with a drive for building functional and beautiful web applications.</p>
+                        <br>
+                        <p>My journey bridges the gap between clean code and creative design. I am deeply interested in applying programming, security, and problem-solving methodologies to create software that makes a difference.</p>
+                        
+                        <h3 style="margin-top: 40px; border-bottom: 1px solid var(--ink); display: inline-block;">Education Record</h3>
+                        <ul style="list-style-type: square; margin-left: 20px; margin-top: 10px;">
+                            <li><strong>Bachelor of Computer Applications (BCA)</strong><br>
+                                LJ University | 2023 – Present (Semester 5)
+                            </li>
+                        </ul>
+
+                        <h3 style="margin-top: 40px; border-bottom: 1px solid var(--ink); display: inline-block;">Official Certifications</h3>
+                        <div style="background: #fff; border: 1px solid #ccc; padding: 15px; margin-top: 10px; width: fit-content; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); transform: rotate(1deg);">
+                            <ul style="list-style: none;">
+                                <li><i class="fas fa-check-square red-ink"></i> Python for Everybody (Coursera)</li>
+                                <li><i class="fas fa-check-square red-ink"></i> TCS iON Career Edge (TCS)</li>
+                                <li><i class="fas fa-check-square red-ink"></i> Data Analytics Job Simulation (Deloitte)</li>
+                            </ul>
+                            <a href="https://github.com/Purvarajsinh39/Certificates" target="_blank" class="handwriting" style="font-size: 1.2rem; display: block; margin-top: 10px;"><i class="fas fa-paperclip"></i> See Attached Proof</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SKILLS PAGE -->
+                <div id="skills" class="page">
+                    <h2>Technical Inventory</h2>
+                    
+                    <div class="skills-container typewriter-text">
+                        <div class="skill-category">
+                            <h3><i class="fas fa-wrench"></i> Development Tools</h3>
+                            <div class="dymo-tags">
+                                <div class="dymo"><span>Python</span></div>
+                                <div class="dymo"><span>.NET</span></div>
+                                <div class="dymo"><span>Figma</span></div>
+                                <div class="dymo"><span>HTML5</span></div>
+                                <div class="dymo"><span>CSS3</span></div>
+                                <div class="dymo"><span>JavaScript</span></div>
+                                <div class="dymo"><span>Laravel</span></div>
+                                <div class="dymo"><span>PHP</span></div>
+                            </div>
+                        </div>
+
+                        <div class="skill-category">
+                            <h3><i class="fas fa-desktop"></i> Systems & Ops</h3>
+                            <div class="dymo-tags">
+                                <div class="dymo"><span>Git</span></div>
+                                <div class="dymo"><span>GitHub</span></div>
+                                <div class="dymo"><span>VS Code</span></div>
+                                <div class="dymo"><span>Linux (Kali)</span></div>
+                            </div>
+                        </div>
+
+                        <div class="skill-category">
+                            <h3><i class="fas fa-database"></i> Database Architecture</h3>
+                            <div class="dymo-tags">
+                                <div class="dymo"><span>phpMyAdmin</span></div>
+                                <div class="dymo"><span>SSMS</span></div>
+                                <div class="dymo"><span>MySQL</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROJECTS PAGE -->
+                <div id="projects" class="page">
+                    <h2>Project Archives</h2>
+                    <p class="typewriter-text">Photographic evidence of recent developments:</p>
+                    
+                    <div class="polaroid-grid">
+                        
+                        <!-- Project 1 -->
+                        <div class="polaroid">
+                            <div class="tape"></div>
+                            <div class="polaroid-img" style="background: linear-gradient(135deg, #2c3e50, #3498db);">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <p class="polaroid-caption">Job Board Platform</p>
+                            <p class="typewriter-text" style="font-size: 0.85rem; text-align: center; margin: 10px 0;">Connecting employers & seekers.</p>
+                            <p class="polaroid-tech">[ .NET | SSMS | C# ]</p>
+                            <a href="https://github.com/Purvarajsinh39/JobBoardPlatForm-ASP.NET.git" target="_blank" class="mech-btn" style="font-size: 0.8rem; padding: 5px 10px; margin-top: 10px;">Inspect File</a>
+                        </div>
+
+                        <!-- Project 2 -->
+                        <div class="polaroid">
+                            <div class="tape"></div>
+                            <div class="polaroid-img" style="background: linear-gradient(135deg, #8e44ad, #9b59b6);">
+                                <i class="fas fa-blog"></i>
+                            </div>
+                            <p class="polaroid-caption">Blog Management</p>
+                            <p class="typewriter-text" style="font-size: 0.85rem; text-align: center; margin: 10px 0;">Dynamic content CMS.</p>
+                            <p class="polaroid-tech">[ LARAVEL | PHP | MySQL ]</p>
+                            <a href="https://github.com/Purvarajsinh39/BLOG-MANAGEMENT-SYSTEM-LARAVEL.git" target="_blank" class="mech-btn" style="font-size: 0.8rem; padding: 5px 10px; margin-top: 10px;">Inspect File</a>
+                        </div>
+
+                        <!-- Project 3 -->
+                        <div class="polaroid">
+                            <div class="tape"></div>
+                            <div class="polaroid-img" style="background: linear-gradient(135deg, #d35400, #e67e22);">
+                                <i class="fas fa-hotel"></i>
+                            </div>
+                            <p class="polaroid-caption">Hotel Management</p>
+                            <p class="typewriter-text" style="font-size: 0.85rem; text-align: center; margin: 10px 0;">Streamlining hotel ops.</p>
+                            <p class="polaroid-tech">[ PHP | MySQL | HTML/CSS ]</p>
+                            <a href="https://github.com/Purvarajsinh39/Hotel-Management-PHP.git" target="_blank" class="mech-btn" style="font-size: 0.8rem; padding: 5px 10px; margin-top: 10px;">Inspect File</a>
+                        </div>
+
+                        <!-- Project 4 -->
+                        <div class="polaroid">
+                            <div class="tape"></div>
+                            <div class="polaroid-img" style="background: linear-gradient(135deg, #16a085, #1abc9c);">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <p class="polaroid-caption">Interactive Quiz</p>
+                            <p class="typewriter-text" style="font-size: 0.85rem; text-align: center; margin: 10px 0;">Knowledge testing app.</p>
+                            <p class="polaroid-tech">[ PYTHON | Tkinter | SQL ]</p>
+                            <a href="https://github.com/Purvarajsinh39/Python-Quiz-For-Beginners.git" target="_blank" class="mech-btn" style="font-size: 0.8rem; padding: 5px 10px; margin-top: 10px;">Inspect File</a>
+                        </div>
+
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <span class="handwriting">Find more in the repository: </span>
+                        <a href="https://github.com/Purvarajsinh39" target="_blank" class="red-ink" style="font-family:'Courier Prime'; font-weight:bold;">GitHub Profile</a>
+                    </div>
+                </div>
+
+                <!-- CONTACT PAGE -->
+                <div id="contact" class="page">
+                    <h2>Dispatch Center</h2>
+                    
+                    <div class="typewriter-text" style="margin-bottom: 30px;">
+                        <p><i class="fas fa-phone"></i> Telephone: <strong>+91 9824733917</strong></p>
+                        <p><i class="fas fa-envelope"></i> Telegraph: <strong>vaghelapurvarajsinh8442@gmail.com</strong></p>
+                    </div>
+
+                    <div class="physical-form">
+                        <form id="contact-form">
+                            <input type="text" id="name" class="form-line" placeholder="Sender Name..." required>
+                            <input type="email" id="email" class="form-line" placeholder="Return Address (Email)..." required>
+                            <textarea id="message" class="form-line" rows="3" placeholder="Write your message here..." required></textarea>
+                            
+                            <button type="submit" class="mech-btn" style="width: 100%; justify-content: center; font-size: 1.3rem;">
+                                <i class="fas fa-stamp"></i> Post Message (Via Gmail)
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set dynamic date on the Home Page
+        const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', dateOptions);
+
+        // --- PAGE TABS LOGIC ---
+        function openPage(pageId) {
+            // Remove active classes
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+
+            // Add active class to target
+            document.getElementById(pageId).classList.add('active');
+            
+            // Find and activate the clicked tab
+            const tabs = Array.from(document.querySelectorAll('.tab'));
+            const targetTab = tabs.find(t => t.getAttribute('onclick').includes(pageId));
+            if(targetTab) targetTab.classList.add('active');
+
+            // Reset scroll on new page
+            document.getElementById(pageId).scrollTop = 0;
+        }
+
+        // --- CONTACT FORM LOGIC (Gmail Redirect) ---
+        document.getElementById('contact-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            
+            const subject = encodeURIComponent(`Portfolio Contact from ${name}`);
+            const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+            
+            const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=vaghelapurvarajsinh8442@gmail.com&su=${subject}&body=${body}`;
+            
+            window.open(gmailLink, '_blank');
+            document.getElementById('contact-form').reset();
+        });
+    </script>
+</body>
+</html>

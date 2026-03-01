@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36221.1 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portify", "Portify.csproj", "{76B15519-732B-466E-B8DC-19380868FB0B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76B15519-732B-466E-B8DC-19380868FB0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76B15519-732B-466E-B8DC-19380868FB0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76B15519-732B-466E-B8DC-19380868FB0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76B15519-732B-466E-B8DC-19380868FB0B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3EC85712-C88D-4B90-A925-E34533575C67}
+	EndGlobalSection
+EndGlobal

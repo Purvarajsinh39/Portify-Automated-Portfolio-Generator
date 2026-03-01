@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purvarajsinh | Terminal Portfolio</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- CORE THEME --- */
+        :root {
+            --bg-color: #050505;
+            --term-green: #0f0;
+            --term-dim: #008f11;
+            --term-bright: #ccffcc;
+            --glass: rgba(0, 20, 0, 0.7);
+            --border: 1px solid var(--term-dim);
+            --glow: 0 0 10px var(--term-dim);
+            --font-main: 'Fira Code', monospace;
+            --font-head: 'VT323', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--term-green);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- MATRIX BACKGROUND --- */
+        canvas#matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        /* --- CRT OVERLAY --- */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 4px 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* --- NAVBAR --- */
+        .terminal-nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 1px solid var(--term-dim);
+            padding: 15px 5%;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-brand {
+            font-family: var(--font-head);
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: var(--term-bright);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--term-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--term-green);
+            text-shadow: var(--glow);
+        }
+
+        .nav-links a::before { content: '['; margin-right: 5px; opacity: 0; transition: 0.3s; }
+        .nav-links a::after { content: ']'; margin-left: 5px; opacity: 0; transition: 0.3s; }
+        .nav-links a:hover::before, .nav-links a:hover::after { opacity: 1; }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10%;
+            padding-top: 60px;
+            perspective: 1000px;
+        }
+
+        .terminal-window {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(0, 10, 0, 0.85);
+            border: 1px solid var(--term-green);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            /* Entry Animation */
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+            animation: bootUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation-delay: 0.2s;
+        }
+
+        @keyframes bootUp {
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Scanning Line Animation */
+        .terminal-window::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 10px #0f0;
+            animation: scanWindow 3s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanWindow {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .window-bar {
+            background: var(--term-green);
+            color: #000;
+            padding: 5px 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .window-controls span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid #000;
+            margin-left: 5px;
+        }
+
+        .window-content {
+            padding: 40px;
+            position: relative;
+        }
+
+        .hero-title {
+            font-family: var(--font-head);
+            font-size: 3rem;
+            margin-bottom: 20px;
+            line-height: 1;
+        }
+
+        /* Glitch Name Effect */
+        .glitch-name {
+            color: var(--term-bright);
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch-name::before,
+        .glitch-name::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 10, 0, 0.85); /* Masks the original to create slices */
+        }
+
+        .glitch-name::before {
+            left: 2px;
+            text-shadow: -1px 0 red;
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim-1 3s infinite linear alternate-reverse;
+        }
+
+        .glitch-name::after {
+            left: -2px;
+            text-shadow: -1px 0 blue;
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim-2 2.5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip: rect(20px, 9999px, 10px, 0); }
+            20% { clip: rect(50px, 9999px, 60px, 0); }
+            40% { clip: rect(80px, 9999px, 40px, 0); }
+            60% { clip: rect(10px, 9999px, 80px, 0); }
+            80% { clip: rect(60px, 9999px, 30px, 0); }
+            100% { clip: rect(90px, 9999px, 70px, 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(60px, 9999px, 10px, 0); }
+            20% { clip: rect(20px, 9999px, 90px, 0); }
+            40% { clip: rect(90px, 9999px, 30px, 0); }
+            60% { clip: rect(10px, 9999px, 60px, 0); }
+            80% { clip: rect(40px, 9999px, 20px, 0); }
+            100% { clip: rect(70px, 9999px, 50px, 0); }
+        }
+
+        .typewriter {
+            display: inline-block;
+            color: var(--term-bright);
+            border-right: 10px solid var(--term-green);
+            animation: blink 0.75s step-end infinite;
+            white-space: pre-wrap;
+            font-size: 1.2rem;
+        }
+
+        @keyframes blink { 50% { border-color: transparent; } }
+
+        .cta-group {
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .cmd-btn {
+            background: transparent;
+            color: var(--term-green);
+            border: 1px solid var(--term-green);
+            padding: 10px 25px;
+            font-family: var(--font-main);
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .cmd-btn:hover {
+            background: var(--term-green);
+            color: #000;
+            box-shadow: var(--glow);
+            animation: pulsate 1s infinite;
+        }
+        
+        @keyframes pulsate {
+            0% { box-shadow: 0 0 10px var(--term-green); }
+            50% { box-shadow: 0 0 25px var(--term-green); }
+            100% { box-shadow: 0 0 10px var(--term-green); }
+        }
+
+        /* --- SECTIONS COMMON --- */
+        section {
+            padding: 80px 10%;
+            border-top: 1px dashed var(--term-dim);
+        }
+
+        .section-header {
+            margin-bottom: 50px;
+            font-family: var(--font-head);
+            font-size: 2.5rem;
+            border-bottom: 2px solid var(--term-green);
+            display: inline-block;
+            padding-right: 20px;
+        }
+
+        .section-header::before {
+            content: './';
+            color: var(--term-dim);
+            margin-right: 10px;
+        }
+
+        /* --- ABOUT --- */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .sys-info {
+            background: rgba(0, 20, 0, 0.5);
+            border-left: 3px solid var(--term-green);
+            padding: 20px;
+        }
+
+        .sys-key { color: var(--term-dim); font-weight: bold; margin-right: 10px; }
+        .sys-val { color: var(--term-bright); }
+
+        /* --- SKILLS --- */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .skill-card {
+            border: 1px solid var(--term-dim);
+            padding: 20px;
+            transition: 0.3s;
+        }
+
+        .skill-card:hover {
+            border-color: var(--term-green);
+            background: rgba(0, 255, 0, 0.05);
+            transform: translateY(-5px);
+        }
+
+        .skill-card h3 {
+            color: var(--term-bright);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            border-bottom: 1px dashed var(--term-dim);
+            padding-bottom: 5px;
+        }
+
+        .skill-tags span {
+            display: inline-block;
+            margin: 5px 5px 0 0;
+            padding: 2px 8px;
+            background: rgba(0, 255, 0, 0.1);
+            font-size: 0.8rem;
+        }
+
+        /* --- PROJECTS --- */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .project-card {
+            border: 1px solid var(--term-dim);
+            position: relative;
+            background: #000;
+        }
+
+        .project-header {
+            background: #111;
+            padding: 10px;
+            border-bottom: 1px solid var(--term-dim);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--term-dim);
+        }
+
+        .project-body {
+            padding: 20px;
+        }
+
+        .project-body h3 {
+            color: var(--term-bright);
+            margin-bottom: 10px;
+        }
+
+        .project-body p {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+
+        .project-tech {
+            font-size: 0.8rem;
+            color: var(--term-green);
+            margin-bottom: 20px;
+        }
+
+        .project-links a {
+            font-size: 0.9rem;
+            color: var(--term-bright);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--term-dim);
+        }
+        
+        .project-links a:hover {
+            background: var(--term-dim);
+            color: #000;
+        }
+
+        /* --- CONTACT --- */
+        .contact-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 600px;
+        }
+
+        .contact-line {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border: 1px solid var(--term-dim);
+            transition: 0.3s;
+            text-decoration: none;
+            color: var(--term-green);
+        }
+
+        .contact-line:hover {
+            background: var(--term-green);
+            color: #000;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            font-size: 0.8rem;
+            color: var(--term-dim);
+            border-top: 1px solid var(--term-dim);
+        }
+
+        /* --- MOBILE --- */
+        @media (max-width: 768px) {
+            .nav-links { display: none; } /* Simplified for mobile */
+            .hero-title { font-size: 2rem; }
+            .window-content { padding: 20px; }
+            section { padding: 60px 5%; }
+            .glitch-name::before, .glitch-name::after { display: none; } /* Disable heavy glitch on mobile for performance */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- CRT Overlay Effects -->
+    <div class="scanlines"></div>
+    <canvas id="matrix-bg"></canvas>
+
+    <!-- Navigation -->
+    <nav class="terminal-nav">
+        <div class="nav-brand">root@portfolio:~</div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="terminal-window">
+            <div class="window-bar">
+                <span>admin_console.exe</span>
+                <div class="window-controls">
+                    <span style="background:#ff5f56"></span>
+                    <span style="background:#ffbd2e"></span>
+                    <span style="background:#27c93f"></span>
+                </div>
+            </div>
+            <div class="window-content">
+                <p id="system-status" style="color:var(--term-dim); margin-bottom:10px;">> Initializing user profile...</p>
+                <h1 class="hero-title">HELLO, I'M <br> <span class="glitch-name" data-text="PURVARAJSINH">PURVARAJSINH</span></h1>
+                <div class="typewriter" id="typewriter"></div>
+                
+                <div class="cta-group">
+                    <a href="#projects" class="cmd-btn">./View_Projects</a>
+                    <a href="#contact" class="cmd-btn">./Contact_Me</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <h2 class="section-header">About_Me</h2>
+        <div class="about-content">
+            <div class="sys-info">
+                <p style="margin-bottom:10px">> fetching /usr/local/bin/bio...</p>
+                <br>
+                <p>
+                    <span class="sys-key">CURRENT_STATUS:</span>
+                    <span class="sys-val">BCA Student (Semester 5) @ LJ University</span>
+                </p>
+                <p>
+                    <span class="sys-key">MISSION:</span>
+                    <span class="sys-val">Bridging the gap between clean code and creative design.</span>
+                </p>
+                <p>
+                    <span class="sys-key">FOCUS:</span>
+                    <span class="sys-val">Web Application Development, Security, Problem Solving.</span>
+                </p>
+            </div>
+            
+            <div class="sys-info">
+                <p style="margin-bottom:10px">> ls -la /education_certifications</p>
+                <br>
+                <p><span class="sys-key">DEGREE:</span> Bachelor of Computer Applications (2023-Present)</p>
+                <br>
+                <p><span class="sys-key">CERTIFIED:</span> Python for Everybody (Coursera)</p>
+                <p><span class="sys-key">CERTIFIED:</span> TCS iON Career Edge</p>
+                <p><span class="sys-key">CERTIFIED:</span> Data Analytics (Deloitte)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills">
+        <h2 class="section-header">Technical_Arsenal</h2>
+        <div class="skills-grid">
+            <div class="skill-card">
+                <h3>> Development</h3>
+                <div class="skill-tags">
+                    <span>Python</span> <span>.NET</span> <span>PHP</span>
+                    <span>HTML5</span> <span>CSS3</span> <span>JavaScript</span>
+                    <span>Laravel</span>
+                </div>
+            </div>
+            <div class="skill-card">
+                <h3>> Tools & OS</h3>
+                <div class="skill-tags">
+                    <span>Git</span> <span>GitHub</span> <span>VS Code</span>
+                    <span>Linux (Kali)</span> <span>Figma</span>
+                </div>
+            </div>
+            <div class="skill-card">
+                <h3>> Database</h3>
+                <div class="skill-tags">
+                    <span>MySQL</span> <span>SSMS</span> <span>phpMyAdmin</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+        <h2 class="section-header">Executed_Projects</h2>
+        <div class="projects-grid">
+            
+            <!-- Project 1 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <span>ID: 001</span>
+                    <span>STATUS: DEPLOYED</span>
+                </div>
+                <div class="project-body">
+                    <h3>Job Board Platform</h3>
+                    <p>A comprehensive job listing platform connecting employers, job seekers, and admins with streamlined workflows.</p>
+                    <div class="project-tech">
+                        [.NET] [SSMS] [C#]
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/Purvarajsinh39/JobBoardPlatForm-ASP.NET.git" target="_blank">> View Source Code</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <span>ID: 002</span>
+                    <span>STATUS: DEPLOYED</span>
+                </div>
+                <div class="project-body">
+                    <h3>Blog Management</h3>
+                    <p>Dynamic CMS for creating, editing, and managing blog posts efficiently.</p>
+                    <div class="project-tech">
+                        [LARAVEL] [PHP] [MySQL]
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/Purvarajsinh39/BLOG-MANAGEMENT-SYSTEM-LARAVEL.git" target="_blank">> View Source Code</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <span>ID: 003</span>
+                    <span>STATUS: ACTIVE</span>
+                </div>
+                <div class="project-body">
+                    <h3>Hotel Management</h3>
+                    <p>Operational system to streamline hotel bookings, room management, and customer services.</p>
+                    <div class="project-tech">
+                        [PHP] [MySQL] [HTML/CSS]
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/Purvarajsinh39/Hotel-Management-PHP.git" target="_blank">> View Source Code</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 4 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <span>ID: 004</span>
+                    <span>STATUS: COMPLETED</span>
+                </div>
+                <div class="project-body">
+                    <h3>Interactive Quiz App</h3>
+                    <p>Python-based application designed to test knowledge on various topics with immediate feedback.</p>
+                    <div class="project-tech">
+                        [PYTHON] [Tkinter] [SQL]
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/Purvarajsinh39/Python-Quiz-For-Beginners.git" target="_blank">> View Source Code</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2 class="section-header">Establish_Connection</h2>
+        <div class="contact-methods">
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vaghelapurvarajsinh8442@gmail.com" target="_blank" class="contact-line">
+                <i class="fas fa-envelope"></i>
+                <span>vaghelapurvarajsinh8442@gmail.com</span>
+            </a>
+            <a href="tel:+919824733917" class="contact-line">
+                <i class="fas fa-phone"></i>
+                <span>+91 9824733917</span>
+            </a>
+            <a href="https://github.com/Purvarajsinh39" target="_blank" class="contact-line">
+                <i class="fab fa-github"></i>
+                <span>github.com/Purvarajsinh39</span>
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <p>SYSTEM.EXIT(0) // © 2025 Purvarajsinh Vaghela</p>
+    </footer>
+
+    <script>
+        // --- TYPEWRITER EFFECT ---
+        const textElement = document.getElementById('typewriter');
+        const texts = [
+            "Motivated BCA Student...",
+            "Aspiring Web Developer...",
+            "Creative Problem Solver...",
+            "System Architecture Enthusiast..."
+        ];
+        let count = 0;
+        let index = 0;
+        let currentText = '';
+        let letter = '';
+        let isDeleting = false;
+
+        (function type() {
+            if (count === texts.length) {
+                count = 0;
+            }
+            currentText = texts[count];
+
+            if (isDeleting) {
+                letter = currentText.slice(0, --index);
+            } else {
+                letter = currentText.slice(0, ++index);
+            }
+
+            textElement.textContent = letter;
+
+            let typeSpeed = 100;
+            if (isDeleting) typeSpeed = 50;
+
+            if (!isDeleting && letter.length === currentText.length) {
+                typeSpeed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && letter.length === 0) {
+                isDeleting = false;
+                count++;
+                typeSpeed = 500;
+            }
+
+            setTimeout(type, typeSpeed);
+        })();
+
+        // --- STATUS CYCLE EFFECT ---
+        const statusElement = document.getElementById('system-status');
+        const statusMessages = [
+            "> Initializing user profile...",
+            "> Loading kernel modules...",
+            "> Establishing secure connection...",
+            "> Decrypting data...",
+            "> Access granted.",
+            "> System ready."
+        ];
+        let statusIndex = 0;
+        
+        setInterval(() => {
+            statusIndex = (statusIndex + 1) % statusMessages.length;
+            statusElement.innerText = statusMessages[statusIndex];
+        }, 2500);
+
+
+        // --- MATRIX RAIN EFFECT ---
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const nums = '0123456789';
+        const alphabet = katakana + latin + nums;
+
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const rainDrops = [];
+
+        for( let x = 0; x < columns; x++ ) {
+            rainDrops[x] = 1;
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+
+            for(let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                if(rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975){
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        }
+
+        setInterval(draw, 30);
+
+        // Resize fix
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+    </script>
+</body>
+</html>

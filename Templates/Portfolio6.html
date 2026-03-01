@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purvarajsinh Vaghela | Developer</title>
+    <meta name="description" content="Portfolio of Purvarajsinh Vaghela, a motivated BCA student and Web Developer.">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- SKEUOMORPHIC VARIABLES & RESET --- */
+        :root {
+            --desk-color: #4a2e15;
+            --paper-color: #fdfaf4;
+            --paper-dark: #e8e2d2;
+            --text-ink: #2b2b2b;
+            --text-light: #5a5a5a;
+            
+            --plastic-light: #f0f0f0;
+            --plastic-mid: #d4d0c8; /* Classic 90s beige */
+            --plastic-dark: #808080;
+            
+            --leather: #8b0000;
+            --metallic: #a9a9a9;
+            --lcd-screen: #9bbc0f; /* Gameboy/PDA green */
+
+            --font-heading: 'Georgia', serif;
+            --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --font-code: 'Courier New', Courier, monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            /* Wooden Desk Texture */
+            background-color: var(--desk-color);
+            background-image: 
+                repeating-linear-gradient(
+                    45deg, 
+                    rgba(0,0,0,0.1) 0px, 
+                    rgba(0,0,0,0.1) 2px, 
+                    transparent 2px, 
+                    transparent 8px
+                ),
+                linear-gradient(to right, #3d2314, #5c3a21, #3d2314);
+            color: var(--text-ink);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Physical Scrollbar */
+        ::-webkit-scrollbar {
+            width: 16px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #d4d0c8;
+            border-left: 1px solid #808080;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e0e0e0;
+            border: 2px solid #fff;
+            border-bottom-color: #808080;
+            border-right-color: #808080;
+        }
+        ::-webkit-scrollbar-thumb:active {
+            background: #c0c0c0;
+            border: 2px solid #808080;
+            border-bottom-color: #fff;
+            border-right-color: #fff;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            color: #111;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            /* Embossed Text Effect */
+            color: #444;
+            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.8), -1px -1px 0px rgba(0, 0, 0, 0.2);
+            border-bottom: 2px double #ccc;
+            padding-bottom: 10px;
+        }
+
+        /* --- PHYSICAL LAYOUT WRAPPER --- */
+        .desk-environment {
+            max-width: 1100px;
+            margin: 60px auto;
+            position: relative;
+        }
+
+        /* --- NAV TABS (File Folder Metaphor) --- */
+        .tabs-container {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 20px;
+            margin-bottom: -1px; /* Overlap the paper */
+            position: relative;
+            z-index: 10;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 5px;
+        }
+
+        .nav-links a {
+            display: block;
+            padding: 12px 25px;
+            background: #e6dfcc; /* Darker paper for inactive */
+            color: var(--text-ink);
+            text-decoration: none;
+            font-weight: bold;
+            font-family: var(--font-heading);
+            border: 1px solid #c2b69c;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+            box-shadow: inset 1px 1px 0 rgba(255,255,255,0.8), 2px -2px 5px rgba(0,0,0,0.2);
+            position: relative;
+            transition: all 0.2s;
+            top: 5px;
+        }
+
+        .nav-links a:hover {
+            background: #eee8d5;
+            top: 2px;
+            padding-bottom: 15px;
+        }
+
+        .nav-links a.active, .nav-links a:active {
+            background: var(--paper-color);
+            top: 0;
+            padding-bottom: 18px;
+            border-bottom: 2px solid var(--paper-color); /* Merge with paper below */
+            z-index: 2;
+        }
+
+        .hamburger { display: none; }
+
+        /* --- THE PAPER DOCUMENT --- */
+        .paper-document {
+            background: var(--paper-color);
+            background-image: radial-gradient(circle at center, transparent 80%, rgba(0,0,0,0.03) 100%);
+            border: 1px solid #d3cbb8;
+            box-shadow: 
+                0 20px 50px rgba(0,0,0,0.7), /* Deep drop shadow to desk */
+                inset 0 0 40px rgba(0,0,0,0.05), /* Vignette */
+                inset 1px 1px 0 #fff; /* Highlight edge */
+            position: relative;
+            z-index: 5;
+            padding: 40px;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4rem 2rem;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .hero-content {
+            max-width: 500px;
+        }
+
+        .hero-subtitle {
+            font-family: var(--font-code);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            /* Letterpress effect */
+            color: #222;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            color: #444;
+        }
+
+        /* Typewriter Cursor */
+        .typewriter {
+            border-right: 10px solid #222;
+            padding-right: 2px;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            from, to { border-color: transparent }
+            50% { border-color: #222 }
+        }
+
+        /* Physical Buttons */
+        .hero-btns {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            text-decoration: none;
+            font-weight: bold;
+            font-family: var(--font-body);
+            color: #333;
+            background: linear-gradient(to bottom, #f8f8f8, #d4d0c8);
+            border: 1px solid #888;
+            border-radius: 4px;
+            box-shadow: 
+                inset 1px 1px 0px rgba(255,255,255,0.8),
+                inset -1px -1px 0px rgba(0,0,0,0.1),
+                0 4px 6px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.1s;
+            position: relative;
+            top: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:active {
+            top: 4px;
+            box-shadow: 
+                inset 2px 2px 5px rgba(0,0,0,0.2),
+                0 0px 0px rgba(0,0,0,0);
+            background: linear-gradient(to bottom, #d4d0c8, #e8e8e8);
+        }
+
+        .btn-primary {
+            background: linear-gradient(to bottom, #4a90e2, #2c6eb5);
+            color: white;
+            border-color: #1e4f8a;
+            box-shadow: 
+                inset 1px 1px 0px rgba(255,255,255,0.3),
+                inset -1px -1px 0px rgba(0,0,0,0.2),
+                0 4px 6px rgba(0,0,0,0.3);
+            text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+        }
+        
+        .btn-primary:active {
+            background: linear-gradient(to bottom, #2c6eb5, #4a90e2);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom, #e0e0e0, #bcbcbc);
+            border: 1px solid #999;
+            border-radius: 50%;
+            color: #333;
+            font-size: 1.2rem;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.3), inset 1px 1px 0 white;
+            text-decoration: none;
+            transition: all 0.1s;
+        }
+
+        .social-links a:active {
+            transform: translateY(3px);
+            box-shadow: 0 0px 0px rgba(0,0,0,0), inset 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* --- HERO VISUAL: 3D ACRYLIC CLIPBOARD --- */
+        .hero-visual {
+            perspective: 1000px;
+            z-index: 10;
+        }
+
+        .acrylic-clipboard {
+            width: 340px;
+            background: rgba(0, 136, 169, 0.85); /* 90s Bondi Blue Translucent */
+            padding: 45px 20px 25px 20px;
+            border-radius: 12px;
+            box-shadow: 
+                15px 20px 25px rgba(0,0,0,0.3), 
+                inset 2px 2px 5px rgba(255,255,255,0.6),
+                inset -2px -2px 5px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            position: relative;
+            transform: rotate(4deg) rotateX(5deg);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(4px); 
+        }
+
+        .acrylic-clipboard:hover {
+            transform: rotate(0deg) rotateX(0deg) scale(1.02);
+            z-index: 20;
+        }
+
+        /* The big metal clip at the top */
+        .metal-clip {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 60px;
+            background: linear-gradient(to bottom, #f0f0f0, #a0a0a0, #707070);
+            border-radius: 10px 10px 4px 4px;
+            box-shadow: 
+                0 8px 10px rgba(0,0,0,0.5),
+                inset 0 2px 3px rgba(255,255,255,0.8),
+                inset 0 -2px 2px rgba(0,0,0,0.4);
+            z-index: 15;
+            border: 1px solid #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* The inner spring/bar of the clip */
+        .clip-spring {
+            width: 100px;
+            height: 12px;
+            background: linear-gradient(to bottom, #555, #333);
+            border-radius: 6px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 1px 1px rgba(255,255,255,0.5);
+        }
+
+        /* The lined paper */
+        .clipboard-paper {
+            background: #fcfcfc;
+            height: 260px;
+            box-shadow: 2px 4px 10px rgba(0,0,0,0.2);
+            background-image: linear-gradient(#e1e1e1 1px, transparent 1px);
+            background-size: 100% 32px;
+            background-position: 0 40px; /* offset lines */
+            padding: 40px 20px 20px 50px;
+            position: relative;
+            border-radius: 2px;
+        }
+
+        /* Red vertical margin line */
+        .clipboard-paper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 40px;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255, 100, 100, 0.5);
+        }
+
+        .paper-heading {
+            font-family: 'Comic Sans MS', 'Marker Felt', cursive, sans-serif;
+            color: #111;
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+            transform: rotate(-2deg);
+            position: relative;
+            top: -10px;
+        }
+
+        .paper-heading::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #111;
+            transform: rotate(1deg);
+            border-radius: 2px;
+        }
+
+        .todo-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .todo-list li {
+            font-family: 'Comic Sans MS', 'Marker Felt', cursive, sans-serif;
+            font-size: 1.2rem;
+            line-height: 32px; /* Matches background-size lines */
+            color: #222;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .check-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #222;
+            border-radius: 3px;
+            font-size: 18px;
+            color: transparent;
+            font-weight: bold;
+            transform: rotate(-3deg);
+        }
+
+        .check-box.checked {
+            color: #d11a2a; /* Red ink checkmark */
+        }
+
+        /* The physical 3D red pen */
+        .red-pen {
+            position: absolute;
+            bottom: 30px;
+            right: -40px;
+            width: 160px;
+            height: 14px;
+            background: linear-gradient(to bottom, #ff4d4d, #cc0000, #8b0000);
+            border-radius: 7px;
+            transform: rotate(-20deg);
+            box-shadow: 
+                3px 8px 10px rgba(0,0,0,0.4), 
+                inset 0 2px 3px rgba(255,255,255,0.6),
+                inset 0 -2px 3px rgba(0,0,0,0.3);
+            display: flex;
+            z-index: 20;
+        }
+
+        .pen-cap {
+            width: 35px;
+            height: 16px;
+            background: linear-gradient(to bottom, #444, #111, #000);
+            border-radius: 4px 0 0 4px;
+            margin-top: -1px;
+            box-shadow: inset 0 2px 2px rgba(255,255,255,0.3);
+            position: relative;
+        }
+
+        .pen-cap::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 8px;
+            width: 25px;
+            height: 4px;
+            background: linear-gradient(to bottom, #fff, #bbb);
+            border-radius: 2px;
+            box-shadow: 1px 2px 3px rgba(0,0,0,0.5);
+        }
+
+        .pen-body {
+            flex: 1;
+        }
+
+        .pen-tip {
+            width: 15px;
+            height: 8px;
+            background: linear-gradient(to bottom, #eee, #999);
+            border-radius: 0 10px 10px 0;
+            margin-top: 3px;
+            position: relative;
+        }
+        
+        .pen-tip::after {
+            content: '';
+            position: absolute;
+            right: -3px;
+            top: 2px;
+            width: 4px;
+            height: 4px;
+            background: #cc0000;
+            border-radius: 50%;
+        }
+
+        /* --- ABOUT SECTION --- */
+        .about {
+            padding: 4rem 2rem;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 3rem;
+        }
+
+        .physical-card {
+            background: #fff;
+            padding: 2rem;
+            border: 1px solid #ddd;
+            box-shadow: 2px 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Paperclip decoration */
+        .paperclip {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            width: 20px;
+            height: 50px;
+            border: 3px solid #silver;
+            border-radius: 10px;
+            background: transparent;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.3), inset 1px 1px 1px rgba(255,255,255,0.8);
+            border-color: #b0b0b0 #888 #888 #b0b0b0;
+            z-index: 10;
+        }
+        
+        .paperclip::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 3px;
+            width: 8px;
+            height: 30px;
+            border: 3px solid silver;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            border-color: transparent #888 #888 #b0b0b0;
+        }
+
+        .education-card h3, .certifications h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .edu-item {
+            margin-top: 15px;
+        }
+
+        .edu-item h4 { font-family: var(--font-body); font-size: 1.1rem; }
+        .edu-item .institution { color: #666; font-style: italic; }
+        .edu-item .year { font-family: var(--font-code); background: #eee; padding: 2px 5px; border: 1px solid #ccc; font-size: 0.85rem; display: inline-block; margin-top: 5px;}
+
+        .cert-list { list-style: none; display: flex; flex-direction: column; gap: 15px;}
+        .cert-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            background: linear-gradient(to right, #fdfaf4, #fff);
+            box-shadow: 1px 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Wax Seal representation for certs */
+        .wax-seal {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at 30% 30%, #cc3333, #8b0000);
+            border-radius: 50%;
+            box-shadow: 1px 2px 3px rgba(0,0,0,0.3), inset 2px 2px 5px rgba(255,255,255,0.2);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.7rem;
+        }
+
+        .view-repo-btn {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: #0056b3;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        /* --- SKILLS SECTION (Plaques & Badges) --- */
+        .skills {
+            padding: 4rem 2rem;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .skill-category {
+            /* Metallic Plaque Look */
+            background: linear-gradient(135deg, #e6e6e6 0%, #ffffff 50%, #cccccc 100%);
+            border: 1px solid #999;
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: 
+                inset 1px 1px 0px white,
+                inset -1px -1px 0px #999,
+                3px 5px 10px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        /* Screws for the plaque */
+        .skill-category::before, .skill-category::after {
+            content: '+';
+            position: absolute;
+            color: #888;
+            font-weight: bold;
+            font-size: 12px;
+            text-shadow: 1px 1px 0 #fff;
+        }
+        .skill-category::before { top: 5px; left: 10px; }
+        .skill-category::after { top: 5px; right: 10px; }
+
+        .skill-category h3 {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #444;
+            text-shadow: 1px 1px 0 #fff;
+            border-bottom: 1px inset #ccc;
+            padding-bottom: 10px;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        /* Label Maker Tape Style */
+        .skill-tag {
+            padding: 4px 10px;
+            background: #d11a2a; /* Red Dymo tape */
+            color: white;
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 1px 2px 3px rgba(0,0,0,0.4), inset 0 0 2px rgba(0,0,0,0.5);
+            border-left: 2px solid #a00;
+            border-right: 2px solid #a00;
+            text-transform: uppercase;
+            text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+        }
+
+        /* --- PROJECTS SECTION (Polaroids) --- */
+        .projects {
+            padding: 4rem 2rem;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 3rem;
+            padding: 20px 0;
+        }
+
+        .project-card {
+            background: #fff;
+            padding: 15px 15px 60px 15px; /* Heavy bottom padding for polaroid look */
+            box-shadow: 
+                3px 5px 15px rgba(0,0,0,0.3),
+                inset 0 0 0 1px #eee;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        /* Alternate rotations for a messy desk look */
+        .project-card:nth-child(odd) { transform: rotate(-2deg); }
+        .project-card:nth-child(even) { transform: rotate(3deg); }
+        .project-card:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
+
+        /* Masking tape graphic */
+        .tape {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-3deg);
+            width: 100px;
+            height: 30px;
+            background-color: rgba(255, 255, 200, 0.6);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+
+        .project-content {
+            background: #111; /* Simulating the photo area */
+            padding: 15px;
+            color: #eee;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            border: 1px inset #444;
+        }
+
+        .project-content h3 { color: #fff; font-size: 1.2rem; margin-bottom: 10px; font-family: var(--font-body);}
+        .project-content p { font-size: 0.85rem; color: #ccc; flex-grow: 1;}
+
+        .project-tech {
+            margin-top: 10px;
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            color: #ffeb3b;
+        }
+
+        .project-card .project-title-handwritten {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            font-family: "Comic Sans MS", cursive, sans-serif; /* Simulating handwriting */
+            color: #000080; /* Blue ink */
+            font-size: 1.1rem;
+            transform: rotate(-2deg);
+        }
+
+        .project-link {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: none;
+            border: 1px solid #000080;
+            color: #000080;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            border-radius: 2px;
+        }
+
+        .project-link:hover {
+            background: #000080;
+            color: #fff;
+        }
+
+        /* --- CONTACT SECTION (Legal Pad) --- */
+        .contact {
+            padding: 4rem 2rem;
+            position: relative;
+        }
+
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 3rem;
+        }
+
+        .contact-card {
+            background: linear-gradient(to bottom, #f0f0f0, #d4d0c8);
+            border: 1px solid #999;
+            padding: 2rem;
+            box-shadow: inset 1px 1px 0 #fff, 2px 4px 8px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            height: fit-content;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+            text-decoration: none;
+            color: #333;
+            padding: 10px;
+            border: 1px inset #ccc;
+            background: #e8e8e8;
+            transition: all 0.1s;
+        }
+        
+        .contact-item:active {
+            border-style: solid;
+            background: #dcdcdc;
+        }
+
+        .icon-box {
+            font-size: 1.5rem;
+            color: #555;
+        }
+
+        /* Legal Pad Form */
+        .contact-form {
+            background: #feeb75; /* Yellow legal pad color */
+            padding: 30px;
+            border: 1px solid #d4c45a;
+            box-shadow: 3px 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+            background-image: 
+                linear-gradient(transparent 95%, #a6d0df 95%), /* horizontal lines */
+                linear-gradient(90deg, transparent 40px, #e87b7b 40px, #e87b7b 42px, transparent 42px); /* vertical red margin */
+            background-size: 100% 30px, 100% 100%;
+            line-height: 30px;
+        }
+
+        /* Top binding of legal pad */
+        .contact-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 25px;
+            background: #8b0000; /* Dark red tape */
+            border-bottom: 2px solid #5a0000;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            margin-left: 50px; /* offset for red margin */
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #999;
+            font-family: 'Comic Sans MS', cursive, sans-serif; /* Handwriting feel */
+            color: #000080; /* Blue ink */
+            font-size: 1.1rem;
+            padding: 5px 0;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-bottom-color: #000080;
+        }
+
+        /* --- FOOTER --- */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+            border-top: 1px solid #d3cbb8;
+            margin-top: 2rem;
+        }
+
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (max-width: 900px) {
+            .desk-environment { margin: 20px; }
+            .hero, .about-grid, .contact-container { flex-direction: column; grid-template-columns: 1fr; }
+            .hero-content { margin-bottom: 2rem; }
+            .tabs-container { justify-content: center; }
+            
+            /* Adjust Clipboard for mobile */
+            .acrylic-clipboard { 
+                margin: 0 auto; 
+                transform: none; 
+                width: 100%; 
+                max-width: 340px;
+            }
+            .acrylic-clipboard:hover {
+                transform: scale(1.02);
+            }
+            .red-pen { right: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="desk-environment">
+        
+        <!-- Physical Navigation Tabs -->
+        <div class="tabs-container">
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#skills" class="nav-link">Skills</a></li>
+                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+
+        <!-- The Main Document Area -->
+        <main class="paper-document">
+            
+            <!-- Hero Section -->
+            <section id="home" class="hero">
+                <div class="hero-content">
+                    <p class="hero-subtitle">Hello, I'm</p>
+                    <h1 class="hero-title">Purvarajsinh<br>Vaghela</h1>
+                    <p class="hero-description">
+                        <span id="typewriter-text"></span><span class="typewriter"></span><br><br>
+                        Crafting functional software and digital experiences with code and precision.
+                    </p>
+                    <div class="hero-btns">
+                        <a href="#projects" class="btn btn-primary">View Work</a>
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vaghelapurvarajsinh8442@gmail.com" target="_blank" class="btn">Contact Me</a>
+                    </div>
+                    <div class="social-links">
+                        <a href="https://github.com/Purvarajsinh39" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vaghelapurvarajsinh8442@gmail.com" target="_blank"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+
+                <!-- NEW HERO VISUAL: 3D Acrylic Clipboard -->
+                <div class="hero-visual">
+                    <div class="acrylic-clipboard">
+                        <div class="metal-clip">
+                            <div class="clip-spring"></div>
+                        </div>
+                        <div class="clipboard-paper">
+                            <h3 class="paper-heading">Dev Checklist</h3>
+                            <ul class="todo-list">
+                                <li><span class="check-box checked">✔</span> Drink Coffee</li>
+                                <li><span class="check-box checked">✔</span> Write Clean Code</li>
+                                <li><span class="check-box checked">✔</span> Fix Bugs</li>
+                                <li><span class="check-box"></span> Sleep</li>
+                            </ul>
+                            <!-- 3D Red Pen -->
+                            <div class="red-pen">
+                                <div class="pen-cap"></div>
+                                <div class="pen-body"></div>
+                                <div class="pen-tip"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section id="about" class="about">
+                <h2 class="section-title">About Me</h2>
+                <div class="about-grid">
+                    <div class="about-content">
+                        <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
+                            I am a motivated <strong>BCA student (Semester 5)</strong> at LJ University with a drive for building functional and beautiful web applications.
+                            My journey bridges the gap between clean code and creative design. I am deeply interested in applying programming, security, and problem-solving methodologies to create software that makes a difference.
+                        </p>
+                        
+                        <div class="physical-card education-card">
+                            <div class="paperclip"></div>
+                            <h3><i class="fas fa-graduation-cap"></i> Education</h3>
+                            <div class="edu-item">
+                                <h4>Bachelor of Computer Applications</h4>
+                                <p class="institution">LJ University</p>
+                                <span class="year">2023 – Present</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="certifications">
+                        <div class="physical-card">
+                            <div class="paperclip" style="left: auto; right: 20px;"></div>
+                            <h3><i class="fas fa-stamp"></i> Credentials</h3>
+                            <ul class="cert-list">
+                                <li class="cert-item">
+                                    <div class="wax-seal">✔</div>
+                                    <div class="cert-info">
+                                        <strong>Python for Everybody</strong><br>
+                                        <span style="font-size:0.8rem; color:#666;">Coursera</span>
+                                    </div>
+                                </li>
+                                <li class="cert-item">
+                                    <div class="wax-seal">✔</div>
+                                    <div class="cert-info">
+                                        <strong>Career Edge</strong><br>
+                                        <span style="font-size:0.8rem; color:#666;">TCS iON</span>
+                                    </div>
+                                </li>
+                                <li class="cert-item">
+                                    <div class="wax-seal">✔</div>
+                                    <div class="cert-info">
+                                        <strong>Data Analytics</strong><br>
+                                        <span style="font-size:0.8rem; color:#666;">Deloitte</span>
+                                    </div>
+                                </li>
+                            </ul>
+                            <a href="https://github.com/Purvarajsinh39/Certificates" target="_blank" class="view-repo-btn">
+                                View Repository &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Skills Section -->
+            <section id="skills" class="skills">
+                <h2 class="section-title">Technical Arsenal</h2>
+                <div class="skills-grid">
+                    <div class="skill-category">
+                        <h3>Development</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">Python</span>
+                            <span class="skill-tag">.NET</span>
+                            <span class="skill-tag">HTML5</span>
+                            <span class="skill-tag">CSS3</span>
+                            <span class="skill-tag">JavaScript</span>
+                            <span class="skill-tag">Laravel</span>
+                            <span class="skill-tag">PHP</span>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h3>Tools & OS</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">Git</span>
+                            <span class="skill-tag">GitHub</span>
+                            <span class="skill-tag">VS Code</span>
+                            <span class="skill-tag">Linux</span>
+                            <span class="skill-tag">Figma</span>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h3>Database</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">MySQL</span>
+                            <span class="skill-tag">SSMS</span>
+                            <span class="skill-tag">PhpAdmin</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Projects Section -->
+            <section id="projects" class="projects">
+                <h2 class="section-title">Featured Projects</h2>
+                <div class="projects-grid">
+
+                    <div class="project-card">
+                        <div class="tape"></div>
+                        <div class="project-content">
+                            <h3>Job Board Platform</h3>
+                            <p>A comprehensive listing platform connecting employers and seekers.</p>
+                            <div class="project-tech">C# | .NET | SSMS</div>
+                        </div>
+                        <div class="project-title-handwritten">Job Board</div>
+                        <a href="https://github.com/Purvarajsinh39/JobBoardPlatForm-ASP.NET.git" target="_blank" class="project-link">Source</a>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="tape"></div>
+                        <div class="project-content">
+                            <h3>Blog Management</h3>
+                            <p>A dynamic CMS for creating and editing blog posts efficiently.</p>
+                            <div class="project-tech">Laravel | PHP | MySQL</div>
+                        </div>
+                        <div class="project-title-handwritten">My Blog App</div>
+                        <a href="https://github.com/Purvarajsinh39/BLOG-MANAGEMENT-SYSTEM-LARAVEL.git" target="_blank" class="project-link">Source</a>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="tape"></div>
+                        <div class="project-content">
+                            <h3>Hotel Management</h3>
+                            <p>An operational system to streamline bookings and customer services.</p>
+                            <div class="project-tech">PHP | MySQL | HTML</div>
+                        </div>
+                        <div class="project-title-handwritten">Hotel System</div>
+                        <a href="https://github.com/Purvarajsinh39/Hotel-Management-PHP.git" target="_blank" class="project-link">Source</a>
+                    </div>
+                    
+                    <div class="project-card">
+                        <div class="tape"></div>
+                        <div class="project-content">
+                            <h3>Interactive Quiz</h3>
+                            <p>Python-based app designed to test knowledge with immediate feedback.</p>
+                            <div class="project-tech">Python | Tkinter | SQL</div>
+                        </div>
+                        <div class="project-title-handwritten">Quiz Game</div>
+                        <a href="https://github.com/Purvarajsinh39/Python-Quiz-For-Beginners.git" target="_blank" class="project-link">Source</a>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section id="contact" class="contact">
+                <h2 class="section-title">Get In Touch</h2>
+                <div class="contact-container">
+                    <div class="contact-card">
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vaghelapurvarajsinh8442@gmail.com" target="_blank" class="contact-item">
+                            <div class="icon-box">✉</div>
+                            <div>
+                                <strong>Email Me</strong>
+                                <p style="font-size:0.85rem; color:#555;">vaghelapurvarajsinh8442@gmail.com</p>
+                            </div>
+                        </a>
+                        <a href="tel:+919824733917" class="contact-item">
+                            <div class="icon-box">☎</div>
+                            <div>
+                                <strong>Call Me</strong>
+                                <p style="font-size:0.85rem; color:#555;">+91 9824733917</p>
+                            </div>
+                        </a>
+                        <a href="https://github.com/Purvarajsinh39" target="_blank" class="contact-item">
+                            <div class="icon-box">⌨</div>
+                            <div>
+                                <strong>GitHub</strong>
+                                <p style="font-size:0.85rem; color:#555;">/Purvarajsinh39</p>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <form class="contact-form">
+                        <div class="form-group">
+                            <label>Name:</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Notes:</label>
+                            <textarea id="message" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="margin-left: 50px;">Send Letter</button>
+                    </form>
+                </div>
+            </section>
+
+            <footer class="footer">
+                <p>&copy; 2025 Purvarajsinh Vaghela. Printed and Bound.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- TAB NAV LOGIC ---
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            window.addEventListener('scroll', () => {
+                let current = '';
+                const sections = document.querySelectorAll('section');
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    if (pageYOffset >= sectionTop) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+
+            // --- TYPEWRITER EFFECT ---
+            const textElement = document.getElementById('typewriter-text');
+            const texts = ["Motivated BCA Student", "Aspiring Web Developer", "Problem Solver"];
+            let count = 0;
+            let index = 0;
+            let currentText = '';
+            let letter = '';
+            let isDeleting = false;
+        
+            (function type() {
+                if (count === texts.length) count = 0;
+                currentText = texts[count];
+        
+                if (isDeleting) letter = currentText.slice(0, --index);
+                else letter = currentText.slice(0, ++index);
+        
+                textElement.textContent = letter;
+                let typeSpeed = 100;
+                if (isDeleting) typeSpeed = 50;
+        
+                if (!isDeleting && letter.length === currentText.length) {
+                    typeSpeed = 2000;
+                    isDeleting = true;
+                } else if (isDeleting && letter.length === 0) {
+                    isDeleting = false;
+                    count++;
+                    typeSpeed = 500;
+                }
+                setTimeout(type, typeSpeed);
+            })();
+
+            // --- CONTACT FORM HANDLING (Gmail Redirect) ---
+            const contactForm = document.querySelector('.contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('email').value;
+                    const message = document.getElementById('message').value;
+                    
+                    const subject = encodeURIComponent(`Portfolio Contact from ${name}`);
+                    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+                    const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=vaghelapurvarajsinh8442@gmail.com&su=${subject}&body=${body}`;
+                    
+                    window.open(gmailLink, '_blank');
+                    
+                    const btn = contactForm.querySelector('button');
+                    const originalContent = btn.innerHTML;
+                    btn.innerHTML = 'Sending...';
+                    setTimeout(() => {
+                        btn.innerHTML = originalContent;
+                        contactForm.reset();
+                    }, 3000);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

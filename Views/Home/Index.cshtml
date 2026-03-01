@@ -1,0 +1,591 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portify | Automated Portfolio Crafting</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <script>
+        (function () {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            300: '#d8b4fe',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            900: '#581c87'
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'tilt': 'tilt 10s infinite linear',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        tilt: {
+                            '0%, 50%, 100%': { transform: 'rotate(0deg)' },
+                            '25%': { transform: 'rotate(1deg)' },
+                            '75%': { transform: 'rotate(-1deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .noise-bg {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dark .glass {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 3D Perspective Container */
+        .perspective-container {
+            perspective: 1000px;
+        }
+        
+        .hero-dashboard {
+            transform: rotateX(10deg) scale(0.95);
+            transition: transform 0.5s ease-out;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-dashboard:hover {
+            transform: rotateX(0deg) scale(1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #a855f7; border-radius: 10px; }
+
+        /* Smooth dome fade out */
+        .dome-container {
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        /* Mobile Menu Transitions */
+        #mobile-menu {
+            transition: opacity 0.3s ease-in-out, visibility 0.3s;
+        }
+        #mobile-menu.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        #mobile-menu.closed {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body class="bg-white dark:bg-[#050505] text-gray-900 dark:text-white transition-colors duration-500 selection:bg-brand-500 selection:text-white overflow-x-hidden">
+
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute top-[-10%] left-[20%] w-[60%] h-[50%] bg-brand-500/10 rounded-full blur-[120px] animate-pulse-slow"></div>
+        <div class="absolute inset-0 noise-bg opacity-30 dark:opacity-20"></div>
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+        <div class="absolute top-0 left-0 w-full h-full" style="background-image: radial-gradient(rgba(168, 85, 247, 0.1) 1px, transparent 1px); background-size: 50px 50px; opacity: 0.3; mask-image: linear-gradient(to bottom, black 40%, transparent 100%);"></div>
+    </div>
+
+    @if (Session["UserRole"] != null && Session["UserRole"].ToString() == "Admin")
+    {
+        @Html.Partial("~/Views/Shared/_AdminNavbar.cshtml", null, new ViewDataDictionary { { "OmitSpacer", true } })
+    }
+    else if (Session["UserRole"] != null && Session["UserRole"].ToString() == "User")
+    {
+        @Html.Partial("~/Views/Shared/_UserNavbar.cshtml", null, new ViewDataDictionary { { "OmitSpacer", true } })
+    }
+    else
+    {
+        <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent">
+            <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between relative">
+
+                <a href="#" class="flex items-center gap-2 relative z-50 group">
+                    <span class="text-2xl font-bold font-serif italic tracking-tight text-gray-900 dark:text-white transition-colors">Portify</span>
+                </a>
+
+                <div class="hidden md:flex items-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+
+                    <a href="#features"
+                       class="relative text-base font-medium text-gray-600 dark:text-gray-300
+                  transition-all duration-300
+                  hover:text-brand-500 dark:hover:text-brand-400
+                  hover:-translate-y-0.5
+                  after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0
+                  after:bg-brand-500 after:transition-all after:duration-300
+                  hover:after:w-full">
+                        Features
+                    </a>
+
+                    <a href="#workflow"
+                       class="relative text-base font-medium text-gray-600 dark:text-gray-300
+                  transition-all duration-300
+                  hover:text-brand-500 dark:hover:text-brand-400
+                  hover:-translate-y-0.5
+                  after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0
+                  after:bg-brand-500 after:transition-all after:duration-300
+                  hover:after:w-full">
+                        Process
+                    </a>
+
+                    <a href="#templates"
+                       class="relative text-base font-medium text-gray-600 dark:text-gray-300
+                  transition-all duration-300
+                  hover:text-brand-500 dark:hover:text-brand-400
+                  hover:-translate-y-0.5
+                  after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0
+                  after:bg-brand-500 after:transition-all after:duration-300
+                  hover:after:w-full">
+                        Templates
+                    </a>
+
+                </div>
+
+
+                <div class="hidden md:flex items-center gap-4 relative z-50">
+                    <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <i data-lucide="sun" class="hidden dark:block w-5 h-5"></i>
+                        <i data-lucide="moon" class="block dark:hidden w-5 h-5"></i>
+                    </button>
+
+                    <a href="@Url.Action("Login", "Home")" class="inline-flex items-center justify-center px-6 py-2.5 text-base font-semibold text-white transition-all duration-200 bg-gray-900 dark:bg-white dark:text-black rounded-lg hover:bg-brand-600 dark:hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
+                        Sign In
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-4 md:hidden relative z-50">
+                    <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 transition-colors">
+                        <i data-lucide="sun" class="hidden dark:block w-5 h-5"></i>
+                        <i data-lucide="moon" class="block dark:hidden w-5 h-5"></i>
+                    </button>
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="p-2 text-gray-600 dark:text-gray-300 hover:text-brand-500 transition-colors focus:outline-none">
+                        <i id="menu-icon" data-lucide="menu" class="w-6 h-6 transition-transform duration-300"></i>
+                        <i id="close-icon" data-lucide="x" class="w-6 h-6 hidden transition-transform duration-300"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="mobile-menu" class="closed fixed inset-0 bg-white/95 dark:bg-[#050505]/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center gap-8 md:hidden">
+                <nav class="flex flex-col items-center gap-8 text-center">
+                    <a href="#features" onclick="toggleMobileMenu()" class="text-2xl font-serif italic text-gray-900 dark:text-white hover:text-brand-500 transition-colors">Features</a>
+                    <a href="#workflow" onclick="toggleMobileMenu()" class="text-2xl font-serif italic text-gray-900 dark:text-white hover:text-brand-500 transition-colors">Process</a>
+                    <a href="#templates" onclick="toggleMobileMenu()" class="text-2xl font-serif italic text-gray-900 dark:text-white hover:text-brand-500 transition-colors">Templates</a>
+                    <div class="w-12 h-px bg-gray-200 dark:bg-white/10 my-2"></div>
+                    <a href="@Url.Action("Login", "Home")" onclick="toggleMobileMenu()" class="text-lg font-semibold text-brand-600 dark:text-brand-400">Sign In</a>
+                </nav>
+            </div>
+        </nav>
+    }
+
+    <section class="relative pt-32 pb-20 px-6 overflow-hidden min-h-screen flex flex-col justify-center">
+        
+        <div id="domeContainer" class="dome-container absolute bottom-[-150px] left-1/2 -translate-x-1/2 -z-20">
+            <div class="w-[1000px] md:w-[1600px] h-[500px] md:h-[800px] bg-brand-500/10 border-t border-brand-500/50 rounded-t-full shadow-[0_-20px_80px_-10px_rgba(168,85,247,0.4)] backdrop-blur-sm"></div>
+        </div>
+        
+        
+            
+        <div class="max-w-7xl mx-auto text-center relative z-10 mt-16 md:mt-24">         
+           
+
+            <div class="reveal delay-100">
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-serif italic mb-6 leading-[1.1] tracking-tight">
+                    Craft your legacy <br>
+                    <span class="not-italic font-sans font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-brand-600 to-brand-400 dark:from-white dark:via-brand-400 dark:to-brand-600">
+                        in seconds.
+                    </span>
+                </h1>
+            </div>
+
+            <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed reveal delay-200">
+                The automated portfolio builder for developers who would rather code the future than CSS the present. Select a masterwork, inject your git, and deploy.
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-4 reveal delay-300 mb-20">
+                <a href="@(Session["UserId"] != null ? Url.Action("Explore", "Dashboard") : Url.Action("Login", "Home"))" 
+                   class="bg-gray-900 dark:bg-white text-white dark:text-black px-8 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-brand-500 dark:hover:bg-brand-500 dark:hover:text-white transition-all group flex items-center gap-3 shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)]">
+                    Start Building
+                    <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="py-24 px-6 bg-gray-50/50 dark:bg-transparent border-t border-gray-200/50 dark:border-white/5">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20 reveal">
+                <h2 class="text-xs uppercase tracking-[0.4em] text-brand-500 font-bold mb-4">Features</h2>
+                <h3 class="text-4xl md:text-5xl font-serif italic">Tailored for Excellence</h3>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass p-8 rounded-3xl reveal hover:border-brand-500/50 transition-colors group">
+                    <div class="w-12 h-12 bg-brand-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="code" class="text-brand-500"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3">Clean Architecture</h4>
+                    <p class="text-gray-500 dark:text-gray-400 leading-relaxed">Generated code is minified, modular, and built with SEO best practices in mind.</p>
+                </div>
+
+                <div class="glass p-8 rounded-3xl reveal delay-100 hover:border-brand-500/50 transition-colors group">
+                    <div class="w-12 h-12 bg-brand-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="monitor" class="text-brand-500"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3">Responsive Design</h4>
+                    <p class="text-gray-500 dark:text-gray-400 leading-relaxed">Every template is rigorously tested across mobile, tablet, and ultra-wide screens.</p>
+                </div>
+
+                <div class="glass p-8 rounded-3xl reveal delay-200 hover:border-brand-500/50 transition-colors group">
+                    <div class="w-12 h-12 bg-brand-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="download" class="text-brand-500"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3">Direct Export</h4>
+                    <p class="text-gray-500 dark:text-gray-400 leading-relaxed">Download a ZIP containing your .html, .css, and .js files instantly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="templates" class="py-24 px-6 bg-gray-50/50 dark:bg-transparent border-t border-gray-200/50 dark:border-white/5">
+        <div class="max-w-7xl mx-auto">
+             <div class="text-center mb-20 reveal">
+                <h2 class="text-xs uppercase tracking-[0.4em] text-brand-500 font-bold mb-4">Templates</h2>
+                <h3 class="text-4xl md:text-5xl font-serif italic mb-6">Choose Your Canvas</h3>
+                <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                    Select a masterpiece to showcase your work. Each template is crafted for maximum impact.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Portfolio 1 -->
+                <div class="group relative rounded-3xl overflow-hidden glass border border-gray-200/50 dark:border-white/5 hover:border-brand-500/50 transition-all duration-500 reveal">
+                    <div class="aspect-video w-full bg-gray-100 dark:bg-gray-900 overflow-hidden relative">
+                         <iframe src="/Templates/Portfolio1.html" class="w-[400%] h-[400%] absolute top-0 left-0 transform scale-[0.25] origin-top-left border-0 pointer-events-none" loading="lazy"></iframe>
+                         
+                         <div class="absolute inset-0 bg-gray-900/0 group-hover:bg-gray-900/40 transition-all duration-300 z-10 flex items-center justify-center backdrop-blur-[0px] group-hover:backdrop-blur-sm">
+                            <a href="/Templates/Portfolio1.html" target="_blank" class="transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 bg-white dark:bg-black text-black dark:text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 shadow-2xl hover:scale-105">
+                                Preview Template <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                         </div>
+                    </div>
+                    <div class="p-6 border-t border-gray-200/50 dark:border-white/5 bg-white/50 dark:bg-black/20">
+                        <h4 class="text-xl font-bold mb-1">Minimalist Developer</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Clean, focus-driven design for backend engineers.</p>
+                    </div>
+                </div>
+
+                <!-- Portfolio 2 -->
+                <div class="group relative rounded-3xl overflow-hidden glass border border-gray-200/50 dark:border-white/5 hover:border-brand-500/50 transition-all duration-500 reveal delay-100">
+                    <div class="aspect-video w-full bg-gray-100 dark:bg-gray-900 overflow-hidden relative">
+                         <iframe src="/Templates/Portfolio2.html" class="w-[400%] h-[400%] absolute top-0 left-0 transform scale-[0.25] origin-top-left border-0 pointer-events-none" loading="lazy"></iframe>
+                         <div class="absolute inset-0 bg-gray-900/0 group-hover:bg-gray-900/40 transition-all duration-300 z-10 flex items-center justify-center backdrop-blur-[0px] group-hover:backdrop-blur-sm">
+                            <a href="/Templates/Portfolio2.html" target="_blank" class="transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 bg-white dark:bg-black text-black dark:text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 shadow-2xl hover:scale-105">
+                                Preview Template <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                         </div>
+                    </div>
+                    <div class="p-6 border-t border-gray-200/50 dark:border-white/5 bg-white/50 dark:bg-black/20">
+                        <h4 class="text-xl font-bold mb-1">Creative Studio</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Vibrant and expressive for frontend wizards.</p>
+                    </div>
+                </div>
+
+                <!-- Portfolio 3 -->
+                <div class="group relative rounded-3xl overflow-hidden glass border border-gray-200/50 dark:border-white/5 hover:border-brand-500/50 transition-all duration-500 reveal delay-200">
+                    <div class="aspect-video w-full bg-gray-100 dark:bg-gray-900 overflow-hidden relative">
+                         <iframe src="/Templates/Portfolio3.html" class="w-[400%] h-[400%] absolute top-0 left-0 transform scale-[0.25] origin-top-left border-0 pointer-events-none" loading="lazy"></iframe>
+                         <div class="absolute inset-0 bg-gray-900/0 group-hover:bg-gray-900/40 transition-all duration-300 z-10 flex items-center justify-center backdrop-blur-[0px] group-hover:backdrop-blur-sm">
+                            <a href="/Templates/Portfolio3.html" target="_blank" class="transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 bg-white dark:bg-black text-black dark:text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 shadow-2xl hover:scale-105">
+                                Preview Template <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                         </div>
+                    </div>
+                    <div class="p-6 border-t border-gray-200/50 dark:border-white/5 bg-white/50 dark:bg-black/20">
+                        <h4 class="text-xl font-bold mb-1">Modern SaaS</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Professional layout for full-stack developers.</p>
+                    </div>
+                </div>
+
+                <!-- Portfolio 4 -->
+                <div class="group relative rounded-3xl overflow-hidden glass border border-gray-200/50 dark:border-white/5 hover:border-brand-500/50 transition-all duration-500 reveal">
+                    <div class="aspect-video w-full bg-gray-100 dark:bg-gray-900 overflow-hidden relative">
+                         <iframe src="/Templates/Portfolio4.html" class="w-[400%] h-[400%] absolute top-0 left-0 transform scale-[0.25] origin-top-left border-0 pointer-events-none" loading="lazy"></iframe>
+                         <div class="absolute inset-0 bg-gray-900/0 group-hover:bg-gray-900/40 transition-all duration-300 z-10 flex items-center justify-center backdrop-blur-[0px] group-hover:backdrop-blur-sm">
+                            <a href="/Templates/Portfolio4.html" target="_blank" class="transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 bg-white dark:bg-black text-black dark:text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 shadow-2xl hover:scale-105">
+                                Preview Template <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                         </div>
+                    </div>
+                    <div class="p-6 border-t border-gray-200/50 dark:border-white/5 bg-white/50 dark:bg-black/20">
+                        <h4 class="text-xl font-bold mb-1">Typographic Bold</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Text-focused design for leaders and writers.</p>
+                    </div>
+                </div>
+
+                <!-- Portfolio 5 -->
+                <div class="group relative rounded-3xl overflow-hidden glass border border-gray-200/50 dark:border-white/5 hover:border-brand-500/50 transition-all duration-500 reveal delay-100">
+                    <div class="aspect-video w-full bg-gray-100 dark:bg-gray-900 overflow-hidden relative">
+                         <iframe src="/Templates/Portfolio5.html" class="w-[400%] h-[400%] absolute top-0 left-0 transform scale-[0.25] origin-top-left border-0 pointer-events-none" loading="lazy"></iframe>
+                         <div class="absolute inset-0 bg-gray-900/0 group-hover:bg-gray-900/40 transition-all duration-300 z-10 flex items-center justify-center backdrop-blur-[0px] group-hover:backdrop-blur-sm">
+                            <a href="/Templates/Portfolio5.html" target="_blank" class="transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 bg-white dark:bg-black text-black dark:text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 shadow-2xl hover:scale-105">
+                                Preview Template <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                         </div>
+                    </div>
+                    <div class="p-6 border-t border-gray-200/50 dark:border-white/5 bg-white/50 dark:bg-black/20">
+                        <h4 class="text-xl font-bold mb-1">Neo-Brutalist</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">High contrast and trendy.</p>
+                    </div>
+                </div>
+
+                <!-- Coming Soon -->
+                <div class="group relative rounded-3xl overflow-hidden glass border border-dashed border-gray-300 dark:border-gray-700 hover:border-brand-500/50 transition-all duration-500 reveal delay-200 flex flex-col">
+                    <div class="aspect-video w-full flex items-center justify-center bg-gray-50 dark:bg-white/5">
+                        <div class="text-center p-6">
+                            <div class="w-20 h-20 rounded-full bg-gray-200 dark:bg-white/10 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                <i data-lucide="plus" class="w-8 h-8 text-gray-400 dark:text-gray-500"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-2 text-gray-400 dark:text-gray-500">More Coming Soon</h4>
+                            <p class="text-sm text-gray-400 dark:text-gray-600">We are crafting new experiences.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="workflow" class="py-24 px-6 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto flex flex-col items-center">
+            <div class="max-w-3xl w-full">
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-3xl font-serif italic mb-4">How it Works</h2>
+                    <div class="w-20 h-1 bg-brand-500 mx-auto rounded-full"></div>
+                </div>
+
+                <div class="space-y-12">
+                    <div class="flex gap-6 reveal group">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-full border border-brand-500 flex items-center justify-center font-bold text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-all">01</div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2 uppercase tracking-wide">Administrator Setup</h4>
+                            <p class="text-gray-500 dark:text-gray-400">Our admins upload premium templates and manage platform statistics to ensure top-tier variety and performance.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-6 reveal delay-100 group">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-full border border-brand-500 flex items-center justify-center font-bold text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-all">02</div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2 uppercase tracking-wide">Select & Personalize</h4>
+                            <p class="text-gray-500 dark:text-gray-400">Users choose their favorite aesthetic and input their personal data, projects, and skills through our intuitive form.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-6 reveal delay-200 group">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-full border border-brand-500 flex items-center justify-center font-bold text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-all">03</div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2 uppercase tracking-wide">Magic Deployment</h4>
+                            <p class="text-gray-500 dark:text-gray-400">The engine injects your data into the template and provides a high-performance codebase ready for any hosting provider.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-20 px-6 border-t border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-[#080808]">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-12">
+            <div class="col-span-2">
+                <div class="flex items-center gap-2 mb-6">
+                    
+                    <span class="text-lg font-bold tracking-tighter font-serif italic">Portify</span>
+                </div>
+                <p class="text-gray-500 dark:text-gray-400 max-w-sm mb-8">
+                    Empowering creatives to showcase their work without the hassle of coding from scratch. Elegant solutions for modern portfolios.
+                </p>
+                <div class="flex gap-4">
+                    @*<a href="#" class="text-gray-400 hover:text-brand-500 transition-colors"><i data-lucide="twitter"></i></a>*@
+                    <a href="https://github.com/Purvarajsinh39" class="text-gray-400 hover:text-brand-500 transition-colors"><i data-lucide="github"></i></a>
+                    @*<a href="#" class="text-gray-400 hover:text-brand-500 transition-colors"><i data-lucide="linkedin"></i></a>*@
+                </div>
+            </div>
+            
+            <div>
+                <h5 class="font-bold uppercase tracking-widest text-xs mb-6 text-gray-400">Platform</h5>
+                <ul class="space-y-4 text-sm text-gray-500 dark:text-gray-400">
+                    <li><a href="#templates" class="hover:text-brand-500">Templates</a></li>
+                    <li><a href="#" class="hover:text-brand-500">Showcase</a></li>
+                    <li><a href="@Url.Action("Login", "Home")" class="hover:text-brand-500">Admin Dashboard</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h5 class="font-bold uppercase tracking-widest text-xs mb-6 text-gray-400">Legal</h5>
+                <ul class="space-y-4 text-sm text-gray-500 dark:text-gray-400">
+                    <li><a href="#" class="hover:text-brand-500">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-brand-500">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-20 pt-8 border-t border-gray-200 dark:border-white/5 text-center text-xs text-gray-400 uppercase tracking-widest">
+            &copy; 2026 Portify. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        // --- MOBILE MENU LOGIC ---
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const menuIcon = document.getElementById('menu-icon');
+            const closeIcon = document.getElementById('close-icon');
+            const body = document.body;
+
+            if (menu.classList.contains('closed')) {
+                // Open Menu
+                menu.classList.remove('closed');
+                menu.classList.add('open');
+                menuIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+                // Prevent scrolling when menu is open
+                body.style.overflow = 'hidden';
+            } else {
+                // Close Menu
+                menu.classList.remove('open');
+                menu.classList.add('closed');
+                menuIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+                // Restore scrolling
+                body.style.overflow = 'auto';
+            }
+        }
+
+        // --- THEME TOGGLE LOGIC ---
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Apply saved theme
+        // Removed - handled in <head> for FOUC prevention
+
+        // --- SMOOTH DOME FADE OUT ON SCROLL ---
+        function handleDomeFade() {
+            const domeContainer = document.getElementById('domeContainer');
+            const heroSection = document.querySelector('section');
+            const heroHeight = heroSection.offsetHeight;
+            const scrollPosition = window.scrollY;
+            
+            // Calculate opacity and scale based on scroll position
+            // Start fading when user scrolls past 60% of hero section
+            const fadeStart = heroHeight * 0.6;
+            const fadeEnd = heroHeight * 0.95;
+            
+            if (scrollPosition < fadeStart) {
+                domeContainer.style.opacity = '1';
+                domeContainer.style.transform = 'translateX(-50%) translateY(0)';
+            } else if (scrollPosition >= fadeStart && scrollPosition <= fadeEnd) {
+                const fadeProgress = (scrollPosition - fadeStart) / (fadeEnd - fadeStart);
+                domeContainer.style.opacity = String(1 - fadeProgress);
+                domeContainer.style.transform = `translateX(-50%) translateY(${fadeProgress * 30}px)`;
+            } else {
+                domeContainer.style.opacity = '0';
+                domeContainer.style.transform = 'translateX(-50%) translateY(30px)';
+            }
+        }
+
+        window.addEventListener('scroll', handleDomeFade);
+
+        // --- SCROLL ANIMATIONS ---
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // --- NAVBAR SCROLL LOGIC ---
+        const nav = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                nav.classList.add('bg-white/80', 'dark:bg-[#050505]/80', 'backdrop-blur-md', 'border-gray-200', 'dark:border-white/5');
+                nav.classList.remove('border-transparent');
+            } else {
+                nav.classList.remove('bg-white/80', 'dark:bg-[#050505]/80', 'backdrop-blur-md', 'border-gray-200', 'dark:border-white/5');
+                nav.classList.add('border-transparent');
+            }
+        });
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

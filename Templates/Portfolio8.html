@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purvarajsinh Vaghela | Creative Developer</title>
+    <meta name="description" content="Portfolio of Purvarajsinh Vaghela, a motivated BCA student and Web Developer.">
+    
+    <!-- Google Fonts for Neobrutalism -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- SOFT NEOBRUTALISM CSS VARIABLES --- */
+        :root {
+            /* Warm, eye-pleasing background instead of stark white */
+            --bg-color: #F8F5F2; 
+            --text-main: #1A1A1A;
+            
+            /* Softer but distinct borders and shadows */
+            --border-dark: 3px solid #1A1A1A;
+            --shadow-solid: 6px 6px 0px #1A1A1A;
+            --shadow-hover: 2px 2px 0px #1A1A1A;
+            
+            /* Slight rounding for "Soft Brutalism" - makes it beautiful */
+            --radius: 12px;
+            
+            /* Vibrant, harmonious Accent Colors */
+            --color-yellow: #FFDE59;
+            --color-pink: #FF91E7;
+            --color-cyan: #38E5FF;
+            --color-green: #00E58B;
+            --color-orange: #FF6B35;
+            --color-purple: #C084FC;
+            --color-white: #FFFFFF;
+        }
+
+        /* --- RESET & TYPOGRAPHY --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding-top: 80px; /* Space for fixed nav */
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        p, a, li, input, textarea {
+            font-weight: 600;
+        }
+
+        .mono {
+            font-family: 'DM Mono', monospace;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-color);
+            border-bottom: var(--border-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            z-index: 100;
+            box-shadow: 0 4px 0 #1A1A1A;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-decoration: none;
+            color: var(--text-main);
+            background: var(--color-yellow);
+            padding: 0.2rem 0.8rem;
+            border: var(--border-dark);
+            border-radius: var(--radius);
+            box-shadow: 3px 3px 0 #1A1A1A;
+            transform: rotate(-2deg);
+            display: inline-block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--color-pink);
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+
+        .nav-links a:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        /* --- LAYOUT UTILITIES --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+
+        .grid {
+            display: grid;
+            gap: 2.5rem;
+        }
+
+        /* --- NEOBRUTAL COMPONENTS --- */
+        .card {
+            background: var(--color-white);
+            border: var(--border-dark);
+            box-shadow: var(--shadow-solid);
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            transition: all 0.2s ease;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--color-pink);
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border: var(--border-dark);
+            box-shadow: var(--shadow-solid);
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            border-radius: var(--radius);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .btn:hover, .btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border: 2px solid #1A1A1A;
+            box-shadow: 2px 2px 0 #1A1A1A;
+            font-family: 'DM Mono', monospace;
+            font-weight: bold;
+            font-size: 0.9rem;
+            background: var(--color-white);
+            margin: 0.3rem;
+            border-radius: 6px;
+        }
+
+        /* --- HERO SECTION (Redesigned for balance & beauty) --- */
+        .hero {
+            padding: 8rem 2rem 6rem;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            align-items: center;
+            gap: 4rem;
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 6vw, 5.5rem);
+            line-height: 0.95;
+            letter-spacing: -2px;
+        }
+
+        .highlight-text {
+            color: var(--color-purple);
+            text-shadow: 4px 4px 0 #1A1A1A;
+            -webkit-text-stroke: 1px #1A1A1A;
+            display: inline-block;
+            transform: rotate(-1deg);
+        }
+
+        .hero-subtitle {
+            background: var(--color-green);
+            padding: 0.5rem 1.2rem;
+            border: var(--border-dark);
+            border-radius: var(--radius);
+            font-size: clamp(1.2rem, 2vw, 1.8rem);
+            font-weight: 800;
+            transform: rotate(-2deg);
+            display: inline-block;
+            box-shadow: 3px 3px 0 #1A1A1A;
+        }
+
+        .hero-desc {
+            font-size: 1.25rem;
+            max-width: 550px;
+            font-family: 'DM Mono', monospace;
+            background: var(--color-white);
+            padding: 1.5rem;
+            border: var(--border-dark);
+            border-radius: var(--radius);
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.1); /* Softer shadow for text box */
+            margin-top: 0.5rem;
+        }
+
+        /* Visual Element to fill empty space */
+        .hero-visual {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+            aspect-ratio: 1;
+        }
+
+        .visual-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: var(--border-dark);
+            border-radius: var(--radius);
+        }
+
+        .visual-card-back {
+            background: var(--color-cyan);
+            transform: translate(25px, 25px) rotate(4deg);
+        }
+
+        .visual-card-mid {
+            background: var(--color-yellow);
+            transform: translate(10px, 10px) rotate(-1deg);
+            z-index: 1;
+        }
+
+        .visual-card-front {
+            background: var(--color-pink);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transform: rotate(-3deg);
+            box-shadow: var(--shadow-solid);
+            overflow: hidden;
+            background-image: radial-gradient(var(--color-white) 15%, transparent 16%), radial-gradient(var(--color-white) 15%, transparent 16%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+
+        .visual-avatar {
+            font-size: 8rem;
+            color: var(--text-main);
+            background: var(--color-white);
+            width: 200px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: var(--border-dark);
+            border-radius: 50%;
+            box-shadow: inset -5px -5px 0px rgba(0,0,0,0.1);
+        }
+
+        .floating-badge {
+            position: absolute;
+            bottom: 20px;
+            right: -20px;
+            background: var(--color-orange);
+            color: var(--color-white);
+            border: var(--border-dark);
+            border-radius: var(--radius);
+            padding: 1rem;
+            font-family: 'DM Mono', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transform: rotate(10deg);
+            box-shadow: 4px 4px 0 #1A1A1A;
+            text-align: center;
+            z-index: 10;
+        }
+
+        /* --- ABOUT SECTION --- */
+        .about-grid {
+            grid-template-columns: 1.2fr 0.8fr;
+        }
+
+        .about-grid .card:nth-child(1) { background: var(--color-white); }
+        .about-grid .card:nth-child(2) { background: var(--color-purple); color: var(--color-white); }
+
+        .list-brutal {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .list-brutal li {
+            margin-bottom: 1.2rem;
+            padding-left: 2rem;
+            position: relative;
+            font-size: 1.1rem;
+        }
+
+        .list-brutal li::before {
+            content: '➤';
+            position: absolute;
+            left: 0;
+            color: inherit;
+        }
+
+        /* --- SKILLS SECTION --- */
+        .skills-grid {
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        }
+
+        .skill-group h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.6rem;
+            border-bottom: 4px solid var(--text-main);
+            display: inline-block;
+            padding-bottom: 0.3rem;
+        }
+
+        /* --- PROJECTS SECTION --- */
+        .projects-grid {
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        }
+
+        .project-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .project-card.bg-1 { background: var(--color-cyan); }
+        .project-card.bg-2 { background: var(--color-pink); }
+        .project-card.bg-3 { background: var(--color-yellow); }
+        .project-card.bg-4 { background: var(--color-green); }
+
+        .project-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            background: var(--color-white);
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: var(--border-dark);
+            box-shadow: 4px 4px 0 #1A1A1A;
+            border-radius: 50%;
+        }
+
+        .project-tech {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.9rem;
+            background: var(--color-white);
+            padding: 0.4rem 0.8rem;
+            border: 2px solid #1A1A1A;
+            display: inline-block;
+            border-radius: 6px;
+        }
+
+        /* --- CONTACT SECTION --- */
+        .contact-grid {
+            grid-template-columns: 1fr 1.5fr;
+        }
+
+        .contact-info {
+            background: var(--color-orange);
+            color: var(--color-white);
+        }
+
+        .contact-info a {
+            color: var(--color-white);
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+        }
+        .contact-info a:hover { border-bottom: 2px solid var(--color-white); }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            font-family: 'Space Grotesk', sans-serif;
+            border: var(--border-dark);
+            background: var(--bg-color);
+            border-radius: var(--radius);
+            outline: none;
+            box-shadow: 3px 3px 0 #1A1A1A;
+            transition: box-shadow 0.2s, background 0.2s;
+        }
+
+        .form-control:focus {
+            box-shadow: 6px 6px 0 var(--color-cyan);
+            background: var(--color-white);
+        }
+
+        .section-title {
+            font-size: 3.5rem;
+            margin-bottom: 3rem;
+            background: var(--text-main);
+            color: var(--color-white);
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            transform: rotate(-2deg);
+            border-radius: var(--radius);
+            box-shadow: 6px 6px 0 var(--color-cyan);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 992px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 5rem;
+            }
+            .hero-content {
+                align-items: center;
+            }
+            .hero-visual {
+                max-width: 350px;
+                order: -1; /* Puts the graphic above the text on mobile */
+            }
+            .hero h1 { text-align: center; }
+            .hero-desc { text-align: left; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .about-grid, .contact-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 3.5rem; }
+            .section-title { font-size: 2.2rem; margin-bottom: 2rem;}
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <a href="#" class="logo">PV.</a>
+        <div class="nav-links">
+            <a href="#about">About</a>
+            <a href="#skills">Skills</a>
+            <a href="#projects">Work</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <main class="container hero" id="home">
+        <div class="hero-content">
+            <div class="hero-subtitle">CREATIVE DEVELOPER</div>
+            <h1>PURVARAJSINH<br><span class="highlight-text">VAGHELA</span></h1>
+            <p class="hero-desc">Bridging the gap between clean code and creative design. Crafting immersive digital experiences with code, creativity, and precision.</p>
+            
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                <a href="#projects" class="btn" style="background: var(--color-cyan);">
+                    <i class="fas fa-folder-open"></i> View Work
+                </a>
+                <a href="https://github.com/Purvarajsinh39" target="_blank" class="btn" style="background: var(--color-white);">
+                    <i class="fab fa-github"></i> GitHub Profile
+                </a>
+            </div>
+        </div>
+        
+        <!-- NEW VISUAL ELEMENT TO FILL EMPTY SPACE -->
+        <div class="hero-visual">
+            <div class="visual-card visual-card-back"></div>
+            <div class="visual-card visual-card-mid"></div>
+            <div class="visual-card visual-card-front">
+                <div class="visual-avatar">
+                    <i class="fas fa-user-astronaut"></i>
+                </div>
+            </div>
+            <div class="floating-badge">
+                STATUS:<br>BUILDING 🚀
+            </div>
+        </div>
+    </main>
+
+    <!-- ABOUT SECTION -->
+    <section class="container" id="about">
+        <div style="text-align: center;">
+            <h2 class="section-title">SYSTEM_INFO</h2>
+        </div>
+        <div class="grid about-grid">
+            
+            <div class="card">
+                <h3 style="font-size: 2rem; margin-bottom: 1rem; border-bottom: 4px solid var(--text-main); display: inline-block; padding-bottom: 0.3rem;">PROFILE</h3>
+                <p style="font-size: 1.1rem; margin-top: 1rem;">I am a highly motivated <span style="background: var(--color-yellow); padding: 0.2rem 0.5rem; border: 2px solid #000; border-radius: 4px;">BCA student (Semester 5)</span> at <strong>LJ University</strong> with a drive for building functional and beautiful web applications.</p>
+                <br>
+                <p style="font-size: 1.1rem;">My journey bridges the gap between clean code and creative design. I am deeply interested in applying programming, security, and problem-solving methodologies to create software that makes a difference.</p>
+            </div>
+
+            <div class="card">
+                <h3 style="font-size: 2rem; margin-bottom: 1rem; border-bottom: 4px solid var(--color-white); display: inline-block; padding-bottom: 0.3rem;">EDUCATION & CERTS</h3>
+                <ul class="list-brutal">
+                    <li>
+                        <strong>Bachelor of Computer Applications</strong><br>
+                        <span class="mono" style="font-size: 0.9rem; opacity: 0.9;">LJ University | 2023 – Present (Sem 5)</span>
+                    </li>
+                </ul>
+                
+                <h4 style="margin-top: 2rem; margin-bottom: 1rem; font-size: 1.3rem;">Official Certifications</h4>
+                <ul class="list-brutal" style="margin-top: 0;">
+                    <li>Python for Everybody (Coursera)</li>
+                    <li>TCS iON Career Edge (TCS)</li>
+                    <li>Data Analytics Job Sim (Deloitte)</li>
+                </ul>
+                <a href="https://github.com/Purvarajsinh39/Certificates" target="_blank" class="btn" style="background: var(--color-yellow); margin-top: 1rem; font-size: 1rem; padding: 0.5rem 1rem;">
+                    <i class="fas fa-certificate"></i> View Proof
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SKILLS SECTION -->
+    <section class="container" id="skills">
+        <h2 class="section-title" style="transform: rotate(1deg); background: var(--color-pink); color: var(--text-main); box-shadow: 6px 6px 0 var(--text-main);">TECH_STACK</h2>
+        <div class="grid skills-grid">
+            
+            <div class="card skill-group">
+                <h3><i class="fas fa-code"></i> Dev Tools</h3>
+                <div>
+                    <span class="tag" style="background: var(--color-yellow)">Python</span>
+                    <span class="tag" style="background: var(--color-cyan)">.NET</span>
+                    <span class="tag">Figma</span>
+                    <span class="tag" style="background: var(--color-orange); color: #fff">HTML5</span>
+                    <span class="tag" style="background: #0055FF; color: #fff">CSS3</span>
+                    <span class="tag" style="background: var(--color-yellow)">JavaScript</span>
+                    <span class="tag" style="background: #FF2A2A; color: #fff">Laravel</span>
+                    <span class="tag" style="background: var(--color-purple); color: #fff">PHP</span>
+                </div>
+            </div>
+
+            <div class="card skill-group">
+                <h3><i class="fas fa-terminal"></i> Systems</h3>
+                <div>
+                    <span class="tag">Git</span>
+                    <span class="tag" style="background: var(--text-main); color: #fff">GitHub</span>
+                    <span class="tag" style="background: var(--color-cyan)">VS Code</span>
+                    <span class="tag">Linux (Kali)</span>
+                </div>
+            </div>
+
+            <div class="card skill-group">
+                <h3><i class="fas fa-database"></i> Database</h3>
+                <div>
+                    <span class="tag" style="background: var(--color-pink)">phpMyAdmin</span>
+                    <span class="tag">SSMS</span>
+                    <span class="tag" style="background: var(--color-cyan)">MySQL</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- PROJECTS SECTION -->
+    <section class="container" id="projects">
+        <div style="text-align: right;">
+            <h2 class="section-title" style="transform: rotate(-1deg); background: var(--color-green); color: var(--text-main); box-shadow: 6px 6px 0 var(--text-main);">EXECUTABLES</h2>
+        </div>
+        <div class="grid projects-grid">
+
+            <!-- Project 1 -->
+            <div class="card project-card bg-1">
+                <div class="project-icon"><i class="fas fa-briefcase"></i></div>
+                <h3 style="font-size: 1.8rem; margin: 0;">Job Board Platform</h3>
+                <p>Connecting employers & seekers.</p>
+                <div class="project-tech">[ .NET | SSMS | C# ]</div>
+                <a href="https://github.com/Purvarajsinh39/JobBoardPlatForm-ASP.NET.git" target="_blank" class="btn" style="background: var(--color-white); margin-top: auto;">
+                    <i class="fas fa-external-link-alt"></i> Source Code
+                </a>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="card project-card bg-2">
+                <div class="project-icon"><i class="fas fa-blog"></i></div>
+                <h3 style="font-size: 1.8rem; margin: 0;">Blog Management</h3>
+                <p>Dynamic content CMS.</p>
+                <div class="project-tech">[ LARAVEL | PHP | MySQL ]</div>
+                <a href="https://github.com/Purvarajsinh39/BLOG-MANAGEMENT-SYSTEM-LARAVEL.git" target="_blank" class="btn" style="background: var(--color-white); margin-top: auto;">
+                    <i class="fas fa-external-link-alt"></i> Source Code
+                </a>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="card project-card bg-3">
+                <div class="project-icon"><i class="fas fa-hotel"></i></div>
+                <h3 style="font-size: 1.8rem; margin: 0;">Hotel Management</h3>
+                <p>Streamlining hotel ops.</p>
+                <div class="project-tech">[ PHP | MySQL | HTML/CSS ]</div>
+                <a href="https://github.com/Purvarajsinh39/Hotel-Management-PHP.git" target="_blank" class="btn" style="background: var(--color-white); margin-top: auto;">
+                    <i class="fas fa-external-link-alt"></i> Source Code
+                </a>
+            </div>
+
+            <!-- Project 4 -->
+            <div class="card project-card bg-4">
+                <div class="project-icon"><i class="fas fa-question-circle"></i></div>
+                <h3 style="font-size: 1.8rem; margin: 0;">Interactive Quiz</h3>
+                <p>Knowledge testing app.</p>
+                <div class="project-tech">[ PYTHON | Tkinter | SQL ]</div>
+                <a href="https://github.com/Purvarajsinh39/Python-Quiz-For-Beginners.git" target="_blank" class="btn" style="background: var(--color-white); margin-top: auto;">
+                    <i class="fas fa-external-link-alt"></i> Source Code
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="container" id="contact" style="margin-bottom: 4rem;">
+        <h2 class="section-title" style="transform: rotate(2deg);">PING_ME</h2>
+        <div class="grid contact-grid">
+            
+            <div class="card contact-info">
+                <h3 style="font-size: 2.5rem; margin-bottom: 1.5rem;">DIRECT LINE</h3>
+                <p style="font-size: 1.3rem; margin-bottom: 1rem;">
+                    <i class="fas fa-phone fa-fw"></i> <a href="tel:+919824733917">+91 9824733917</a>
+                </p>
+                <p style="font-size: 1.3rem; margin-bottom: 2rem; word-break: break-all;">
+                    <i class="fas fa-envelope fa-fw"></i> <a href="mailto:vaghelapurvarajsinh8442@gmail.com">vaghelapurvarajsinh8442@gmail.com</a>
+                </p>
+                <div style="padding-top: 1.5rem; border-top: 4px solid var(--color-white);">
+                    <p class="mono" style="font-size: 1.1rem; font-weight: 700;">STATUS: ONLINE 🟢</p>
+                </div>
+            </div>
+
+            <div class="card" style="background: var(--color-white);">
+                <form id="contact-form">
+                    <div class="form-group">
+                        <label for="name" style="font-weight: 800; display: block; margin-bottom: 0.5rem;">YOUR NAME</label>
+                        <input type="text" id="name" class="form-control" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" style="font-weight: 800; display: block; margin-bottom: 0.5rem;">RETURN ADDRESS (EMAIL)</label>
+                        <input type="email" id="email" class="form-control" placeholder="john@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message" style="font-weight: 800; display: block; margin-bottom: 0.5rem;">PAYLOAD (MESSAGE)</label>
+                        <textarea id="message" class="form-control" rows="4" placeholder="Hello..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn" style="width: 100%; justify-content: center; background: var(--color-green); margin-top: 1rem;">
+                        <i class="fas fa-paper-plane"></i> TRANSMIT VIA GMAIL
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        // --- CONTACT FORM LOGIC (Gmail Redirect retained from original code) ---
+        document.getElementById('contact-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            
+            const subject = encodeURIComponent(`Portfolio Contact from ${name}`);
+            const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+            
+            const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=vaghelapurvarajsinh8442@gmail.com&su=${subject}&body=${body}`;
+            
+            window.open(gmailLink, '_blank');
+            document.getElementById('contact-form').reset();
+        });
+    </script>
+</body>
+</html>
