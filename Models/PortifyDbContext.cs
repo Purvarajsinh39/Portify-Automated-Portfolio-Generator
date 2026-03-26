@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
 using System.Configuration;
+using Portify.Models; // Explicitly add this again
 
 namespace Portify.Models
 {
@@ -129,6 +132,480 @@ namespace Portify.Models
                 IsBlocked = (bool)reader["IsBlocked"],
                 CreatedAt = (DateTime)reader["CreatedAt"]
             };
+        }
+
+        // --- Template Methods ---
+        
+        public List<Template> GetAllTemplates()
+        {
+            List<Template> templates = new List<Template>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM Templates";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        templates.Add(MapTemplate(reader));
+                    }
+                }
+            }
+            return templates;
+        }
+
+        public Template GetTemplateById(int id)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT TOP 1 * FROM Templates WHERE Id = @Id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return MapTemplate(reader);
+                    }
+                }
+                return null;
+            }
+        }
+
+        public void AddTemplate(Template template)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "INSERT INTO Templates (TemplateName, Description, ThumbnailPath, HtmlPath, CssPath, ConfigPath, IsActive) VALUES (@Name, @Description, @ThumbnailPath, @FilePath, @CssPath, @ConfigPath, @IsActive)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Name", template.Name ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Description", template.Description ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ThumbnailPath", template.ThumbnailPath ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@FilePath", template.FilePath ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@CssPath", template.CssPath ?? "");
+                cmd.Parameters.AddWithValue("@ConfigPath", template.ConfigPath ?? "");
+                cmd.Parameters.AddWithValue("@IsActive", template.IsActive);
+                
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void UpdateTemplate(Template template)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "UPDATE Templates SET TemplateName = @Name, Description = @Description, ThumbnailPath = @ThumbnailPath, HtmlPath = @FilePath, CssPath = @CssPath, ConfigPath = @ConfigPath, IsActive = @IsActive WHERE Id = @Id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Name", template.Name ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Description", template.Description ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ThumbnailPath", template.ThumbnailPath ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@FilePath", template.FilePath ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@CssPath", template.CssPath ?? "");
+                cmd.Parameters.AddWithValue("@ConfigPath", template.ConfigPath ?? "");
+                cmd.Parameters.AddWithValue("@IsActive", template.IsActive);
+                cmd.Parameters.AddWithValue("@Id", template.Id);
+                
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void DeleteTemplate(int id)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "DELETE FROM Templates WHERE Id = @Id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private Template MapTemplate(SqlDataReader reader)
+        {
+            return new Template
+            {
+                Id = (int)reader["Id"],
+                Name = reader["TemplateName"].ToString(),
+                Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() : null,
+                ThumbnailPath = reader["ThumbnailPath"] != DBNull.Value ? reader["ThumbnailPath"].ToString() : null,
+                FilePath = reader["HtmlPath"].ToString(),
+                CssPath = reader["CssPath"] != DBNull.Value ? reader["CssPath"].ToString() : null,
+                ConfigPath = reader["ConfigPath"] != DBNull.Value ? reader["ConfigPath"].ToString() : null,
+                IsActive = reader["IsActive"] != DBNull.Value ? (bool)reader["IsActive"] : true,
+                CreatedAt = reader["CreatedAt"] != DBNull.Value ? (DateTime)reader["CreatedAt"] : DateTime.Now
+            };
+        }
+
+        // --- Portfolio Methods ---
+
+        /// <summary>
+        /// Creates a new Portfolio row and returns its Id (SCOPE_IDENTITY)
+        /// </summary>
+        public int CreatePortfolio(int userId, int templateId, string title, string aboutMe)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "INSERT INTO Portfolios (UserId, TemplateId, Title, AboutMe) VALUES (@UserId, @TemplateId, @Title, @AboutMe); SELECT CAST(SCOPE_IDENTITY() AS INT);";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+                cmd.Parameters.AddWithValue("@TemplateId", templateId);
+                cmd.Parameters.AddWithValue("@Title", title ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@AboutMe", aboutMe ?? (object)DBNull.Value);
+                conn.Open();
+                return (int)cmd.ExecuteScalar();
+            }
+        }
+
+        public List<Portfolio> GetPortfoliosByUserId(int userId)
+        {
+            List<Portfolio> portfolios = new List<Portfolio>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM Portfolios WHERE UserId = @UserId";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        portfolios.Add(MapPortfolio(reader));
+                    }
+                }
+            }
+            return portfolios;
+        }
+
+        public Portfolio GetPortfolioById(int id)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT TOP 1 * FROM Portfolios WHERE Id = @Id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return MapPortfolio(reader);
+                    }
+                }
+                return null;
+            }
+        }
+
+        public void DeletePortfolio(int id)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "DELETE FROM Portfolios WHERE Id = @Id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private Portfolio MapPortfolio(SqlDataReader reader)
+        {
+            return new Portfolio
+            {
+                Id = (int)reader["Id"],
+                UserId = (int)reader["UserId"],
+                TemplateId = (int)reader["TemplateId"],
+                Title = reader["Title"] != DBNull.Value ? reader["Title"].ToString() : null,
+                AboutMe = reader["AboutMe"] != DBNull.Value ? reader["AboutMe"].ToString() : null,
+                CreatedAt = reader["CreatedAt"] != DBNull.Value ? (DateTime)reader["CreatedAt"] : DateTime.Now
+            };
+        }
+
+        // --- PortfolioPersonalInfo ---
+
+        public void AddPortfolioPersonalInfo(PortfolioPersonalInfo info)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "INSERT INTO PortfolioPersonalInfo (PortfolioId, FullName, Profession, Email, Phone, Location) VALUES (@PId, @FullName, @Profession, @Email, @Phone, @Location)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@PId", info.PortfolioId);
+                cmd.Parameters.AddWithValue("@FullName", info.FullName ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Profession", info.Profession ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Email", info.Email ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Phone", info.Phone ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Location", info.Location ?? (object)DBNull.Value);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public PortfolioPersonalInfo GetPersonalInfoByPortfolioId(int portfolioId)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT TOP 1 * FROM PortfolioPersonalInfo WHERE PortfolioId = @PId";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@PId", portfolioId);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return new PortfolioPersonalInfo
+                        {
+                            Id = (int)reader["Id"],
+                            PortfolioId = (int)reader["PortfolioId"],
+                            FullName = reader["FullName"] != DBNull.Value ? reader["FullName"].ToString() : null,
+                            Profession = reader["Profession"] != DBNull.Value ? reader["Profession"].ToString() : null,
+                            Email = reader["Email"] != DBNull.Value ? reader["Email"].ToString() : null,
+                            Phone = reader["Phone"] != DBNull.Value ? reader["Phone"].ToString() : null,
+                            Location = reader["Location"] != DBNull.Value ? reader["Location"].ToString() : null
+                        };
+                    }
+                }
+                return null;
+            }
+        }
+
+        // --- Skills ---
+
+        public void AddSkill(Skill skill)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "INSERT INTO Skills (PortfolioId, SkillName, SkillLevel) VALUES (@PId, @Name, @Level)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@PId", skill.PortfolioId);
+                cmd.Parameters.AddWithValue("@Name", skill.SkillName ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Level", skill.SkillLevel ?? (object)DBNull.Value);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public List<Skill> GetSkillsByPortfolioId(int portfolioId)
+        {
+            var list = new List<Skill>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM Skills WHERE PortfolioId = @PId";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@PId", portfolioId);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new Skill
+                        {
+                            Id = (int)reader["Id"],
+                            PortfolioId = (int)reader["PortfolioId"],
+                            SkillName = reader["SkillName"] != DBNull.Value ? reader["SkillName"].ToString() : null,
+                            SkillLevel = reader["SkillLevel"] != DBNull.Value ? reader["SkillLevel"].ToString() : null
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        // --- Projects ---
+
+        public void AddProject(Project project)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "INSERT INTO Projects (PortfolioId, ProjectTitle, Description, TechStack, GitHubLink, LiveLink) VALUES (@PId, @Title, @Desc, @Tech, @GH, @Live)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@PId", project.PortfolioId);
+                cmd.Parameters.AddWithValue("@Title", project.ProjectTitle ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Desc", project.Description ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Tech", project.TechStack ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@GH", project.GitHubLink ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Live", project.LiveLink ?? (object)DBNull.Value);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public List<Project> GetProjectsByPortfolioId(int portfolioId)
+        {
+            var list = new List<Project>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM Projects WHERE PortfolioId = @PId";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@PId", portfolioId);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new Project
+                        {
+                            Id = (int)reader["Id"],
+                            PortfolioId = (int)reader["PortfolioId"],
+                            ProjectTitle = reader["ProjectTitle"] != DBNull.Value ? reader["ProjectTitle"].ToString() : null,
+                            Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() : null,
+                            TechStack = reader["TechStack"] != DBNull.Value ? reader["TechStack"].ToString() : null,
+                            GitHubLink = reader["GitHubLink"] != DBNull.Value ? reader["GitHubLink"].ToString() : null,
+                            LiveLink = reader["LiveLink"] != DBNull.Value ? reader["LiveLink"].ToString() : null
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        // --- Experiences ---
+
+        public void AddExperience(Experience exp)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "INSERT INTO Experiences (PortfolioId, CompanyName, Role, StartDate, EndDate, Description) VALUES (@PId, @Company, @Role, @Start, @End, @Desc)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@PId", exp.PortfolioId);
+                cmd.Parameters.AddWithValue("@Company", exp.CompanyName ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Role", exp.Role ?? (object)DBNull.Value);
+
+                // StartDate and EndDate are SQL [date] columns — parse safely
+                DateTime parsedStart;
+                if (!string.IsNullOrEmpty(exp.StartDate) && DateTime.TryParse(exp.StartDate, out parsedStart))
+                    cmd.Parameters.AddWithValue("@Start", parsedStart);
+                else
+                    cmd.Parameters.AddWithValue("@Start", DBNull.Value);
+
+                DateTime parsedEnd;
+                if (!string.IsNullOrEmpty(exp.EndDate) && DateTime.TryParse(exp.EndDate, out parsedEnd))
+                    cmd.Parameters.AddWithValue("@End", parsedEnd);
+                else
+                    cmd.Parameters.AddWithValue("@End", DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@Desc", exp.Description ?? (object)DBNull.Value);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public List<Experience> GetExperiencesByPortfolioId(int portfolioId)
+        {
+            var list = new List<Experience>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM Experiences WHERE PortfolioId = @PId";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@PId", portfolioId);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new Experience
+                        {
+                            Id = (int)reader["Id"],
+                            PortfolioId = (int)reader["PortfolioId"],
+                            CompanyName = reader["CompanyName"] != DBNull.Value ? reader["CompanyName"].ToString() : null,
+                            Role = reader["Role"] != DBNull.Value ? reader["Role"].ToString() : null,
+                            StartDate = reader["StartDate"] != DBNull.Value ? reader["StartDate"].ToString() : null,
+                            EndDate = reader["EndDate"] != DBNull.Value ? reader["EndDate"].ToString() : null,
+                            Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() : null
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        // --- Social Links ---
+
+        public void AddSocialLink(SocialLink link)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "INSERT INTO SocialLinks (PortfolioId, Platform, Url) VALUES (@PId, @Platform, @Url)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@PId", link.PortfolioId);
+                cmd.Parameters.AddWithValue("@Platform", link.Platform ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Url", link.Url ?? (object)DBNull.Value);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public List<SocialLink> GetSocialLinksByPortfolioId(int portfolioId)
+        {
+            var list = new List<SocialLink>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM SocialLinks WHERE PortfolioId = @PId";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@PId", portfolioId);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new SocialLink
+                        {
+                            Id = (int)reader["Id"],
+                            PortfolioId = (int)reader["PortfolioId"],
+                            Platform = reader["Platform"] != DBNull.Value ? reader["Platform"].ToString() : null,
+                            Url = reader["Url"] != DBNull.Value ? reader["Url"].ToString() : null
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        // --- Education ---
+
+        public void AddEducation(Education edu)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "INSERT INTO Education (PortfolioId, Degree, Institution, Year) VALUES (@PId, @Degree, @Institution, @Year)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@PId", edu.PortfolioId);
+                cmd.Parameters.AddWithValue("@Degree", edu.Degree ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Institution", edu.Institution ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Year", edu.Year ?? (object)DBNull.Value);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public List<Education> GetEducationByPortfolioId(int portfolioId)
+        {
+            var list = new List<Education>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM Education WHERE PortfolioId = @PId";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@PId", portfolioId);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new Education
+                        {
+                            Id = (int)reader["Id"],
+                            PortfolioId = (int)reader["PortfolioId"],
+                            Degree = reader["Degree"] != DBNull.Value ? reader["Degree"].ToString() : null,
+                            Institution = reader["Institution"] != DBNull.Value ? reader["Institution"].ToString() : null,
+                            Year = reader["Year"] != DBNull.Value ? reader["Year"].ToString() : null
+                        });
+                    }
+                }
+            }
+            return list;
         }
     }
 }

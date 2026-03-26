@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purvarajsinh Vaghela | Creative Developer</title>
-    <meta name="description" content="Premium Portfolio of Purvarajsinh Vaghela, BCA Student & Web Developer.">
+    <title>{{Bio.Name}} | Creative Developer</title>
+    <meta name="description" content="Premium Portfolio of {{Bio.Name}}">
 
     <!-- Google Fonts: Playfair Display (Classic) + Space Grotesk (Tech) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -58,20 +61,24 @@
             background-color: #050505;
             color: #e0e0e0;
             overflow-x: hidden;
-            cursor: none; /* Custom cursor */
+            cursor: none;
+            /* Custom cursor */
         }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
+
         ::-webkit-scrollbar-track {
             background: #050505;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #333;
             border-radius: 4px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: #d4af37;
         }
@@ -85,7 +92,8 @@
         }
 
         /* Custom Cursor */
-        #cursor-dot, #cursor-outline {
+        #cursor-dot,
+        #cursor-outline {
             position: fixed;
             top: 0;
             left: 0;
@@ -94,17 +102,20 @@
             pointer-events: none;
             z-index: 9999;
         }
+
         #cursor-dot {
             width: 8px;
             height: 8px;
             background: #d4af37;
         }
+
         #cursor-outline {
             width: 40px;
             height: 40px;
             border: 1px solid rgba(212, 175, 55, 0.5);
             transition: width 0.2s, height 0.2s, background 0.2s;
         }
+
         body.hovering #cursor-outline {
             width: 60px;
             height: 60px;
@@ -121,6 +132,7 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
+
         .glass-nav {
             background: rgba(5, 5, 5, 0.8);
             backdrop-filter: blur(20px);
@@ -133,6 +145,7 @@
             transform: translateY(40px);
             transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
@@ -173,12 +186,13 @@
         .code-window {
             background: #1e1e1e;
             border-radius: 8px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
             font-family: 'Fira Code', monospace;
             border: 1px solid #333;
         }
     </style>
 </head>
+
 <body class="antialiased selection:bg-gold selection:text-black">
 
     <!-- Preloader -->
@@ -207,10 +221,18 @@
 
             <!-- Desktop Menu -->
             <nav class="hidden md:flex gap-8">
-                <a href="#home" class="text-sm font-sans uppercase tracking-widest hover:text-gold transition-colors hover-trigger" data-hover>Home</a>
-                <a href="#about" class="text-sm font-sans uppercase tracking-widest hover:text-gold transition-colors hover-trigger" data-hover>About</a>
-                <a href="#projects" class="text-sm font-sans uppercase tracking-widest hover:text-gold transition-colors hover-trigger" data-hover>Work</a>
-                <a href="#contact" class="text-sm font-sans uppercase tracking-widest hover:text-gold transition-colors hover-trigger" data-hover>Contact</a>
+                <a href="#home"
+                    class="text-sm font-sans uppercase tracking-widest hover:text-gold transition-colors hover-trigger"
+                    data-hover>Home</a>
+                <a href="#about"
+                    class="text-sm font-sans uppercase tracking-widest hover:text-gold transition-colors hover-trigger"
+                    data-hover>About</a>
+                <a href="#projects"
+                    class="text-sm font-sans uppercase tracking-widest hover:text-gold transition-colors hover-trigger"
+                    data-hover>Work</a>
+                <a href="#contact"
+                    class="text-sm font-sans uppercase tracking-widest hover:text-gold transition-colors hover-trigger"
+                    data-hover>Contact</a>
             </nav>
 
             <!-- Mobile Menu Button -->
@@ -220,12 +242,16 @@
         </div>
 
         <!-- Mobile Menu Overlay -->
-        <div class="fixed inset-0 bg-black/95 flex flex-col items-center justify-center gap-8 z-40 transform translate-x-full transition-transform duration-500 md:hidden" id="mobile-menu">
-            <button class="absolute top-6 right-6 text-2xl text-gold" id="close-menu-btn"><i class="fas fa-times"></i></button>
+        <div class="fixed inset-0 bg-black/95 flex flex-col items-center justify-center gap-8 z-40 transform translate-x-full transition-transform duration-500 md:hidden"
+            id="mobile-menu">
+            <button class="absolute top-6 right-6 text-2xl text-gold" id="close-menu-btn"><i
+                    class="fas fa-times"></i></button>
             <a href="#home" class="text-3xl font-serif italic hover:text-gold transition-colors mobile-link">Home</a>
             <a href="#about" class="text-3xl font-serif italic hover:text-gold transition-colors mobile-link">About</a>
-            <a href="#projects" class="text-3xl font-serif italic hover:text-gold transition-colors mobile-link">Work</a>
-            <a href="#contact" class="text-3xl font-serif italic hover:text-gold transition-colors mobile-link">Contact</a>
+            <a href="#projects"
+                class="text-3xl font-serif italic hover:text-gold transition-colors mobile-link">Work</a>
+            <a href="#contact"
+                class="text-3xl font-serif italic hover:text-gold transition-colors mobile-link">Contact</a>
         </div>
     </header>
 
@@ -233,26 +259,30 @@
         <!-- Hero Section -->
         <section id="home" class="min-h-screen flex items-center pt-20 relative overflow-hidden">
             <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-                
+
                 <div class="order-2 md:order-1 reveal active">
                     <p class="text-gold font-mono text-sm tracking-[0.2em] mb-4">CREATIVE DEVELOPER</p>
                     <h1 class="text-6xl md:text-7xl lg:text-8xl font-serif font-medium leading-tight mb-6">
-                        Purvarajsinh <br>
-                        <span class="text-gradient italic">Vaghela</span>
+                        {{Bio.Name}}
                     </h1>
                     <p class="text-gray-400 max-w-lg text-lg mb-8 font-light">
-                        Crafting immersive digital experiences where <span class="text-white font-medium">classic aesthetics</span> meet <span class="text-white font-medium">modern engineering</span>.
+                        {{Bio.Summary}}
                         <br><span class="text-gold/80 mt-2 block" id="typewriter"></span>
                     </p>
-                    
+
                     <div class="flex flex-wrap gap-4">
-                        <a href="#projects" class="px-8 py-3 bg-gold text-black font-sans font-bold tracking-wide hover:bg-white transition-colors duration-300 hover-trigger" data-hover>VIEW WORK</a>
-                        <a href="#contact" class="px-8 py-3 border border-white/20 hover:border-gold hover:text-gold transition-colors duration-300 font-sans tracking-wide hover-trigger" data-hover>CONTACT ME</a>
+                        <a href="#projects"
+                            class="px-8 py-3 bg-gold text-black font-sans font-bold tracking-wide hover:bg-white transition-colors duration-300 hover-trigger"
+                            data-hover>VIEW WORK</a>
+                        <a href="#contact"
+                            class="px-8 py-3 border border-white/20 hover:border-gold hover:text-gold transition-colors duration-300 font-sans tracking-wide hover-trigger"
+                            data-hover>CONTACT ME</a>
                     </div>
                 </div>
 
                 <div class="order-1 md:order-2 flex justify-center perspective-1000 reveal active delay-200">
-                    <div class="code-window p-6 transform rotate-y-12 rotate-x-6 hover:rotate-0 transition-transform duration-700 w-full max-w-md animate-float">
+                    <div
+                        class="code-window p-6 transform rotate-y-12 rotate-x-6 hover:rotate-0 transition-transform duration-700 w-full max-w-md animate-float">
                         <div class="flex gap-2 mb-4 border-b border-gray-700 pb-2">
                             <div class="w-3 h-3 rounded-full bg-red-500"></div>
                             <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
@@ -260,9 +290,9 @@
                         </div>
                         <pre class="text-sm"><code class="language-javascript"><span class="text-purple-400">class</span> <span class="text-yellow-300">Developer</span> <span class="text-blue-300">{</span>
   <span class="text-purple-400">constructor</span><span class="text-blue-300">()</span> <span class="text-blue-300">{</span>
-    <span class="text-cyan-400">this</span>.<span class="text-blue-200">name</span> = <span class="text-green-400">"Purvarajsinh"</span>;
+    <span class="text-cyan-400">this</span>.<span class="text-blue-200">name</span> = <span class="text-green-400">"{{Bio.Name}}"</span>;
     <span class="text-cyan-400">this</span>.<span class="text-blue-200">passion</span> = <span class="text-orange-400">true</span>;
-    <span class="text-cyan-400">this</span>.<span class="text-blue-200">stack</span> = [<span class="text-green-400">"Web"</span>, <span class="text-green-400">"Security"</span>];
+    <span class="text-cyan-400">this</span>.<span class="text-blue-200">stack</span> = [<span class="text-green-400">"{{Bio.Title}}"</span>];
   <span class="text-blue-300">}</span>
   
   <span class="text-purple-400">async</span> <span class="text-yellow-300">buildFuture</span><span class="text-blue-300">()</span> <span class="text-blue-300">{</span>
@@ -272,10 +302,11 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Scroll Indicator -->
             <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-                <a href="#about" class="text-white/50 hover:text-gold transition-colors"><i class="fas fa-chevron-down"></i></a>
+                <a href="#about" class="text-white/50 hover:text-gold transition-colors"><i
+                        class="fas fa-chevron-down"></i></a>
             </div>
         </section>
 
@@ -283,30 +314,24 @@
         <section id="about" class="py-32 relative">
             <div class="container mx-auto px-6">
                 <div class="flex flex-col md:flex-row gap-16">
-                    
+
                     <!-- Text Content -->
                     <div class="md:w-1/2 reveal">
-                        <h2 class="text-5xl font-serif mb-8"><span class="text-gold italic">About</span> the Creator</h2>
+                        <h2 class="text-5xl font-serif mb-8"><span class="text-gold italic">About</span> the Creator
+                        </h2>
                         <div class="space-y-6 text-gray-400 leading-relaxed text-lg">
                             <p>
-                                I am a motivated <strong class="text-white">BCA student</strong> at LJ University (Semester 5) with a relentless drive for building functional, beautiful web applications.
+                                {{Bio.Summary}}
                             </p>
-                            <p>
-                                My journey bridges the gap between clean code and creative design. I am deeply interested in applying programming, security, and problem-solving methodologies to create software that makes a tangible difference.
-                            </p>
-                            
+
                             <div class="pt-6">
                                 <h3 class="font-serif text-2xl text-white mb-4">Education</h3>
-                                <div class="border-l-2 border-gold pl-4">
-                                    <h4 class="text-xl text-white">Bachelor of Computer Applications</h4>
-                                    <p class="text-sm text-gold">LJ University | 2023 - Present</p>
-                                </div>
+                                {{EducationList}}
                             </div>
 
                             <div class="pt-4">
-                                <a href="https://github.com/Purvarajsinh39/Certificates" target="_blank" class="inline-flex items-center gap-2 text-gold hover:text-white transition-colors hover-trigger" data-hover>
-                                    View Certifications <i class="fas fa-arrow-right text-xs"></i>
-                                </a>
+                                <h3 class="font-serif text-2xl text-white mb-4">Experience</h3>
+                                {{ExperienceList}}
                             </div>
                         </div>
                     </div>
@@ -314,34 +339,13 @@
                     <!-- Skills Grid -->
                     <div class="md:w-1/2 reveal delay-100">
                         <div class="grid grid-cols-1 gap-6">
-                            <!-- Category 1 -->
                             <div class="glass-card p-6 rounded-lg group hover:border-gold/30 transition-colors">
                                 <div class="flex items-center gap-3 mb-4">
                                     <i class="fas fa-code text-gold text-xl"></i>
-                                    <h3 class="text-xl font-serif text-white">Development</h3>
+                                    <h3 class="text-xl font-serif text-white">Skills</h3>
                                 </div>
                                 <div class="flex flex-wrap gap-2">
-                                    <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300">HTML5/CSS3</span>
-                                    <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300">JavaScript</span>
-                                    <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300">Python</span>
-                                    <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300">.NET</span>
-                                    <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300">PHP</span>
-                                    <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300">Laravel</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Category 2 -->
-                            <div class="glass-card p-6 rounded-lg group hover:border-gold/30 transition-colors">
-                                <div class="flex items-center gap-3 mb-4">
-                                    <i class="fas fa-database text-gold text-xl"></i>
-                                    <h3 class="text-xl font-serif text-white">Data & Tools</h3>
-                                </div>
-                                <div class="flex flex-wrap gap-2">
-                                    <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300">MySQL</span>
-                                    <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300">SSMS</span>
-                                    <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300">Git/GitHub</span>
-                                    <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300">Figma</span>
-                                    <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300">Linux (Kali)</span>
+                                    {{SkillsList}}
                                 </div>
                             </div>
                         </div>
@@ -356,86 +360,17 @@
                 <div class="flex justify-between items-end mb-16 reveal">
                     <div>
                         <p class="text-gold font-mono text-sm tracking-[0.2em] mb-2">PORTFOLIO</p>
-                        <h2 class="text-5xl font-serif text-white">Selected <span class="italic text-gray-500">Works</span></h2>
+                        <h2 class="text-5xl font-serif text-white">Selected <span
+                                class="italic text-gray-500">Works</span></h2>
                     </div>
-                    <a href="https://github.com/Purvarajsinh39" target="_blank" class="hidden md:inline-block text-white border-b border-gold pb-1 hover:text-gold transition-colors hover-trigger" data-hover>View GitHub</a>
+                    <a href="{{Bio.GitHub}}" target="_blank"
+                        class="hidden md:inline-block text-white border-b border-gold pb-1 hover:text-gold transition-colors hover-trigger"
+                        data-hover>View GitHub</a>
                 </div>
 
                 <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-                    
-                    <!-- Project 1 -->
-                    <article class="group relative reveal">
-                        <div class="glass-card h-full p-8 rounded-xl transition-all duration-500 hover:translate-y-[-10px] hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] border border-white/5 hover:border-gold/30">
-                            <div class="flex justify-between items-start mb-6">
-                                <div class="p-3 bg-white/5 rounded-lg text-gold group-hover:bg-gold group-hover:text-black transition-colors">
-                                    <i class="fas fa-briefcase text-2xl"></i>
-                                </div>
-                                <a href="https://github.com/Purvarajsinh39/JobBoardPlatForm-ASP.NET.git" target="_blank" class="text-gray-400 hover:text-white hover-trigger" data-hover><i class="fas fa-external-link-alt"></i></a>
-                            </div>
-                            <h3 class="text-2xl font-serif text-white mb-3 group-hover:text-gold transition-colors">Job Board Platform</h3>
-                            <p class="text-gray-400 mb-6 text-sm leading-relaxed">A comprehensive job listing platform connecting employers, job seekers, and admins with streamlined workflows.</p>
-                            <div class="flex flex-wrap gap-2 mt-auto">
-                                <span class="text-xs font-mono text-gold border border-gold/20 px-2 py-1 rounded">.NET</span>
-                                <span class="text-xs font-mono text-gold border border-gold/20 px-2 py-1 rounded">C#</span>
-                                <span class="text-xs font-mono text-gold border border-gold/20 px-2 py-1 rounded">SSMS</span>
-                            </div>
-                        </div>
-                    </article>
 
-                    <!-- Project 2 -->
-                    <article class="group relative reveal delay-100">
-                        <div class="glass-card h-full p-8 rounded-xl transition-all duration-500 hover:translate-y-[-10px] hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] border border-white/5 hover:border-gold/30">
-                            <div class="flex justify-between items-start mb-6">
-                                <div class="p-3 bg-white/5 rounded-lg text-gold group-hover:bg-gold group-hover:text-black transition-colors">
-                                    <i class="fas fa-blog text-2xl"></i>
-                                </div>
-                                <a href="https://github.com/Purvarajsinh39/BLOG-MANAGEMENT-SYSTEM-LARAVEL.git" target="_blank" class="text-gray-400 hover:text-white hover-trigger" data-hover><i class="fas fa-external-link-alt"></i></a>
-                            </div>
-                            <h3 class="text-2xl font-serif text-white mb-3 group-hover:text-gold transition-colors">Blog Management</h3>
-                            <p class="text-gray-400 mb-6 text-sm leading-relaxed">A dynamic content management system for creating, editing, and managing blog posts efficiently.</p>
-                            <div class="flex flex-wrap gap-2 mt-auto">
-                                <span class="text-xs font-mono text-gold border border-gold/20 px-2 py-1 rounded">Laravel</span>
-                                <span class="text-xs font-mono text-gold border border-gold/20 px-2 py-1 rounded">PHP</span>
-                                <span class="text-xs font-mono text-gold border border-gold/20 px-2 py-1 rounded">MySQL</span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Project 3 -->
-                    <article class="group relative reveal">
-                        <div class="glass-card h-full p-8 rounded-xl transition-all duration-500 hover:translate-y-[-10px] hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] border border-white/5 hover:border-gold/30">
-                            <div class="flex justify-between items-start mb-6">
-                                <div class="p-3 bg-white/5 rounded-lg text-gold group-hover:bg-gold group-hover:text-black transition-colors">
-                                    <i class="fas fa-hotel text-2xl"></i>
-                                </div>
-                                <a href="https://github.com/Purvarajsinh39/Hotel-Management-PHP.git" target="_blank" class="text-gray-400 hover:text-white hover-trigger" data-hover><i class="fas fa-external-link-alt"></i></a>
-                            </div>
-                            <h3 class="text-2xl font-serif text-white mb-3 group-hover:text-gold transition-colors">Hotel Management</h3>
-                            <p class="text-gray-400 mb-6 text-sm leading-relaxed">An operational system to streamline hotel bookings, room management, and customer services.</p>
-                            <div class="flex flex-wrap gap-2 mt-auto">
-                                <span class="text-xs font-mono text-gold border border-gold/20 px-2 py-1 rounded">PHP</span>
-                                <span class="text-xs font-mono text-gold border border-gold/20 px-2 py-1 rounded">HTML/CSS</span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Project 4 -->
-                    <article class="group relative reveal delay-100">
-                        <div class="glass-card h-full p-8 rounded-xl transition-all duration-500 hover:translate-y-[-10px] hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] border border-white/5 hover:border-gold/30">
-                            <div class="flex justify-between items-start mb-6">
-                                <div class="p-3 bg-white/5 rounded-lg text-gold group-hover:bg-gold group-hover:text-black transition-colors">
-                                    <i class="fas fa-question-circle text-2xl"></i>
-                                </div>
-                                <a href="https://github.com/Purvarajsinh39/Python-Quiz-For-Beginners.git" target="_blank" class="text-gray-400 hover:text-white hover-trigger" data-hover><i class="fas fa-external-link-alt"></i></a>
-                            </div>
-                            <h3 class="text-2xl font-serif text-white mb-3 group-hover:text-gold transition-colors">Interactive Quiz App</h3>
-                            <p class="text-gray-400 mb-6 text-sm leading-relaxed">A Python-based application designed to test knowledge on various topics with immediate feedback.</p>
-                            <div class="flex flex-wrap gap-2 mt-auto">
-                                <span class="text-xs font-mono text-gold border border-gold/20 px-2 py-1 rounded">Python</span>
-                                <span class="text-xs font-mono text-gold border border-gold/20 px-2 py-1 rounded">Tkinter</span>
-                            </div>
-                        </div>
-                    </article>
+                    {{ProjectsList}}
 
                 </div>
             </div>
@@ -444,32 +379,39 @@
         <!-- Contact Section -->
         <section id="contact" class="py-32 relative">
             <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
-            
+
             <div class="container mx-auto px-6 relative z-10">
                 <div class="max-w-4xl mx-auto">
                     <div class="text-center mb-16 reveal">
-                        <h2 class="text-5xl md:text-6xl font-serif text-white mb-6">Let's Create <span class="text-gold italic">Together</span></h2>
+                        <h2 class="text-5xl md:text-6xl font-serif text-white mb-6">Let's Create <span
+                                class="text-gold italic">Together</span></h2>
                         <p class="text-gray-400 text-lg">Have a project in mind or just want to say hi?</p>
                     </div>
 
                     <div class="grid md:grid-cols-3 gap-8 mb-16 reveal delay-100">
                         <!-- Email -->
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vaghelapurvarajsinh8442@gmail.com" target="_blank" class="glass-card p-6 rounded-lg text-center group hover:bg-gold hover:text-black transition-all duration-300 hover-trigger" data-hover>
+                        <a href="mailto:{{Bio.ContactEmail}}"
+                            class="glass-card p-6 rounded-lg text-center group hover:bg-gold hover:text-black transition-all duration-300 hover-trigger"
+                            data-hover>
                             <i class="fas fa-envelope text-3xl mb-4 text-gold group-hover:text-black"></i>
                             <p class="font-bold">Email</p>
-                            <p class="text-xs opacity-70">vaghelapurvarajsinh8442@gmail.com</p>
-                        </a>
-                        <!-- Phone -->
-                        <a href="tel:+919824733917" class="glass-card p-6 rounded-lg text-center group hover:bg-gold hover:text-black transition-all duration-300 hover-trigger" data-hover>
-                            <i class="fas fa-phone text-3xl mb-4 text-gold group-hover:text-black"></i>
-                            <p class="font-bold">Phone</p>
-                            <p class="text-xs opacity-70">+91 9824733917</p>
+                            <p class="text-xs opacity-70">{{Bio.ContactEmail}}</p>
                         </a>
                         <!-- GitHub -->
-                        <a href="https://github.com/Purvarajsinh39" target="_blank" class="glass-card p-6 rounded-lg text-center group hover:bg-gold hover:text-black transition-all duration-300 hover-trigger" data-hover>
+                        <a href="{{Bio.GitHub}}" target="_blank"
+                            class="glass-card p-6 rounded-lg text-center group hover:bg-gold hover:text-black transition-all duration-300 hover-trigger"
+                            data-hover>
                             <i class="fab fa-github text-3xl mb-4 text-gold group-hover:text-black"></i>
                             <p class="font-bold">GitHub</p>
-                            <p class="text-xs opacity-70">@Purvarajsinh39</p>
+                            <p class="text-xs opacity-70">{{Bio.GitHub}}</p>
+                        </a>
+                        <!-- LinkedIn -->
+                        <a href="{{Bio.LinkedIn}}" target="_blank"
+                            class="glass-card p-6 rounded-lg text-center group hover:bg-gold hover:text-black transition-all duration-300 hover-trigger"
+                            data-hover>
+                            <i class="fab fa-linkedin text-3xl mb-4 text-gold group-hover:text-black"></i>
+                            <p class="font-bold">LinkedIn</p>
+                            <p class="text-xs opacity-70">{{Bio.LinkedIn}}</p>
                         </a>
                     </div>
 
@@ -477,20 +419,34 @@
                     <form class="glass-card p-8 md:p-12 rounded-2xl reveal delay-200 contact-form">
                         <div class="grid md:grid-cols-2 gap-6 mb-6">
                             <div class="relative group">
-                                <input type="text" id="name" required class="w-full bg-transparent border-b border-gray-600 py-3 text-white outline-none focus:border-gold transition-colors peer" placeholder=" ">
-                                <label for="name" class="absolute left-0 top-3 text-gray-500 text-sm transition-all peer-focus:-top-4 peer-focus:text-gold peer-focus:text-xs peer-not-placeholder-shown:-top-4 peer-not-placeholder-shown:text-xs">Your Name</label>
+                                <input type="text" id="name" required
+                                    class="w-full bg-transparent border-b border-gray-600 py-3 text-white outline-none focus:border-gold transition-colors peer"
+                                    placeholder=" ">
+                                <label for="name"
+                                    class="absolute left-0 top-3 text-gray-500 text-sm transition-all peer-focus:-top-4 peer-focus:text-gold peer-focus:text-xs peer-not-placeholder-shown:-top-4 peer-not-placeholder-shown:text-xs">Your
+                                    Name</label>
                             </div>
                             <div class="relative group">
-                                <input type="email" id="email" required class="w-full bg-transparent border-b border-gray-600 py-3 text-white outline-none focus:border-gold transition-colors peer" placeholder=" ">
-                                <label for="email" class="absolute left-0 top-3 text-gray-500 text-sm transition-all peer-focus:-top-4 peer-focus:text-gold peer-focus:text-xs peer-not-placeholder-shown:-top-4 peer-not-placeholder-shown:text-xs">Your Email</label>
+                                <input type="email" id="email" required
+                                    class="w-full bg-transparent border-b border-gray-600 py-3 text-white outline-none focus:border-gold transition-colors peer"
+                                    placeholder=" ">
+                                <label for="email"
+                                    class="absolute left-0 top-3 text-gray-500 text-sm transition-all peer-focus:-top-4 peer-focus:text-gold peer-focus:text-xs peer-not-placeholder-shown:-top-4 peer-not-placeholder-shown:text-xs">Your
+                                    Email</label>
                             </div>
                         </div>
                         <div class="relative group mb-10">
-                            <textarea id="message" rows="4" required class="w-full bg-transparent border-b border-gray-600 py-3 text-white outline-none focus:border-gold transition-colors peer resize-none" placeholder=" "></textarea>
-                            <label for="message" class="absolute left-0 top-3 text-gray-500 text-sm transition-all peer-focus:-top-4 peer-focus:text-gold peer-focus:text-xs peer-not-placeholder-shown:-top-4 peer-not-placeholder-shown:text-xs">Tell me about your project</label>
+                            <textarea id="message" rows="4" required
+                                class="w-full bg-transparent border-b border-gray-600 py-3 text-white outline-none focus:border-gold transition-colors peer resize-none"
+                                placeholder=" "></textarea>
+                            <label for="message"
+                                class="absolute left-0 top-3 text-gray-500 text-sm transition-all peer-focus:-top-4 peer-focus:text-gold peer-focus:text-xs peer-not-placeholder-shown:-top-4 peer-not-placeholder-shown:text-xs">Tell
+                                me about your project</label>
                         </div>
                         <div class="text-center">
-                            <button type="submit" class="px-12 py-4 bg-white text-black font-sans font-bold hover:bg-gold transition-all duration-300 rounded-sm hover-trigger" data-hover>
+                            <button type="submit"
+                                class="px-12 py-4 bg-white text-black font-sans font-bold hover:bg-gold transition-all duration-300 rounded-sm hover-trigger"
+                                data-hover>
                                 SEND MESSAGE
                             </button>
                         </div>
@@ -502,30 +458,38 @@
 
     <footer class="py-8 bg-black border-t border-white/5 text-center">
         <p class="text-gray-500 text-sm font-sans">
-            &copy; 2025 Purvarajsinh Vaghela. Designed with <i class="fas fa-heart text-gold mx-1"></i> & Classic Elegance.
+            &copy; 2025 {{Bio.Name}}. Designed with <i class="fas fa-heart text-gold mx-1"></i> & Classic
+            Elegance.
         </p>
     </footer>
 
     <!-- AI Chatbot Widget -->
     <div class="fixed bottom-8 right-8 z-[9000]">
-        <button id="chat-toggle-btn" class="w-16 h-16 rounded-full bg-gold text-black shadow-[0_0_20px_rgba(212,175,55,0.4)] flex items-center justify-center text-2xl hover:scale-110 transition-transform hover-trigger" data-hover aria-label="Chat AI">
+        <button id="chat-toggle-btn"
+            class="w-16 h-16 rounded-full bg-gold text-black shadow-[0_0_20px_rgba(212,175,55,0.4)] flex items-center justify-center text-2xl hover:scale-110 transition-transform hover-trigger"
+            data-hover aria-label="Chat AI">
             <i class="fas fa-robot toggle-icon"></i>
         </button>
 
-        <div class="chat-container fixed bottom-28 right-8 w-80 md:w-96 bg-[#111] border border-white/10 rounded-2xl shadow-2xl overflow-hidden transform scale-0 opacity-0 transition-all duration-300 origin-bottom-right flex flex-col h-[500px]">
+        <div
+            class="chat-container fixed bottom-28 right-8 w-80 md:w-96 bg-[#111] border border-white/10 rounded-2xl shadow-2xl overflow-hidden transform scale-0 opacity-0 transition-all duration-300 origin-bottom-right flex flex-col h-[500px]">
             <!-- Header -->
             <div class="bg-gray-900 p-4 border-b border-white/5 flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gold flex items-center justify-center text-black font-bold text-sm">AI</div>
+                <div
+                    class="w-10 h-10 rounded-full bg-gold flex items-center justify-center text-black font-bold text-sm">
+                    AI</div>
                 <div>
-                    <h4 class="text-white text-sm font-bold">Purvarajsinh's Assistant</h4>
-                    <span class="text-green-400 text-xs flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400"></span> Online</span>
+                    <h4 class="text-white text-sm font-bold">{{Bio.Name}}'s Assistant</h4>
+                    <span class="text-green-400 text-xs flex items-center gap-1"><span
+                            class="w-2 h-2 rounded-full bg-green-400"></span> Online</span>
                 </div>
             </div>
-            
+
             <!-- Messages -->
             <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0a0a0a]">
-                <div class="bg-gray-800 text-gray-200 p-3 rounded-2xl rounded-tl-none max-w-[85%] text-sm leading-relaxed">
-                    Hello! I'm an AI assistant. Ask me anything about Purvarajsinh's projects, skills, or experience! ✨
+                <div
+                    class="bg-gray-800 text-gray-200 p-3 rounded-2xl rounded-tl-none max-w-[85%] text-sm leading-relaxed">
+                    Hello! I'm an AI assistant. Ask me anything about {{Bio.Name}}'s projects, skills, or experience! ✨
                 </div>
                 <div id="typing-indicator" class="hidden bg-gray-800 p-3 rounded-2xl rounded-tl-none w-16">
                     <div class="flex gap-1 justify-center">
@@ -539,8 +503,11 @@
             <!-- Input -->
             <div class="p-4 bg-gray-900 border-t border-white/5">
                 <div class="flex gap-2">
-                    <input type="text" id="chat-input" placeholder="Type a message..." class="flex-1 bg-black border border-gray-700 rounded-full px-4 py-2 text-white text-sm focus:border-gold focus:outline-none transition-colors">
-                    <button onclick="sendMessage()" class="w-10 h-10 rounded-full bg-gold text-black flex items-center justify-center hover:bg-white transition-colors"><i class="fas fa-paper-plane"></i></button>
+                    <input type="text" id="chat-input" placeholder="Type a message..."
+                        class="flex-1 bg-black border border-gray-700 rounded-full px-4 py-2 text-white text-sm focus:border-gold focus:outline-none transition-colors">
+                    <button onclick="sendMessage()"
+                        class="w-10 h-10 rounded-full bg-gold text-black flex items-center justify-center hover:bg-white transition-colors"><i
+                            class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
@@ -558,14 +525,14 @@
             // --- CUSTOM CURSOR ---
             const cursorDot = document.getElementById('cursor-dot');
             const cursorOutline = document.getElementById('cursor-outline');
-            
+
             window.addEventListener('mousemove', (e) => {
                 const posX = e.clientX;
                 const posY = e.clientY;
-                
+
                 cursorDot.style.left = `${posX}px`;
                 cursorDot.style.top = `${posY}px`;
-                
+
                 // Smooth follow for outline
                 cursorOutline.animate({
                     left: `${posX}px`,
@@ -591,7 +558,7 @@
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
             // --- TYPEWRITER ---
-            const texts = ["Web Developer", "BCA Student", "Problem Solver"];
+            const texts = ["{{Bio.Title}}"];
             const textElement = document.getElementById('typewriter');
             let count = 0;
             let index = 0;
@@ -672,20 +639,20 @@
             function animateParticles() {
                 requestAnimationFrame(animateParticles);
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
+
                 for (let i = 0; i < particlesArray.length; i++) {
                     particlesArray[i].update();
                     particlesArray[i].draw();
-                    
+
                     // Constellation effect (draw lines between close particles)
                     for (let j = i; j < particlesArray.length; j++) {
                         const dx = particlesArray[i].x - particlesArray[j].x;
                         const dy = particlesArray[i].y - particlesArray[j].y;
                         const distance = Math.sqrt(dx * dx + dy * dy);
-                        
+
                         if (distance < 100) {
                             ctx.beginPath();
-                            ctx.strokeStyle = `rgba(212, 175, 55, ${1 - distance/100})`;
+                            ctx.strokeStyle = `rgba(212, 175, 55, ${1 - distance / 100})`;
                             ctx.lineWidth = 0.5;
                             ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
                             ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
@@ -720,18 +687,18 @@
                     const name = document.getElementById('name').value;
                     const email = document.getElementById('email').value;
                     const message = document.getElementById('message').value;
-                    
+
                     const subject = encodeURIComponent(`Portfolio Inquiry from ${name}`);
                     const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
                     const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=vaghelapurvarajsinh8442@gmail.com&su=${subject}&body=${body}`;
-                    
+
                     window.open(gmailLink, '_blank');
-                    
+
                     const btn = contactForm.querySelector('button');
                     const originalText = btn.innerText;
                     btn.innerText = "OPENING GMAIL...";
                     btn.style.background = "#d4af37";
-                    
+
                     setTimeout(() => {
                         btn.innerText = originalText;
                         btn.style.background = "";
@@ -748,7 +715,7 @@
             const typingIndicator = document.getElementById('typing-indicator');
 
             chatToggleBtn.addEventListener('click', () => {
-                if(chatContainer.classList.contains('scale-0')) {
+                if (chatContainer.classList.contains('scale-0')) {
                     chatContainer.classList.remove('scale-0', 'opacity-0');
                     document.querySelector('.toggle-icon').classList.replace('fa-robot', 'fa-times');
                 } else {
@@ -762,23 +729,23 @@
                 if (e.key === 'Enter') window.sendMessage();
             });
 
-            window.sendMessage = async function() {
+            window.sendMessage = async function () {
                 const text = chatInput.value.trim();
                 if (!text) return;
 
                 // Add User Message
                 addMessage(text, 'user');
                 chatInput.value = '';
-                
+
                 // Show Typing
                 typingIndicator.classList.remove('hidden');
                 chatMessages.scrollTop = chatMessages.scrollHeight;
 
                 const apiKey = ""; // API Key provided by environment usually, or user must add theirs.
                 const contextText = document.querySelector('main').innerText.replace(/\s+/g, ' ').trim();
-                
+
                 // Construct Prompt
-                const systemPrompt = `You are a professional AI assistant for Purvarajsinh Vaghela's portfolio.
+                const systemPrompt = `You are a professional AI assistant for Rajdipsinh Miroliya's portfolio.
                 Use this context to answer questions concisely:
                 ${contextText}
                 If the info isn't there, suggest contacting him via the form. Be polite and professional.`;
@@ -824,4 +791,5 @@
         });
     </script>
 </body>
+
 </html>

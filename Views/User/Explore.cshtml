@@ -1,4 +1,4 @@
-@model List<string>
+@model List<Portify.Models.Template>
 @{
     Layout = null;
 }
@@ -116,25 +116,26 @@
                 {
                     foreach (var template in Model)
                     {
-                        var templateName = System.IO.Path.GetFileNameWithoutExtension(template);
+                        var templateName = template.Name;
+                        var htmlPath = Url.Content(template.FilePath);
                         <div class="glass rounded-2xl overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
                             <!-- Template Live Preview -->
                             <div class="h-48 relative flex items-center justify-center overflow-hidden bg-white">
                                 <div class="absolute inset-0 w-[400%] h-[400%] origin-top-left scale-[0.25] pointer-events-none">
-                                    <iframe src="/Templates/@template" class="w-full h-full border-0 pointer-events-none" scrolling="no"></iframe>
+                                    <iframe src="@htmlPath" class="w-full h-full border-0 pointer-events-none" scrolling="no"></iframe>
                                 </div>
                                 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 z-10">
-                                    <a href="/Templates/@template" target="_blank" class="px-4 py-2 bg-white text-gray-900 font-medium rounded-lg shadow-lg hover:bg-gray-50 transition-colors">Preview</a>
+                                    <a href="@htmlPath" target="_blank" class="px-4 py-2 bg-white text-gray-900 font-medium rounded-lg shadow-lg hover:bg-gray-50 transition-colors">Preview</a>
                                 </div>
                             </div>
                             <div class="p-5 border-t border-gray-100 dark:border-white/5 relative z-20 bg-white/50 dark:bg-black/50 backdrop-blur-md">
                                 <h3 class="text-xl font-bold mb-2">@templateName</h3>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">A beautiful portfolio template.</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">@(string.IsNullOrEmpty(template.Description) ? "A beautiful portfolio template." : template.Description)</p>
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs font-semibold px-2 py-1 bg-brand-100 text-brand-600 dark:bg-brand-900/30 dark:text-brand-300 rounded-md">Free</span>
-                                    <button class="text-brand-500 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1 text-sm font-medium transition-colors">
+                                    <a href="@Url.Action("Editor", "Portfolio", new { templateId = template.Id })" class="text-brand-500 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1 text-sm font-medium transition-colors">
                                         Use Template <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>

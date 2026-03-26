@@ -1,0 +1,279 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Live Editor - @ViewBag.TemplateName</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body { margin: 0; display: flex; height: 100vh; overflow: hidden; font-family: sans-serif; }
+        .editor-sidebar { width: 450px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; z-index: 10; font-size: 0.9rem;}
+        .sidebar-header { padding: 15px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-content { flex: 1; overflow-y: auto; padding: 15px; }
+        .preview-area { flex: 1; display: flex; flex-direction: column; background: #f8f9fa; }
+        .iframe-container { flex: 1; padding: 20px; }
+        iframe { width: 100%; height: 100%; border: none; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 8px; }
+        .list-group-item { cursor: default; }
+        input, textarea { font-size: 0.9rem; }
+        h6 { font-weight: bold; margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+        .btn-sm { font-size: 0.8rem; }
+        .add-form { border: 1px solid #e0e0e0; padding: 10px; margin-bottom: 12px; border-radius: 6px; background: #fafafa; }
+    </style>
+</head>
+<body>
+    <div class="editor-sidebar shadow-sm">
+        <div class="sidebar-header">
+            <h5 class="m-0">Portfolio Builder</h5>
+            <div>
+                <a href="@Url.Action("Explore", "Dashboard")" class="btn btn-outline-secondary btn-sm">Cancel</a>
+                <button type="button" class="btn btn-primary btn-sm ms-2" onclick="savePortfolio()">Save Portfolio</button>
+            </div>
+        </div>
+        
+        <div class="sidebar-content">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Portfolio Title</label>
+                <input type="text" id="portfolioTitle" class="form-control" placeholder="My Awesome Portfolio" />
+            </div>
+
+            <div class="accordion" id="builderAccordion">
+                
+                <!-- Personal Info -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBio">Personal Information</button></h2>
+                    <div id="collapseBio" class="accordion-collapse collapse show">
+                        <div class="accordion-body">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control mb-2" id="fullName" oninput="debouncePreview()">
+                            <label class="form-label">Profession</label>
+                            <input type="text" class="form-control mb-2" id="profession" oninput="debouncePreview()">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control mb-2" id="email" oninput="debouncePreview()">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" class="form-control mb-2" id="phone" oninput="debouncePreview()">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control mb-2" id="location" oninput="debouncePreview()">
+                            <label class="form-label">About Me</label>
+                            <textarea class="form-control mb-2" id="aboutMe" rows="3" oninput="debouncePreview()"></textarea>
+                            <label class="form-label">GitHub Username</label>
+                            <input type="text" class="form-control mb-2" id="github" oninput="debouncePreview()">
+                            <label class="form-label">LinkedIn URL</label>
+                            <input type="text" class="form-control" id="linkedin" oninput="debouncePreview()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSkills">Skills</button></h2>
+                    <div id="collapseSkills" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <div class="input-group mb-2">
+                                <input type="text" id="newSkillName" class="form-control" placeholder="e.g. C#">
+                                <input type="text" id="newSkillLevel" class="form-control" placeholder="Level (Beginner/Expert)" style="max-width:140px;">
+                                <button class="btn btn-outline-success" type="button" onclick="addSkill()">Add</button>
+                            </div>
+                            <ul class="list-group" id="skillsList"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projects -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProjects">Projects</button></h2>
+                    <div id="collapseProjects" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <div class="add-form">
+                                <input type="text" id="projTitle" class="form-control mb-2" placeholder="Project Title">
+                                <textarea id="projDesc" class="form-control mb-2" rows="2" placeholder="Description"></textarea>
+                                <input type="text" id="projTech" class="form-control mb-2" placeholder="Tech Stack (e.g. .NET, React)">
+                                <input type="text" id="projGitHub" class="form-control mb-2" placeholder="GitHub Link">
+                                <input type="text" id="projLive" class="form-control mb-2" placeholder="Live Demo Link">
+                                <button class="btn btn-sm btn-success w-100" type="button" onclick="addProject()">Add Project</button>
+                            </div>
+                            <ul class="list-group" id="projectsList"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experience -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExp">Experience</button></h2>
+                    <div id="collapseExp" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <div class="add-form">
+                                <input type="text" id="expCompany" class="form-control mb-2" placeholder="Company Name">
+                                <input type="text" id="expRole" class="form-control mb-2" placeholder="Role / Position">
+                                <div class="row mb-2">
+                                    <div class="col"><label class="form-label small">Start Date</label><input type="date" id="expStart" class="form-control"></div>
+                                    <div class="col"><label class="form-label small">End Date</label><input type="date" id="expEnd" class="form-control"></div>
+                                </div>
+                                <textarea id="expDesc" class="form-control mb-2" rows="2" placeholder="Description"></textarea>
+                                <button class="btn btn-sm btn-success w-100" type="button" onclick="addExperience()">Add Experience</button>
+                            </div>
+                            <ul class="list-group" id="expList"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEdu">Education</button></h2>
+                    <div id="collapseEdu" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <div class="add-form">
+                                <input type="text" id="eduDegree" class="form-control mb-2" placeholder="Degree (e.g. B.Sc Computer Science)">
+                                <input type="text" id="eduInstitution" class="form-control mb-2" placeholder="Institution Name">
+                                <input type="text" id="eduYear" class="form-control mb-2" placeholder="Year (e.g. 2020 - 2024)">
+                                <button class="btn btn-sm btn-success w-100" type="button" onclick="addEducation()">Add Education</button>
+                            </div>
+                            <ul class="list-group" id="eduList"></ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="preview-area">
+        <div class="p-2 border-bottom bg-white d-flex justify-content-between align-items-center">
+            <span class="text-muted small fw-bold">Live Preview: @ViewBag.TemplateName</span>
+            <span id="previewStatus" class="badge bg-success">Ready</span>
+        </div>
+        <div class="iframe-container">
+            <iframe id="previewFrame" src="about:blank"></iframe>
+        </div>
+    </div>
+
+    <!-- Hidden form for saving -->
+    <form id="saveForm" action="@Url.Action("Save", "Portfolio")" method="POST" style="display:none;">
+        <input type="hidden" name="templateId" value="@ViewBag.TemplateId" />
+        <input type="hidden" name="portfolioTitle" id="hiddenTitle" />
+        <input type="hidden" name="jsonData" id="hiddenData" />
+    </form>
+
+    <script>
+        // State object matching PortfolioData C# model
+        const state = {
+            FullName: '', Profession: '', Email: '', Phone: '', Location: '',
+            AboutMe: '', GitHub: '', LinkedIn: '',
+            Skills: [],
+            Projects: [],
+            Experience: [],
+            Education: []
+        };
+        const templateId = @ViewBag.TemplateId;
+        let previewTimer = null;
+
+        // --- Read inputs into state ---
+        function syncState() {
+            state.FullName = el('fullName').value;
+            state.Profession = el('profession').value;
+            state.Email = el('email').value;
+            state.Phone = el('phone').value;
+            state.Location = el('location').value;
+            state.AboutMe = el('aboutMe').value;
+            state.GitHub = el('github').value;
+            state.LinkedIn = el('linkedin').value;
+        }
+        function el(id) { return document.getElementById(id); }
+
+        // --- Skills ---
+        function addSkill() {
+            const name = el('newSkillName').value.trim();
+            const level = el('newSkillLevel').value.trim();
+            if (name) { state.Skills.push({ SkillName: name, SkillLevel: level }); el('newSkillName').value = ''; el('newSkillLevel').value = ''; renderLists(); debouncePreview(); }
+        }
+        function removeSkill(i) { state.Skills.splice(i, 1); renderLists(); debouncePreview(); }
+
+        // --- Projects ---
+        function addProject() {
+            const t = el('projTitle').value;
+            if (t) {
+                state.Projects.push({ ProjectTitle: t, Description: el('projDesc').value, TechStack: el('projTech').value, GitHubLink: el('projGitHub').value, LiveLink: el('projLive').value });
+                el('projTitle').value = ''; el('projDesc').value = ''; el('projTech').value = ''; el('projGitHub').value = ''; el('projLive').value = '';
+                renderLists(); debouncePreview();
+            }
+        }
+        function removeProject(i) { state.Projects.splice(i, 1); renderLists(); debouncePreview(); }
+
+        // --- Experience ---
+        function addExperience() {
+            const c = el('expCompany').value;
+            if (c) {
+                state.Experience.push({ CompanyName: c, Role: el('expRole').value, StartDate: el('expStart').value, EndDate: el('expEnd').value, Description: el('expDesc').value });
+                el('expCompany').value = ''; el('expRole').value = ''; el('expStart').value = ''; el('expEnd').value = ''; el('expDesc').value = '';
+                renderLists(); debouncePreview();
+            }
+        }
+        function removeExperience(i) { state.Experience.splice(i, 1); renderLists(); debouncePreview(); }
+
+        // --- Education ---
+        function addEducation() {
+            const d = el('eduDegree').value;
+            if (d) {
+                state.Education.push({ Degree: d, Institution: el('eduInstitution').value, Year: el('eduYear').value });
+                el('eduDegree').value = ''; el('eduInstitution').value = ''; el('eduYear').value = '';
+                renderLists(); debouncePreview();
+            }
+        }
+        function removeEducation(i) { state.Education.splice(i, 1); renderLists(); debouncePreview(); }
+
+        // --- Render dynamic lists ---
+        function renderLists() {
+            el('skillsList').innerHTML = state.Skills.map((s, i) =>
+                `<li class="list-group-item d-flex justify-content-between py-1 px-2"><span>${s.SkillName} ${s.SkillLevel ? '<small class="text-muted">(' + s.SkillLevel + ')</small>' : ''}</span><button class="btn btn-sm btn-danger py-0 px-1" onclick="removeSkill(${i})">&times;</button></li>`).join('');
+
+            el('projectsList').innerHTML = state.Projects.map((p, i) =>
+                `<li class="list-group-item d-flex justify-content-between p-2"><div><strong>${p.ProjectTitle}</strong><br><small class="text-muted">${p.TechStack || ''}</small></div><button class="btn btn-sm btn-danger py-0 px-1" onclick="removeProject(${i})">&times;</button></li>`).join('');
+
+            el('expList').innerHTML = state.Experience.map((e, i) =>
+                `<li class="list-group-item d-flex justify-content-between p-2"><div><strong>${e.Role}</strong> at ${e.CompanyName}<br><small class="text-muted">${e.StartDate} - ${e.EndDate}</small></div><button class="btn btn-sm btn-danger py-0 px-1" onclick="removeExperience(${i})">&times;</button></li>`).join('');
+
+            el('eduList').innerHTML = state.Education.map((e, i) =>
+                `<li class="list-group-item d-flex justify-content-between p-2"><div><strong>${e.Degree}</strong><br><small class="text-muted">${e.Institution} · ${e.Year}</small></div><button class="btn btn-sm btn-danger py-0 px-1" onclick="removeEducation(${i})">&times;</button></li>`).join('');
+        }
+
+        // --- Preview ---
+        function debouncePreview() {
+            syncState();
+            el('previewStatus').className = "badge bg-warning text-dark";
+            el('previewStatus').innerText = "Updating...";
+            clearTimeout(previewTimer);
+            previewTimer = setTimeout(fetchPreview, 500);
+        }
+
+        async function fetchPreview() {
+            try {
+                const fd = new FormData();
+                fd.append('templateId', templateId);
+                fd.append('jsonData', JSON.stringify(state));
+                const resp = await fetch('@Url.Action("Preview", "Portfolio")', { method: 'POST', body: fd });
+                const html = await resp.text();
+                el('previewFrame').srcdoc = html;
+                el('previewStatus').className = "badge bg-success";
+                el('previewStatus').innerText = "Live";
+            } catch (e) {
+                el('previewStatus').className = "badge bg-danger";
+                el('previewStatus').innerText = "Error";
+            }
+        }
+
+        // --- Save ---
+        function savePortfolio() {
+            syncState();
+            const title = el('portfolioTitle').value || "My Portfolio";
+            el('hiddenTitle').value = title;
+            el('hiddenData').value = JSON.stringify(state);
+            el('saveForm').submit();
+        }
+
+        // Init
+        fetchPreview();
+    </script>
+</body>
+</html>

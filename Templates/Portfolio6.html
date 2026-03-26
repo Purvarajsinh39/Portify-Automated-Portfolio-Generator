@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purvarajsinh Vaghela | Developer</title>
-    <meta name="description" content="Portfolio of Purvarajsinh Vaghela, a motivated BCA student and Web Developer.">
-    
+    <title>{{Bio.Name}} | Developer</title>
+    <meta name="description" content="Portfolio of {{Bio.Name}} - {{Bio.Title}}">
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -17,14 +18,16 @@
             --paper-dark: #e8e2d2;
             --text-ink: #2b2b2b;
             --text-light: #5a5a5a;
-            
+
             --plastic-light: #f0f0f0;
-            --plastic-mid: #d4d0c8; /* Classic 90s beige */
+            --plastic-mid: #d4d0c8;
+            /* Classic 90s beige */
             --plastic-dark: #808080;
-            
+
             --leather: #8b0000;
             --metallic: #a9a9a9;
-            --lcd-screen: #9bbc0f; /* Gameboy/PDA green */
+            --lcd-screen: #9bbc0f;
+            /* Gameboy/PDA green */
 
             --font-heading: 'Georgia', serif;
             --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -41,14 +44,12 @@
         body {
             /* Wooden Desk Texture */
             background-color: var(--desk-color);
-            background-image: 
-                repeating-linear-gradient(
-                    45deg, 
-                    rgba(0,0,0,0.1) 0px, 
-                    rgba(0,0,0,0.1) 2px, 
-                    transparent 2px, 
-                    transparent 8px
-                ),
+            background-image:
+                repeating-linear-gradient(45deg,
+                    rgba(0, 0, 0, 0.1) 0px,
+                    rgba(0, 0, 0, 0.1) 2px,
+                    transparent 2px,
+                    transparent 8px),
                 linear-gradient(to right, #3d2314, #5c3a21, #3d2314);
             color: var(--text-ink);
             font-family: var(--font-body);
@@ -60,16 +61,19 @@
         ::-webkit-scrollbar {
             width: 16px;
         }
+
         ::-webkit-scrollbar-track {
             background: #d4d0c8;
             border-left: 1px solid #808080;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #e0e0e0;
             border: 2px solid #fff;
             border-bottom-color: #808080;
             border-right-color: #808080;
         }
+
         ::-webkit-scrollbar-thumb:active {
             background: #c0c0c0;
             border: 2px solid #808080;
@@ -78,7 +82,10 @@
         }
 
         /* --- TYPOGRAPHY --- */
-        h1, h2, h3, h4 {
+        h1,
+        h2,
+        h3,
+        h4 {
             font-family: var(--font-heading);
             color: #111;
         }
@@ -109,7 +116,8 @@
             display: flex;
             justify-content: flex-end;
             padding-right: 20px;
-            margin-bottom: -1px; /* Overlap the paper */
+            margin-bottom: -1px;
+            /* Overlap the paper */
             position: relative;
             z-index: 10;
         }
@@ -123,7 +131,8 @@
         .nav-links a {
             display: block;
             padding: 12px 25px;
-            background: #e6dfcc; /* Darker paper for inactive */
+            background: #e6dfcc;
+            /* Darker paper for inactive */
             color: var(--text-ink);
             text-decoration: none;
             font-weight: bold;
@@ -131,7 +140,7 @@
             border: 1px solid #c2b69c;
             border-bottom: none;
             border-radius: 10px 10px 0 0;
-            box-shadow: inset 1px 1px 0 rgba(255,255,255,0.8), 2px -2px 5px rgba(0,0,0,0.2);
+            box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.8), 2px -2px 5px rgba(0, 0, 0, 0.2);
             position: relative;
             transition: all 0.2s;
             top: 5px;
@@ -143,25 +152,32 @@
             padding-bottom: 15px;
         }
 
-        .nav-links a.active, .nav-links a:active {
+        .nav-links a.active,
+        .nav-links a:active {
             background: var(--paper-color);
             top: 0;
             padding-bottom: 18px;
-            border-bottom: 2px solid var(--paper-color); /* Merge with paper below */
+            border-bottom: 2px solid var(--paper-color);
+            /* Merge with paper below */
             z-index: 2;
         }
 
-        .hamburger { display: none; }
+        .hamburger {
+            display: none;
+        }
 
         /* --- THE PAPER DOCUMENT --- */
         .paper-document {
             background: var(--paper-color);
-            background-image: radial-gradient(circle at center, transparent 80%, rgba(0,0,0,0.03) 100%);
+            background-image: radial-gradient(circle at center, transparent 80%, rgba(0, 0, 0, 0.03) 100%);
             border: 1px solid #d3cbb8;
-            box-shadow: 
-                0 20px 50px rgba(0,0,0,0.7), /* Deep drop shadow to desk */
-                inset 0 0 40px rgba(0,0,0,0.05), /* Vignette */
-                inset 1px 1px 0 #fff; /* Highlight edge */
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.7),
+                /* Deep drop shadow to desk */
+                inset 0 0 40px rgba(0, 0, 0, 0.05),
+                /* Vignette */
+                inset 1px 1px 0 #fff;
+            /* Highlight edge */
             position: relative;
             z-index: 5;
             padding: 40px;
@@ -195,7 +211,7 @@
             margin-bottom: 1.5rem;
             /* Letterpress effect */
             color: #222;
-            text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
         }
 
         .hero-description {
@@ -212,8 +228,15 @@
         }
 
         @keyframes blink {
-            from, to { border-color: transparent }
-            50% { border-color: #222 }
+
+            from,
+            to {
+                border-color: transparent
+            }
+
+            50% {
+                border-color: #222
+            }
         }
 
         /* Physical Buttons */
@@ -232,10 +255,10 @@
             background: linear-gradient(to bottom, #f8f8f8, #d4d0c8);
             border: 1px solid #888;
             border-radius: 4px;
-            box-shadow: 
-                inset 1px 1px 0px rgba(255,255,255,0.8),
-                inset -1px -1px 0px rgba(0,0,0,0.1),
-                0 4px 6px rgba(0,0,0,0.3);
+            box-shadow:
+                inset 1px 1px 0px rgba(255, 255, 255, 0.8),
+                inset -1px -1px 0px rgba(0, 0, 0, 0.1),
+                0 4px 6px rgba(0, 0, 0, 0.3);
             cursor: pointer;
             transition: all 0.1s;
             position: relative;
@@ -247,9 +270,9 @@
 
         .btn:active {
             top: 4px;
-            box-shadow: 
-                inset 2px 2px 5px rgba(0,0,0,0.2),
-                0 0px 0px rgba(0,0,0,0);
+            box-shadow:
+                inset 2px 2px 5px rgba(0, 0, 0, 0.2),
+                0 0px 0px rgba(0, 0, 0, 0);
             background: linear-gradient(to bottom, #d4d0c8, #e8e8e8);
         }
 
@@ -257,13 +280,13 @@
             background: linear-gradient(to bottom, #4a90e2, #2c6eb5);
             color: white;
             border-color: #1e4f8a;
-            box-shadow: 
-                inset 1px 1px 0px rgba(255,255,255,0.3),
-                inset -1px -1px 0px rgba(0,0,0,0.2),
-                0 4px 6px rgba(0,0,0,0.3);
-            text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+            box-shadow:
+                inset 1px 1px 0px rgba(255, 255, 255, 0.3),
+                inset -1px -1px 0px rgba(0, 0, 0, 0.2),
+                0 4px 6px rgba(0, 0, 0, 0.3);
+            text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
         }
-        
+
         .btn-primary:active {
             background: linear-gradient(to bottom, #2c6eb5, #4a90e2);
         }
@@ -284,14 +307,14 @@
             border-radius: 50%;
             color: #333;
             font-size: 1.2rem;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.3), inset 1px 1px 0 white;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3), inset 1px 1px 0 white;
             text-decoration: none;
             transition: all 0.1s;
         }
 
         .social-links a:active {
             transform: translateY(3px);
-            box-shadow: 0 0px 0px rgba(0,0,0,0), inset 2px 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 0px 0px rgba(0, 0, 0, 0), inset 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         /* --- HERO VISUAL: 3D ACRYLIC CLIPBOARD --- */
@@ -302,18 +325,19 @@
 
         .acrylic-clipboard {
             width: 340px;
-            background: rgba(0, 136, 169, 0.85); /* 90s Bondi Blue Translucent */
+            background: rgba(0, 136, 169, 0.85);
+            /* 90s Bondi Blue Translucent */
             padding: 45px 20px 25px 20px;
             border-radius: 12px;
-            box-shadow: 
-                15px 20px 25px rgba(0,0,0,0.3), 
-                inset 2px 2px 5px rgba(255,255,255,0.6),
-                inset -2px -2px 5px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow:
+                15px 20px 25px rgba(0, 0, 0, 0.3),
+                inset 2px 2px 5px rgba(255, 255, 255, 0.6),
+                inset -2px -2px 5px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             position: relative;
             transform: rotate(4deg) rotateX(5deg);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            backdrop-filter: blur(4px); 
+            backdrop-filter: blur(4px);
         }
 
         .acrylic-clipboard:hover {
@@ -331,10 +355,10 @@
             height: 60px;
             background: linear-gradient(to bottom, #f0f0f0, #a0a0a0, #707070);
             border-radius: 10px 10px 4px 4px;
-            box-shadow: 
-                0 8px 10px rgba(0,0,0,0.5),
-                inset 0 2px 3px rgba(255,255,255,0.8),
-                inset 0 -2px 2px rgba(0,0,0,0.4);
+            box-shadow:
+                0 8px 10px rgba(0, 0, 0, 0.5),
+                inset 0 2px 3px rgba(255, 255, 255, 0.8),
+                inset 0 -2px 2px rgba(0, 0, 0, 0.4);
             z-index: 15;
             border: 1px solid #666;
             display: flex;
@@ -348,17 +372,18 @@
             height: 12px;
             background: linear-gradient(to bottom, #555, #333);
             border-radius: 6px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 1px 1px rgba(255,255,255,0.5);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8), 0 1px 1px rgba(255, 255, 255, 0.5);
         }
 
         /* The lined paper */
         .clipboard-paper {
             background: #fcfcfc;
             height: 260px;
-            box-shadow: 2px 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
             background-image: linear-gradient(#e1e1e1 1px, transparent 1px);
             background-size: 100% 32px;
-            background-position: 0 40px; /* offset lines */
+            background-position: 0 40px;
+            /* offset lines */
             padding: 40px 20px 20px 50px;
             position: relative;
             border-radius: 2px;
@@ -406,7 +431,8 @@
         .todo-list li {
             font-family: 'Comic Sans MS', 'Marker Felt', cursive, sans-serif;
             font-size: 1.2rem;
-            line-height: 32px; /* Matches background-size lines */
+            line-height: 32px;
+            /* Matches background-size lines */
             color: #222;
             display: flex;
             align-items: center;
@@ -428,7 +454,8 @@
         }
 
         .check-box.checked {
-            color: #d11a2a; /* Red ink checkmark */
+            color: #d11a2a;
+            /* Red ink checkmark */
         }
 
         /* The physical 3D red pen */
@@ -441,10 +468,10 @@
             background: linear-gradient(to bottom, #ff4d4d, #cc0000, #8b0000);
             border-radius: 7px;
             transform: rotate(-20deg);
-            box-shadow: 
-                3px 8px 10px rgba(0,0,0,0.4), 
-                inset 0 2px 3px rgba(255,255,255,0.6),
-                inset 0 -2px 3px rgba(0,0,0,0.3);
+            box-shadow:
+                3px 8px 10px rgba(0, 0, 0, 0.4),
+                inset 0 2px 3px rgba(255, 255, 255, 0.6),
+                inset 0 -2px 3px rgba(0, 0, 0, 0.3);
             display: flex;
             z-index: 20;
         }
@@ -455,7 +482,7 @@
             background: linear-gradient(to bottom, #444, #111, #000);
             border-radius: 4px 0 0 4px;
             margin-top: -1px;
-            box-shadow: inset 0 2px 2px rgba(255,255,255,0.3);
+            box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.3);
             position: relative;
         }
 
@@ -468,7 +495,7 @@
             height: 4px;
             background: linear-gradient(to bottom, #fff, #bbb);
             border-radius: 2px;
-            box-shadow: 1px 2px 3px rgba(0,0,0,0.5);
+            box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.5);
         }
 
         .pen-body {
@@ -483,7 +510,7 @@
             margin-top: 3px;
             position: relative;
         }
-        
+
         .pen-tip::after {
             content: '';
             position: absolute;
@@ -511,7 +538,7 @@
             background: #fff;
             padding: 2rem;
             border: 1px solid #ddd;
-            box-shadow: 2px 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
             position: relative;
         }
 
@@ -525,11 +552,11 @@
             border: 3px solid #silver;
             border-radius: 10px;
             background: transparent;
-            box-shadow: 1px 1px 2px rgba(0,0,0,0.3), inset 1px 1px 1px rgba(255,255,255,0.8);
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3), inset 1px 1px 1px rgba(255, 255, 255, 0.8);
             border-color: #b0b0b0 #888 #888 #b0b0b0;
             z-index: 10;
         }
-        
+
         .paperclip::after {
             content: '';
             position: absolute;
@@ -543,7 +570,8 @@
             border-color: transparent #888 #888 #b0b0b0;
         }
 
-        .education-card h3, .certifications h3 {
+        .education-card h3,
+        .certifications h3 {
             font-size: 1.4rem;
             margin-bottom: 1rem;
             border-bottom: 2px solid #eee;
@@ -554,11 +582,33 @@
             margin-top: 15px;
         }
 
-        .edu-item h4 { font-family: var(--font-body); font-size: 1.1rem; }
-        .edu-item .institution { color: #666; font-style: italic; }
-        .edu-item .year { font-family: var(--font-code); background: #eee; padding: 2px 5px; border: 1px solid #ccc; font-size: 0.85rem; display: inline-block; margin-top: 5px;}
+        .edu-item h4 {
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+        }
 
-        .cert-list { list-style: none; display: flex; flex-direction: column; gap: 15px;}
+        .edu-item .institution {
+            color: #666;
+            font-style: italic;
+        }
+
+        .edu-item .year {
+            font-family: var(--font-code);
+            background: #eee;
+            padding: 2px 5px;
+            border: 1px solid #ccc;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .cert-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
         .cert-item {
             display: flex;
             align-items: center;
@@ -566,7 +616,7 @@
             padding: 10px;
             border: 1px solid #e0e0e0;
             background: linear-gradient(to right, #fdfaf4, #fff);
-            box-shadow: 1px 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         /* Wax Seal representation for certs */
@@ -575,12 +625,12 @@
             height: 30px;
             background: radial-gradient(circle at 30% 30%, #cc3333, #8b0000);
             border-radius: 50%;
-            box-shadow: 1px 2px 3px rgba(0,0,0,0.3), inset 2px 2px 5px rgba(255,255,255,0.2);
+            box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3), inset 2px 2px 5px rgba(255, 255, 255, 0.2);
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: rgba(255,255,255,0.6);
+            color: rgba(255, 255, 255, 0.6);
             font-size: 0.7rem;
         }
 
@@ -610,15 +660,16 @@
             border: 1px solid #999;
             padding: 1.5rem;
             border-radius: 4px;
-            box-shadow: 
+            box-shadow:
                 inset 1px 1px 0px white,
                 inset -1px -1px 0px #999,
-                3px 5px 10px rgba(0,0,0,0.2);
+                3px 5px 10px rgba(0, 0, 0, 0.2);
             position: relative;
         }
 
         /* Screws for the plaque */
-        .skill-category::before, .skill-category::after {
+        .skill-category::before,
+        .skill-category::after {
             content: '+';
             position: absolute;
             color: #888;
@@ -626,8 +677,16 @@
             font-size: 12px;
             text-shadow: 1px 1px 0 #fff;
         }
-        .skill-category::before { top: 5px; left: 10px; }
-        .skill-category::after { top: 5px; right: 10px; }
+
+        .skill-category::before {
+            top: 5px;
+            left: 10px;
+        }
+
+        .skill-category::after {
+            top: 5px;
+            right: 10px;
+        }
 
         .skill-category h3 {
             font-size: 1.2rem;
@@ -649,17 +708,18 @@
         /* Label Maker Tape Style */
         .skill-tag {
             padding: 4px 10px;
-            background: #d11a2a; /* Red Dymo tape */
+            background: #d11a2a;
+            /* Red Dymo tape */
             color: white;
             font-family: var(--font-code);
             font-size: 0.9rem;
             font-weight: bold;
             letter-spacing: 1px;
-            box-shadow: 1px 2px 3px rgba(0,0,0,0.4), inset 0 0 2px rgba(0,0,0,0.5);
+            box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4), inset 0 0 2px rgba(0, 0, 0, 0.5);
             border-left: 2px solid #a00;
             border-right: 2px solid #a00;
             text-transform: uppercase;
-            text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+            text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
         }
 
         /* --- PROJECTS SECTION (Polaroids) --- */
@@ -677,18 +737,28 @@
 
         .project-card {
             background: #fff;
-            padding: 15px 15px 60px 15px; /* Heavy bottom padding for polaroid look */
-            box-shadow: 
-                3px 5px 15px rgba(0,0,0,0.3),
+            padding: 15px 15px 60px 15px;
+            /* Heavy bottom padding for polaroid look */
+            box-shadow:
+                3px 5px 15px rgba(0, 0, 0, 0.3),
                 inset 0 0 0 1px #eee;
             position: relative;
             transition: transform 0.2s;
         }
 
         /* Alternate rotations for a messy desk look */
-        .project-card:nth-child(odd) { transform: rotate(-2deg); }
-        .project-card:nth-child(even) { transform: rotate(3deg); }
-        .project-card:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
+        .project-card:nth-child(odd) {
+            transform: rotate(-2deg);
+        }
+
+        .project-card:nth-child(even) {
+            transform: rotate(3deg);
+        }
+
+        .project-card:hover {
+            transform: scale(1.05) rotate(0deg);
+            z-index: 10;
+        }
 
         /* Masking tape graphic */
         .tape {
@@ -699,12 +769,13 @@
             width: 100px;
             height: 30px;
             background-color: rgba(255, 255, 200, 0.6);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
             z-index: 2;
         }
 
         .project-content {
-            background: #111; /* Simulating the photo area */
+            background: #111;
+            /* Simulating the photo area */
             padding: 15px;
             color: #eee;
             height: 200px;
@@ -713,8 +784,18 @@
             border: 1px inset #444;
         }
 
-        .project-content h3 { color: #fff; font-size: 1.2rem; margin-bottom: 10px; font-family: var(--font-body);}
-        .project-content p { font-size: 0.85rem; color: #ccc; flex-grow: 1;}
+        .project-content h3 {
+            color: #fff;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-family: var(--font-body);
+        }
+
+        .project-content p {
+            font-size: 0.85rem;
+            color: #ccc;
+            flex-grow: 1;
+        }
 
         .project-tech {
             margin-top: 10px;
@@ -727,8 +808,10 @@
             position: absolute;
             bottom: 15px;
             left: 15px;
-            font-family: "Comic Sans MS", cursive, sans-serif; /* Simulating handwriting */
-            color: #000080; /* Blue ink */
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            /* Simulating handwriting */
+            color: #000080;
+            /* Blue ink */
             font-size: 1.1rem;
             transform: rotate(-2deg);
         }
@@ -767,7 +850,7 @@
             background: linear-gradient(to bottom, #f0f0f0, #d4d0c8);
             border: 1px solid #999;
             padding: 2rem;
-            box-shadow: inset 1px 1px 0 #fff, 2px 4px 8px rgba(0,0,0,0.2);
+            box-shadow: inset 1px 1px 0 #fff, 2px 4px 8px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
             height: fit-content;
         }
@@ -784,7 +867,7 @@
             background: #e8e8e8;
             transition: all 0.1s;
         }
-        
+
         .contact-item:active {
             border-style: solid;
             background: #dcdcdc;
@@ -797,14 +880,17 @@
 
         /* Legal Pad Form */
         .contact-form {
-            background: #feeb75; /* Yellow legal pad color */
+            background: #feeb75;
+            /* Yellow legal pad color */
             padding: 30px;
             border: 1px solid #d4c45a;
-            box-shadow: 3px 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 3px 5px 15px rgba(0, 0, 0, 0.2);
             position: relative;
-            background-image: 
-                linear-gradient(transparent 95%, #a6d0df 95%), /* horizontal lines */
-                linear-gradient(90deg, transparent 40px, #e87b7b 40px, #e87b7b 42px, transparent 42px); /* vertical red margin */
+            background-image:
+                linear-gradient(transparent 95%, #a6d0df 95%),
+                /* horizontal lines */
+                linear-gradient(90deg, transparent 40px, #e87b7b 40px, #e87b7b 42px, transparent 42px);
+            /* vertical red margin */
             background-size: 100% 30px, 100% 100%;
             line-height: 30px;
         }
@@ -817,13 +903,15 @@
             left: 0;
             width: 100%;
             height: 25px;
-            background: #8b0000; /* Dark red tape */
+            background: #8b0000;
+            /* Dark red tape */
             border-bottom: 2px solid #5a0000;
         }
 
         .form-group {
             margin-bottom: 1.5rem;
-            margin-left: 50px; /* offset for red margin */
+            margin-left: 50px;
+            /* offset for red margin */
             position: relative;
             z-index: 2;
         }
@@ -836,18 +924,22 @@
             margin-bottom: 5px;
         }
 
-        .form-group input, .form-group textarea {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
             background: transparent;
             border: none;
             border-bottom: 1px solid #999;
-            font-family: 'Comic Sans MS', cursive, sans-serif; /* Handwriting feel */
-            color: #000080; /* Blue ink */
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            /* Handwriting feel */
+            color: #000080;
+            /* Blue ink */
             font-size: 1.1rem;
             padding: 5px 0;
         }
 
-        .form-group input:focus, .form-group textarea:focus {
+        .form-group input:focus,
+        .form-group textarea:focus {
             outline: none;
             border-bottom-color: #000080;
         }
@@ -865,29 +957,48 @@
 
         /* --- RESPONSIVE ADJUSTMENTS --- */
         @media (max-width: 900px) {
-            .desk-environment { margin: 20px; }
-            .hero, .about-grid, .contact-container { flex-direction: column; grid-template-columns: 1fr; }
-            .hero-content { margin-bottom: 2rem; }
-            .tabs-container { justify-content: center; }
-            
+            .desk-environment {
+                margin: 20px;
+            }
+
+            .hero,
+            .about-grid,
+            .contact-container {
+                flex-direction: column;
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content {
+                margin-bottom: 2rem;
+            }
+
+            .tabs-container {
+                justify-content: center;
+            }
+
             /* Adjust Clipboard for mobile */
-            .acrylic-clipboard { 
-                margin: 0 auto; 
-                transform: none; 
-                width: 100%; 
+            .acrylic-clipboard {
+                margin: 0 auto;
+                transform: none;
+                width: 100%;
                 max-width: 340px;
             }
+
             .acrylic-clipboard:hover {
                 transform: scale(1.02);
             }
-            .red-pen { right: 10px; }
+
+            .red-pen {
+                right: 10px;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <div class="desk-environment">
-        
+
         <!-- Physical Navigation Tabs -->
         <div class="tabs-container">
             <ul class="nav-links">
@@ -901,23 +1012,24 @@
 
         <!-- The Main Document Area -->
         <main class="paper-document">
-            
+
             <!-- Hero Section -->
             <section id="home" class="hero">
                 <div class="hero-content">
                     <p class="hero-subtitle">Hello, I'm</p>
-                    <h1 class="hero-title">Purvarajsinh<br>Vaghela</h1>
+                    <h1 class="hero-title">{{Bio.Name}}</h1>
                     <p class="hero-description">
                         <span id="typewriter-text"></span><span class="typewriter"></span><br><br>
-                        Crafting functional software and digital experiences with code and precision.
+                        {{Bio.Summary}}
                     </p>
                     <div class="hero-btns">
                         <a href="#projects" class="btn btn-primary">View Work</a>
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vaghelapurvarajsinh8442@gmail.com" target="_blank" class="btn">Contact Me</a>
+                        <a href="mailto:{{Bio.ContactEmail}}" class="btn">Contact Me</a>
                     </div>
                     <div class="social-links">
-                        <a href="https://github.com/Purvarajsinh39" target="_blank"><i class="fab fa-github"></i></a>
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vaghelapurvarajsinh8442@gmail.com" target="_blank"><i class="fas fa-envelope"></i></a>
+                        <a href="{{Bio.GitHub}}" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="mailto:{{Bio.ContactEmail}}" target="_blank"><i class="fas fa-envelope"></i></a>
+                        <a href="{{Bio.LinkedIn}}" target="_blank"><i class="fab fa-linkedin"></i></a>
                     </div>
                 </div>
 
@@ -952,51 +1064,21 @@
                 <div class="about-grid">
                     <div class="about-content">
                         <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
-                            I am a motivated <strong>BCA student (Semester 5)</strong> at LJ University with a drive for building functional and beautiful web applications.
-                            My journey bridges the gap between clean code and creative design. I am deeply interested in applying programming, security, and problem-solving methodologies to create software that makes a difference.
+                            {{Bio.Summary}}
                         </p>
-                        
+
                         <div class="physical-card education-card">
                             <div class="paperclip"></div>
                             <h3><i class="fas fa-graduation-cap"></i> Education</h3>
-                            <div class="edu-item">
-                                <h4>Bachelor of Computer Applications</h4>
-                                <p class="institution">LJ University</p>
-                                <span class="year">2023 – Present</span>
-                            </div>
+                            {{EducationList}}
                         </div>
                     </div>
-                    
+
                     <div class="certifications">
                         <div class="physical-card">
                             <div class="paperclip" style="left: auto; right: 20px;"></div>
-                            <h3><i class="fas fa-stamp"></i> Credentials</h3>
-                            <ul class="cert-list">
-                                <li class="cert-item">
-                                    <div class="wax-seal">✔</div>
-                                    <div class="cert-info">
-                                        <strong>Python for Everybody</strong><br>
-                                        <span style="font-size:0.8rem; color:#666;">Coursera</span>
-                                    </div>
-                                </li>
-                                <li class="cert-item">
-                                    <div class="wax-seal">✔</div>
-                                    <div class="cert-info">
-                                        <strong>Career Edge</strong><br>
-                                        <span style="font-size:0.8rem; color:#666;">TCS iON</span>
-                                    </div>
-                                </li>
-                                <li class="cert-item">
-                                    <div class="wax-seal">✔</div>
-                                    <div class="cert-info">
-                                        <strong>Data Analytics</strong><br>
-                                        <span style="font-size:0.8rem; color:#666;">Deloitte</span>
-                                    </div>
-                                </li>
-                            </ul>
-                            <a href="https://github.com/Purvarajsinh39/Certificates" target="_blank" class="view-repo-btn">
-                                View Repository &rarr;
-                            </a>
+                            <h3><i class="fas fa-stamp"></i> Experience</h3>
+                            {{ExperienceList}}
                         </div>
                     </div>
                 </div>
@@ -1007,33 +1089,9 @@
                 <h2 class="section-title">Technical Arsenal</h2>
                 <div class="skills-grid">
                     <div class="skill-category">
-                        <h3>Development</h3>
+                        <h3>Skills</h3>
                         <div class="skill-tags">
-                            <span class="skill-tag">Python</span>
-                            <span class="skill-tag">.NET</span>
-                            <span class="skill-tag">HTML5</span>
-                            <span class="skill-tag">CSS3</span>
-                            <span class="skill-tag">JavaScript</span>
-                            <span class="skill-tag">Laravel</span>
-                            <span class="skill-tag">PHP</span>
-                        </div>
-                    </div>
-                    <div class="skill-category">
-                        <h3>Tools & OS</h3>
-                        <div class="skill-tags">
-                            <span class="skill-tag">Git</span>
-                            <span class="skill-tag">GitHub</span>
-                            <span class="skill-tag">VS Code</span>
-                            <span class="skill-tag">Linux</span>
-                            <span class="skill-tag">Figma</span>
-                        </div>
-                    </div>
-                    <div class="skill-category">
-                        <h3>Database</h3>
-                        <div class="skill-tags">
-                            <span class="skill-tag">MySQL</span>
-                            <span class="skill-tag">SSMS</span>
-                            <span class="skill-tag">PhpAdmin</span>
+                            {{SkillsList}}
                         </div>
                     </div>
                 </div>
@@ -1044,49 +1102,7 @@
                 <h2 class="section-title">Featured Projects</h2>
                 <div class="projects-grid">
 
-                    <div class="project-card">
-                        <div class="tape"></div>
-                        <div class="project-content">
-                            <h3>Job Board Platform</h3>
-                            <p>A comprehensive listing platform connecting employers and seekers.</p>
-                            <div class="project-tech">C# | .NET | SSMS</div>
-                        </div>
-                        <div class="project-title-handwritten">Job Board</div>
-                        <a href="https://github.com/Purvarajsinh39/JobBoardPlatForm-ASP.NET.git" target="_blank" class="project-link">Source</a>
-                    </div>
-
-                    <div class="project-card">
-                        <div class="tape"></div>
-                        <div class="project-content">
-                            <h3>Blog Management</h3>
-                            <p>A dynamic CMS for creating and editing blog posts efficiently.</p>
-                            <div class="project-tech">Laravel | PHP | MySQL</div>
-                        </div>
-                        <div class="project-title-handwritten">My Blog App</div>
-                        <a href="https://github.com/Purvarajsinh39/BLOG-MANAGEMENT-SYSTEM-LARAVEL.git" target="_blank" class="project-link">Source</a>
-                    </div>
-
-                    <div class="project-card">
-                        <div class="tape"></div>
-                        <div class="project-content">
-                            <h3>Hotel Management</h3>
-                            <p>An operational system to streamline bookings and customer services.</p>
-                            <div class="project-tech">PHP | MySQL | HTML</div>
-                        </div>
-                        <div class="project-title-handwritten">Hotel System</div>
-                        <a href="https://github.com/Purvarajsinh39/Hotel-Management-PHP.git" target="_blank" class="project-link">Source</a>
-                    </div>
-                    
-                    <div class="project-card">
-                        <div class="tape"></div>
-                        <div class="project-content">
-                            <h3>Interactive Quiz</h3>
-                            <p>Python-based app designed to test knowledge with immediate feedback.</p>
-                            <div class="project-tech">Python | Tkinter | SQL</div>
-                        </div>
-                        <div class="project-title-handwritten">Quiz Game</div>
-                        <a href="https://github.com/Purvarajsinh39/Python-Quiz-For-Beginners.git" target="_blank" class="project-link">Source</a>
-                    </div>
+                    {{ProjectsList}}
 
                 </div>
             </section>
@@ -1096,29 +1112,29 @@
                 <h2 class="section-title">Get In Touch</h2>
                 <div class="contact-container">
                     <div class="contact-card">
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vaghelapurvarajsinh8442@gmail.com" target="_blank" class="contact-item">
+                        <a href="mailto:{{Bio.ContactEmail}}" class="contact-item">
                             <div class="icon-box">✉</div>
                             <div>
                                 <strong>Email Me</strong>
-                                <p style="font-size:0.85rem; color:#555;">vaghelapurvarajsinh8442@gmail.com</p>
+                                <p style="font-size:0.85rem; color:#555;">{{Bio.ContactEmail}}</p>
                             </div>
                         </a>
-                        <a href="tel:+919824733917" class="contact-item">
-                            <div class="icon-box">☎</div>
-                            <div>
-                                <strong>Call Me</strong>
-                                <p style="font-size:0.85rem; color:#555;">+91 9824733917</p>
-                            </div>
-                        </a>
-                        <a href="https://github.com/Purvarajsinh39" target="_blank" class="contact-item">
+                        <a href="{{Bio.GitHub}}" target="_blank" class="contact-item">
                             <div class="icon-box">⌨</div>
                             <div>
                                 <strong>GitHub</strong>
-                                <p style="font-size:0.85rem; color:#555;">/Purvarajsinh39</p>
+                                <p style="font-size:0.85rem; color:#555;">{{Bio.GitHub}}</p>
+                            </div>
+                        </a>
+                        <a href="{{Bio.LinkedIn}}" target="_blank" class="contact-item">
+                            <div class="icon-box"><i class="fab fa-linkedin"></i></div>
+                            <div>
+                                <strong>LinkedIn</strong>
+                                <p style="font-size:0.85rem; color:#555;">{{Bio.LinkedIn}}</p>
                             </div>
                         </a>
                     </div>
-                    
+
                     <form class="contact-form">
                         <div class="form-group">
                             <label>Name:</label>
@@ -1138,21 +1154,21 @@
             </section>
 
             <footer class="footer">
-                <p>&copy; 2025 Purvarajsinh Vaghela. Printed and Bound.</p>
+                <p>&copy; 2025 {{Bio.Name}}. Printed and Bound.</p>
             </footer>
         </main>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            
+
             // --- TAB NAV LOGIC ---
             const navLinks = document.querySelectorAll('.nav-link');
-            
+
             window.addEventListener('scroll', () => {
                 let current = '';
                 const sections = document.querySelectorAll('section');
-                
+
                 sections.forEach(section => {
                     const sectionTop = section.offsetTop - 100;
                     if (pageYOffset >= sectionTop) {
@@ -1170,24 +1186,24 @@
 
             // --- TYPEWRITER EFFECT ---
             const textElement = document.getElementById('typewriter-text');
-            const texts = ["Motivated BCA Student", "Aspiring Web Developer", "Problem Solver"];
+            const texts = ["{{Bio.Title}}"];
             let count = 0;
             let index = 0;
             let currentText = '';
             let letter = '';
             let isDeleting = false;
-        
+
             (function type() {
                 if (count === texts.length) count = 0;
                 currentText = texts[count];
-        
+
                 if (isDeleting) letter = currentText.slice(0, --index);
                 else letter = currentText.slice(0, ++index);
-        
+
                 textElement.textContent = letter;
                 let typeSpeed = 100;
                 if (isDeleting) typeSpeed = 50;
-        
+
                 if (!isDeleting && letter.length === currentText.length) {
                     typeSpeed = 2000;
                     isDeleting = true;
@@ -1207,13 +1223,13 @@
                     const name = document.getElementById('name').value;
                     const email = document.getElementById('email').value;
                     const message = document.getElementById('message').value;
-                    
+
                     const subject = encodeURIComponent(`Portfolio Contact from ${name}`);
                     const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-                    const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=vaghelapurvarajsinh8442@gmail.com&su=${subject}&body=${body}`;
-                    
+                    const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to={{Bio.ContactEmail}}&su=${subject}&body=${body}`;
+
                     window.open(gmailLink, '_blank');
-                    
+
                     const btn = contactForm.querySelector('button');
                     const originalContent = btn.innerHTML;
                     btn.innerHTML = 'Sending...';
@@ -1226,4 +1242,5 @@
         });
     </script>
 </body>
+
 </html>

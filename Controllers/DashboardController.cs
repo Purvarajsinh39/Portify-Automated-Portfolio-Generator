@@ -1,3 +1,7 @@
+using System;
+using System.IO;
+using System.IO.Compression;
+using System.Web;
 using System.Web.Mvc;
 using Portify.Models;
 using System.Linq;
@@ -19,19 +23,79 @@ namespace Portify.Controllers
                 return RedirectToAction("Admin");
             }
 
-            string templatesPath = Server.MapPath("~/Templates");
-            var templates = new System.Collections.Generic.List<string>();
-
-            if (System.IO.Directory.Exists(templatesPath))
-            {
-                string[] files = System.IO.Directory.GetFiles(templatesPath, "*.html");
-                foreach (string file in files)
-                {
-                    templates.Add(System.IO.Path.GetFileName(file));
-                }
-            }
+            PortifyDbContext db = new PortifyDbContext();
+            var templates = db.GetAllTemplates();
 
             return View("~/Views/User/Explore.cshtml", templates);
+        }
+
+        // GET: Dashboard/UploadTemplate
+        public ActionResult UploadTemplate()
+        {
+            if (Session["UserId"] == null || Session["UserRole"]?.ToString() != "Admin")
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            return View("~/Views/Admin/UploadTemplate.cshtml", new Template());
+        }
+
+        [HttpPost]
+        public ActionResult UploadTemplate(Template template, HttpPostedFileBase TemplateFile)
+        {
+            if (Session["UserId"] == null || Session["UserRole"]?.ToString() != "Admin")
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            if (TemplateFile != null && TemplateFile.ContentLength > 0)
+            {
+                try
+                {
+                    string fileName = Path.GetFileName(TemplateFile.FileName);
+                    string extension = Path.GetExtension(fileName).ToLower();
+                    string templateDir = Server.MapPath("~/Templates/" + template.Name);
+                    
+                    if (!Directory.Exists(templateDir))
+                    {
+                        Directory.CreateDirectory(templateDir);
+                    }
+
+                    if (extension == ".zip")
+                    {
+                        using (var archive = new ZipArchive(TemplateFile.InputStream))
+                        {
+                            archive.ExtractToDirectory(templateDir);
+                        }
+                        // Assume index.html inside
+                        template.FilePath = "~/Templates/" + template.Name + "/index.html"; 
+                    }
+                    else if (extension == ".html")
+                    {
+                        string savePath = Path.Combine(templateDir, fileName);
+                        TemplateFile.SaveAs(savePath);
+                        template.FilePath = "~/Templates/" + template.Name + "/" + fileName;
+                    }
+                    
+                    template.IsActive = true;
+
+                    PortifyDbContext db = new PortifyDbContext();
+                    db.AddTemplate(template);
+
+                    TempData["SuccessMessage"] = "Template uploaded successfully!";
+                    return RedirectToAction("UploadTemplate");
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.ErrorMessage = "Error uploading template: " + ex.Message;
+                }
+            }
+            else
+            {
+                ViewBag.ErrorMessage = "Please select a valid file.";
+            }
+
+            return View("~/Views/Admin/UploadTemplate.cshtml", template);
         }
 
         // GET: Dashboard/Index (User Dashboard)

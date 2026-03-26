@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purvarajsinh | Terminal Portfolio</title>
+    <title>{{Bio.Name}} | Terminal Portfolio</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=VT323&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=VT323&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -103,9 +105,24 @@
             text-shadow: var(--glow);
         }
 
-        .nav-links a::before { content: '['; margin-right: 5px; opacity: 0; transition: 0.3s; }
-        .nav-links a::after { content: ']'; margin-left: 5px; opacity: 0; transition: 0.3s; }
-        .nav-links a:hover::before, .nav-links a:hover::after { opacity: 1; }
+        .nav-links a::before {
+            content: '[';
+            margin-right: 5px;
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .nav-links a::after {
+            content: ']';
+            margin-left: 5px;
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover::before,
+        .nav-links a:hover::after {
+            opacity: 1;
+        }
 
         /* --- HERO SECTION --- */
         .hero {
@@ -156,10 +173,23 @@
         }
 
         @keyframes scanWindow {
-            0% { top: 0%; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
+            0% {
+                top: 0%;
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
         }
 
         .window-bar {
@@ -209,7 +239,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 10, 0, 0.85); /* Masks the original to create slices */
+            background: rgba(0, 10, 0, 0.85);
+            /* Masks the original to create slices */
         }
 
         .glitch-name::before {
@@ -227,21 +258,55 @@
         }
 
         @keyframes glitch-anim-1 {
-            0% { clip: rect(20px, 9999px, 10px, 0); }
-            20% { clip: rect(50px, 9999px, 60px, 0); }
-            40% { clip: rect(80px, 9999px, 40px, 0); }
-            60% { clip: rect(10px, 9999px, 80px, 0); }
-            80% { clip: rect(60px, 9999px, 30px, 0); }
-            100% { clip: rect(90px, 9999px, 70px, 0); }
+            0% {
+                clip: rect(20px, 9999px, 10px, 0);
+            }
+
+            20% {
+                clip: rect(50px, 9999px, 60px, 0);
+            }
+
+            40% {
+                clip: rect(80px, 9999px, 40px, 0);
+            }
+
+            60% {
+                clip: rect(10px, 9999px, 80px, 0);
+            }
+
+            80% {
+                clip: rect(60px, 9999px, 30px, 0);
+            }
+
+            100% {
+                clip: rect(90px, 9999px, 70px, 0);
+            }
         }
 
         @keyframes glitch-anim-2 {
-            0% { clip: rect(60px, 9999px, 10px, 0); }
-            20% { clip: rect(20px, 9999px, 90px, 0); }
-            40% { clip: rect(90px, 9999px, 30px, 0); }
-            60% { clip: rect(10px, 9999px, 60px, 0); }
-            80% { clip: rect(40px, 9999px, 20px, 0); }
-            100% { clip: rect(70px, 9999px, 50px, 0); }
+            0% {
+                clip: rect(60px, 9999px, 10px, 0);
+            }
+
+            20% {
+                clip: rect(20px, 9999px, 90px, 0);
+            }
+
+            40% {
+                clip: rect(90px, 9999px, 30px, 0);
+            }
+
+            60% {
+                clip: rect(10px, 9999px, 60px, 0);
+            }
+
+            80% {
+                clip: rect(40px, 9999px, 20px, 0);
+            }
+
+            100% {
+                clip: rect(70px, 9999px, 50px, 0);
+            }
         }
 
         .typewriter {
@@ -253,7 +318,11 @@
             font-size: 1.2rem;
         }
 
-        @keyframes blink { 50% { border-color: transparent; } }
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
 
         .cta-group {
             margin-top: 40px;
@@ -282,11 +351,19 @@
             box-shadow: var(--glow);
             animation: pulsate 1s infinite;
         }
-        
+
         @keyframes pulsate {
-            0% { box-shadow: 0 0 10px var(--term-green); }
-            50% { box-shadow: 0 0 25px var(--term-green); }
-            100% { box-shadow: 0 0 10px var(--term-green); }
+            0% {
+                box-shadow: 0 0 10px var(--term-green);
+            }
+
+            50% {
+                box-shadow: 0 0 25px var(--term-green);
+            }
+
+            100% {
+                box-shadow: 0 0 10px var(--term-green);
+            }
         }
 
         /* --- SECTIONS COMMON --- */
@@ -323,8 +400,15 @@
             padding: 20px;
         }
 
-        .sys-key { color: var(--term-dim); font-weight: bold; margin-right: 10px; }
-        .sys-val { color: var(--term-bright); }
+        .sys-key {
+            color: var(--term-dim);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .sys-val {
+            color: var(--term-bright);
+        }
 
         /* --- SKILLS --- */
         .skills-grid {
@@ -411,7 +495,7 @@
             text-decoration: none;
             border-bottom: 1px dashed var(--term-dim);
         }
-        
+
         .project-links a:hover {
             background: var(--term-dim);
             color: #000;
@@ -451,15 +535,33 @@
 
         /* --- MOBILE --- */
         @media (max-width: 768px) {
-            .nav-links { display: none; } /* Simplified for mobile */
-            .hero-title { font-size: 2rem; }
-            .window-content { padding: 20px; }
-            section { padding: 60px 5%; }
-            .glitch-name::before, .glitch-name::after { display: none; } /* Disable heavy glitch on mobile for performance */
-        }
+            .nav-links {
+                display: none;
+            }
 
+            /* Simplified for mobile */
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .window-content {
+                padding: 20px;
+            }
+
+            section {
+                padding: 60px 5%;
+            }
+
+            .glitch-name::before,
+            .glitch-name::after {
+                display: none;
+            }
+
+            /* Disable heavy glitch on mobile for performance */
+        }
     </style>
 </head>
+
 <body>
 
     <!-- CRT Overlay Effects -->
@@ -490,10 +592,12 @@
                 </div>
             </div>
             <div class="window-content">
-                <p id="system-status" style="color:var(--term-dim); margin-bottom:10px;">> Initializing user profile...</p>
-                <h1 class="hero-title">HELLO, I'M <br> <span class="glitch-name" data-text="PURVARAJSINH">PURVARAJSINH</span></h1>
+                <p id="system-status" style="color:var(--term-dim); margin-bottom:10px;">> Initializing user profile...
+                </p>
+                <h1 class="hero-title">HELLO, I'M <br> <span class="glitch-name"
+                        data-text="{{Bio.Name}}">{{Bio.Name}}</span></h1>
                 <div class="typewriter" id="typewriter"></div>
-                
+
                 <div class="cta-group">
                     <a href="#projects" class="cmd-btn">./View_Projects</a>
                     <a href="#contact" class="cmd-btn">./Contact_Me</a>
@@ -510,27 +614,15 @@
                 <p style="margin-bottom:10px">> fetching /usr/local/bin/bio...</p>
                 <br>
                 <p>
-                    <span class="sys-key">CURRENT_STATUS:</span>
-                    <span class="sys-val">BCA Student (Semester 5) @ LJ University</span>
-                </p>
-                <p>
-                    <span class="sys-key">MISSION:</span>
-                    <span class="sys-val">Bridging the gap between clean code and creative design.</span>
-                </p>
-                <p>
-                    <span class="sys-key">FOCUS:</span>
-                    <span class="sys-val">Web Application Development, Security, Problem Solving.</span>
+                    <span class="sys-key">SUMMARY:</span>
+                    <span class="sys-val">{{Bio.Summary}}</span>
                 </p>
             </div>
-            
+
             <div class="sys-info">
-                <p style="margin-bottom:10px">> ls -la /education_certifications</p>
+                <p style="margin-bottom:10px">> ls -la /education</p>
                 <br>
-                <p><span class="sys-key">DEGREE:</span> Bachelor of Computer Applications (2023-Present)</p>
-                <br>
-                <p><span class="sys-key">CERTIFIED:</span> Python for Everybody (Coursera)</p>
-                <p><span class="sys-key">CERTIFIED:</span> TCS iON Career Edge</p>
-                <p><span class="sys-key">CERTIFIED:</span> Data Analytics (Deloitte)</p>
+                {{EducationList}}
             </div>
         </div>
     </section>
@@ -540,24 +632,9 @@
         <h2 class="section-header">Technical_Arsenal</h2>
         <div class="skills-grid">
             <div class="skill-card">
-                <h3>> Development</h3>
+                <h3>> Skills</h3>
                 <div class="skill-tags">
-                    <span>Python</span> <span>.NET</span> <span>PHP</span>
-                    <span>HTML5</span> <span>CSS3</span> <span>JavaScript</span>
-                    <span>Laravel</span>
-                </div>
-            </div>
-            <div class="skill-card">
-                <h3>> Tools & OS</h3>
-                <div class="skill-tags">
-                    <span>Git</span> <span>GitHub</span> <span>VS Code</span>
-                    <span>Linux (Kali)</span> <span>Figma</span>
-                </div>
-            </div>
-            <div class="skill-card">
-                <h3>> Database</h3>
-                <div class="skill-tags">
-                    <span>MySQL</span> <span>SSMS</span> <span>phpMyAdmin</span>
+                    {{SkillsList}}
                 </div>
             </div>
         </div>
@@ -567,78 +644,8 @@
     <section id="projects">
         <h2 class="section-header">Executed_Projects</h2>
         <div class="projects-grid">
-            
-            <!-- Project 1 -->
-            <div class="project-card">
-                <div class="project-header">
-                    <span>ID: 001</span>
-                    <span>STATUS: DEPLOYED</span>
-                </div>
-                <div class="project-body">
-                    <h3>Job Board Platform</h3>
-                    <p>A comprehensive job listing platform connecting employers, job seekers, and admins with streamlined workflows.</p>
-                    <div class="project-tech">
-                        [.NET] [SSMS] [C#]
-                    </div>
-                    <div class="project-links">
-                        <a href="https://github.com/Purvarajsinh39/JobBoardPlatForm-ASP.NET.git" target="_blank">> View Source Code</a>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Project 2 -->
-            <div class="project-card">
-                <div class="project-header">
-                    <span>ID: 002</span>
-                    <span>STATUS: DEPLOYED</span>
-                </div>
-                <div class="project-body">
-                    <h3>Blog Management</h3>
-                    <p>Dynamic CMS for creating, editing, and managing blog posts efficiently.</p>
-                    <div class="project-tech">
-                        [LARAVEL] [PHP] [MySQL]
-                    </div>
-                    <div class="project-links">
-                        <a href="https://github.com/Purvarajsinh39/BLOG-MANAGEMENT-SYSTEM-LARAVEL.git" target="_blank">> View Source Code</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Project 3 -->
-            <div class="project-card">
-                <div class="project-header">
-                    <span>ID: 003</span>
-                    <span>STATUS: ACTIVE</span>
-                </div>
-                <div class="project-body">
-                    <h3>Hotel Management</h3>
-                    <p>Operational system to streamline hotel bookings, room management, and customer services.</p>
-                    <div class="project-tech">
-                        [PHP] [MySQL] [HTML/CSS]
-                    </div>
-                    <div class="project-links">
-                        <a href="https://github.com/Purvarajsinh39/Hotel-Management-PHP.git" target="_blank">> View Source Code</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Project 4 -->
-            <div class="project-card">
-                <div class="project-header">
-                    <span>ID: 004</span>
-                    <span>STATUS: COMPLETED</span>
-                </div>
-                <div class="project-body">
-                    <h3>Interactive Quiz App</h3>
-                    <p>Python-based application designed to test knowledge on various topics with immediate feedback.</p>
-                    <div class="project-tech">
-                        [PYTHON] [Tkinter] [SQL]
-                    </div>
-                    <div class="project-links">
-                        <a href="https://github.com/Purvarajsinh39/Python-Quiz-For-Beginners.git" target="_blank">> View Source Code</a>
-                    </div>
-                </div>
-            </div>
+            {{ProjectsList}}
 
         </div>
     </section>
@@ -647,33 +654,30 @@
     <section id="contact">
         <h2 class="section-header">Establish_Connection</h2>
         <div class="contact-methods">
-            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vaghelapurvarajsinh8442@gmail.com" target="_blank" class="contact-line">
+            <a href="mailto:{{Bio.ContactEmail}}" class="contact-line">
                 <i class="fas fa-envelope"></i>
-                <span>vaghelapurvarajsinh8442@gmail.com</span>
+                <span>{{Bio.ContactEmail}}</span>
             </a>
-            <a href="tel:+919824733917" class="contact-line">
-                <i class="fas fa-phone"></i>
-                <span>+91 9824733917</span>
-            </a>
-            <a href="https://github.com/Purvarajsinh39" target="_blank" class="contact-line">
+            <a href="{{Bio.GitHub}}" target="_blank" class="contact-line">
                 <i class="fab fa-github"></i>
-                <span>github.com/Purvarajsinh39</span>
+                <span>{{Bio.GitHub}}</span>
+            </a>
+            <a href="{{Bio.LinkedIn}}" target="_blank" class="contact-line">
+                <i class="fab fa-linkedin"></i>
+                <span>{{Bio.LinkedIn}}</span>
             </a>
         </div>
     </section>
 
     <footer>
-        <p>SYSTEM.EXIT(0) // © 2025 Purvarajsinh Vaghela</p>
+        <p>SYSTEM.EXIT(0) // &copy; 2025 {{Bio.Name}}</p>
     </footer>
 
     <script>
         // --- TYPEWRITER EFFECT ---
         const textElement = document.getElementById('typewriter');
         const texts = [
-            "Motivated BCA Student...",
-            "Aspiring Web Developer...",
-            "Creative Problem Solver...",
-            "System Architecture Enthusiast..."
+            "{{Bio.Title}}"
         ];
         let count = 0;
         let index = 0;
@@ -721,7 +725,7 @@
             "> System ready."
         ];
         let statusIndex = 0;
-        
+
         setInterval(() => {
             statusIndex = (statusIndex + 1) % statusMessages.length;
             statusElement.innerText = statusMessages[statusIndex];
@@ -744,7 +748,7 @@
         const columns = canvas.width / fontSize;
         const rainDrops = [];
 
-        for( let x = 0; x < columns; x++ ) {
+        for (let x = 0; x < columns; x++) {
             rainDrops[x] = 1;
         }
 
@@ -755,11 +759,11 @@
             ctx.fillStyle = '#0F0';
             ctx.font = fontSize + 'px monospace';
 
-            for(let i = 0; i < rainDrops.length; i++) {
+            for (let i = 0; i < rainDrops.length; i++) {
                 const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
                 ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
 
-                if(rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975){
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                     rainDrops[i] = 0;
                 }
                 rainDrops[i]++;
@@ -776,4 +780,5 @@
 
     </script>
 </body>
+
 </html>
