@@ -24,7 +24,7 @@ namespace Portify.Controllers
             }
 
             PortifyDbContext db = new PortifyDbContext();
-            var templates = db.GetAllTemplates();
+            var templates = db.GetAllTemplates().Where(t => t.IsActive).ToList();
 
             return View("~/Views/User/Explore.cshtml", templates);
         }
@@ -83,7 +83,7 @@ namespace Portify.Controllers
                     db.AddTemplate(template);
 
                     TempData["SuccessMessage"] = "Template uploaded successfully!";
-                    return RedirectToAction("UploadTemplate");
+                    return RedirectToAction("ManageTemplates");
                 }
                 catch (Exception ex)
                 {
@@ -96,6 +96,63 @@ namespace Portify.Controllers
             }
 
             return View("~/Views/Admin/UploadTemplate.cshtml", template);
+        }
+
+        // GET: Dashboard/ManageTemplates
+        public ActionResult ManageTemplates()
+        {
+            if (Session["UserId"] == null || Session["UserRole"]?.ToString() != "Admin")
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            PortifyDbContext db = new PortifyDbContext();
+            var templates = db.GetAllTemplates();
+
+            return View("~/Views/Admin/ManageTemplates.cshtml", templates);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteTemplate(int templateId)
+        {
+            if (Session["UserRole"] != null && Session["UserRole"].ToString() == "Admin")
+            {
+                PortifyDbContext db = new PortifyDbContext();
+                var template = db.GetTemplateById(templateId);
+                if (template != null)
+                {
+                    // Try to delete the template folder from disk
+                    try
+                    {
+                        string templateDir = Server.MapPath("~/Templates/" + template.Name);
+                        if (Directory.Exists(templateDir))
+                        {
+                            Directory.Delete(templateDir, true);
+                        }
+                    }
+                    catch { /* Ignore file system errors */ }
+
+                    db.DeleteTemplate(templateId);
+                    TempData["SuccessMessage"] = "Template deleted successfully.";
+                }
+            }
+            return RedirectToAction("ManageTemplates");
+        }
+
+        [HttpPost]
+        public ActionResult ToggleTemplateStatus(int templateId)
+        {
+            if (Session["UserRole"] != null && Session["UserRole"].ToString() == "Admin")
+            {
+                PortifyDbContext db = new PortifyDbContext();
+                var template = db.GetTemplateById(templateId);
+                if (template != null)
+                {
+                    template.IsActive = !template.IsActive;
+                    db.UpdateTemplate(template);
+                }
+            }
+            return RedirectToAction("ManageTemplates");
         }
 
         // GET: Dashboard/Index (User Dashboard)
@@ -111,7 +168,41 @@ namespace Portify.Controllers
                 return RedirectToAction("Admin");
             }
 
-            return View("~/Views/User/UserDashboard.cshtml");
+            int userId = (int)Session["UserId"];
+            PortifyDbContext db = new PortifyDbContext();
+            var portfolios = db.GetPortfoliosByUserId(userId);
+
+            // Build a dictionary of templateId -> templateName for display
+            var templates = db.GetAllTemplates();
+            var templateNames = new System.Collections.Generic.Dictionary<int, string>();
+            foreach (var t in templates)
+            {
+                templateNames[t.Id] = t.Name;
+            }
+            ViewBag.TemplateNames = templateNames;
+
+            return View("~/Views/User/UserDashboard.cshtml", portfolios);
+        }
+
+        [HttpPost]
+        public ActionResult DeletePortfolio(int portfolioId)
+        {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            int userId = (int)Session["UserId"];
+            PortifyDbContext db = new PortifyDbContext();
+            var portfolio = db.GetPortfolioById(portfolioId);
+
+            // Only allow deletion if the portfolio belongs to this user
+            if (portfolio != null && portfolio.UserId == userId)
+            {
+                db.DeletePortfolio(portfolioId);
+            }
+
+            return RedirectToAction("Index");
         }
 
         // GET: Dashboard/MyProfile

@@ -2,150 +2,413 @@
     Layout = null;
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="utf-8" />
-    <title>Live Editor - @ViewBag.TemplateName</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Editor — @ViewBag.TemplateName | Portify</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <script>
+        (function () {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            300: '#d8b4fe',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            900: '#581c87'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        body { margin: 0; display: flex; height: 100vh; overflow: hidden; font-family: sans-serif; }
-        .editor-sidebar { width: 450px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; z-index: 10; font-size: 0.9rem;}
-        .sidebar-header { padding: 15px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
-        .sidebar-content { flex: 1; overflow-y: auto; padding: 15px; }
-        .preview-area { flex: 1; display: flex; flex-direction: column; background: #f8f9fa; }
-        .iframe-container { flex: 1; padding: 20px; }
-        iframe { width: 100%; height: 100%; border: none; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 8px; }
-        .list-group-item { cursor: default; }
-        input, textarea { font-size: 0.9rem; }
-        h6 { font-weight: bold; margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
-        .btn-sm { font-size: 0.8rem; }
-        .add-form { border: 1px solid #e0e0e0; padding: 10px; margin-bottom: 12px; border-radius: 6px; background: #fafafa; }
+        body { margin: 0; display: flex; height: 100vh; overflow: hidden; }
+
+        /* --- Sidebar --- */
+        .editor-sidebar {
+            width: 440px;
+            min-width: 440px;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* --- Preview --- */
+        .preview-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Scrollbar --- */
+        .sidebar-content::-webkit-scrollbar { width: 6px; }
+        .sidebar-content::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-content::-webkit-scrollbar-thumb { background: #a855f7; border-radius: 10px; }
+
+        /* --- Accordion --- */
+        .section-toggle {
+            cursor: pointer;
+            user-select: none;
+        }
+        .section-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+        .section-body.open {
+            max-height: 2000px;
+        }
+        .section-chevron {
+            transition: transform 0.3s ease;
+        }
+        .section-chevron.open {
+            transform: rotate(180deg);
+        }
+
+        /* --- Input --- */
+        .field-input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.08);
+            background: rgba(255,255,255,0.5);
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+        .dark .field-input {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        .field-input:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 0 3px rgba(168,85,247,0.15);
+        }
+        .field-input::placeholder {
+            color: #9ca3af;
+        }
+        .dark .field-input::placeholder {
+            color: #6b7280;
+        }
+
+        textarea.field-input { resize: none; }
+
+        /* --- Added Item Chip --- */
+        .item-chip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-radius: 10px;
+            background: rgba(168,85,247,0.06);
+            border: 1px solid rgba(168,85,247,0.1);
+            margin-bottom: 6px;
+            transition: all 0.2s ease;
+        }
+        .dark .item-chip {
+            background: rgba(168,85,247,0.08);
+            border-color: rgba(168,85,247,0.15);
+        }
+        .item-chip:hover {
+            background: rgba(168,85,247,0.12);
+        }
+        .item-chip .remove-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            color: #9ca3af;
+            transition: all 0.2s ease;
+            border: none;
+            background: transparent;
+            flex-shrink: 0;
+        }
+        .item-chip .remove-btn:hover {
+            color: #ef4444;
+            background: rgba(239,68,68,0.1);
+        }
+
+        /* --- Add Form --- */
+        .add-form {
+            border: 1px dashed rgba(168,85,247,0.2);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
+            background: rgba(168,85,247,0.02);
+        }
+        .dark .add-form {
+            background: rgba(168,85,247,0.04);
+            border-color: rgba(168,85,247,0.15);
+        }
+
+        /* --- Status Badge --- */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .status-dot.live { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.5); }
+        .status-dot.updating { background: #eab308; box-shadow: 0 0 8px rgba(234,179,8,0.5); }
+        .status-dot.error { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.5); }
     </style>
 </head>
-<body>
-    <div class="editor-sidebar shadow-sm">
-        <div class="sidebar-header">
-            <h5 class="m-0">Portfolio Builder</h5>
-            <div>
-                <a href="@Url.Action("Explore", "Dashboard")" class="btn btn-outline-secondary btn-sm">Cancel</a>
-                <button type="button" class="btn btn-primary btn-sm ms-2" onclick="savePortfolio()">Save Portfolio</button>
+
+<body class="bg-gray-50 dark:bg-[#0a0a0a] text-gray-900 dark:text-white font-sans">
+
+    <!-- ===== SIDEBAR ===== -->
+    <div class="editor-sidebar bg-white dark:bg-[#111] border-r border-gray-200 dark:border-white/5 shadow-xl">
+
+        <!-- Header -->
+        <div class="px-5 py-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="@Url.Action("Explore", "Dashboard")" class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" title="Back to Explore">
+                    <i data-lucide="arrow-left" class="w-4 h-4 text-gray-400"></i>
+                </a>
+                <div>
+                    <h1 class="text-sm font-bold text-gray-900 dark:text-white">Portfolio Builder</h1>
+                    <p class="text-[11px] text-gray-400 dark:text-gray-500">@ViewBag.TemplateName</p>
+                </div>
             </div>
+            <button type="button" onclick="savePortfolio()" id="saveBtn"
+                    class="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider
+                           bg-gradient-to-r from-brand-600 to-brand-500 text-white
+                           hover:from-brand-500 hover:to-brand-600 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]
+                           transition-all duration-200 shadow-md">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                Save
+            </button>
         </div>
-        
-        <div class="sidebar-content">
-            <div class="mb-3">
-                <label class="form-label fw-bold">Portfolio Title</label>
-                <input type="text" id="portfolioTitle" class="form-control" placeholder="My Awesome Portfolio" />
+
+        <!-- Scrollable Content -->
+        <div class="sidebar-content px-5 py-4 space-y-1">
+
+            <!-- Portfolio Title -->
+            <div class="mb-5">
+                <label class="block text-[11px] uppercase tracking-widest text-gray-400 dark:text-gray-500 font-semibold mb-2">Portfolio Title</label>
+                <input type="text" id="portfolioTitle" class="field-input" placeholder="My Awesome Portfolio" />
             </div>
 
-            <div class="accordion" id="builderAccordion">
-                
-                <!-- Personal Info -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBio">Personal Information</button></h2>
-                    <div id="collapseBio" class="accordion-collapse collapse show">
-                        <div class="accordion-body">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" class="form-control mb-2" id="fullName" oninput="debouncePreview()">
-                            <label class="form-label">Profession</label>
-                            <input type="text" class="form-control mb-2" id="profession" oninput="debouncePreview()">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control mb-2" id="email" oninput="debouncePreview()">
-                            <label class="form-label">Phone</label>
-                            <input type="tel" class="form-control mb-2" id="phone" oninput="debouncePreview()">
-                            <label class="form-label">Location</label>
-                            <input type="text" class="form-control mb-2" id="location" oninput="debouncePreview()">
-                            <label class="form-label">About Me</label>
-                            <textarea class="form-control mb-2" id="aboutMe" rows="3" oninput="debouncePreview()"></textarea>
-                            <label class="form-label">GitHub Username</label>
-                            <input type="text" class="form-control mb-2" id="github" oninput="debouncePreview()">
-                            <label class="form-label">LinkedIn URL</label>
-                            <input type="text" class="form-control" id="linkedin" oninput="debouncePreview()">
+            <!-- Section: Personal Information -->
+            <div class="mb-2">
+                <div class="section-toggle flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" onclick="toggleSection('bio')">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center">
+                            <i data-lucide="user" class="w-4 h-4 text-brand-600 dark:text-brand-400"></i>
+                        </div>
+                        <span class="text-sm font-semibold">Personal Information</span>
+                    </div>
+                    <i data-lucide="chevron-down" id="chevron-bio" class="section-chevron w-4 h-4 text-gray-400 open"></i>
+                </div>
+                <div class="section-body open pl-11 pr-1 pb-3 space-y-3" id="body-bio">
+                    <div>
+                        <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Full Name</label>
+                        <input type="text" class="field-input" id="fullName" placeholder="John Doe" oninput="debouncePreview()">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Profession</label>
+                        <input type="text" class="field-input" id="profession" placeholder="Full Stack Developer" oninput="debouncePreview()">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Email</label>
+                            <input type="email" class="field-input" id="email" placeholder="john@example.com" oninput="debouncePreview()">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Phone</label>
+                            <input type="tel" class="field-input" id="phone" placeholder="+91 9876543210" oninput="debouncePreview()">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Location</label>
+                        <input type="text" class="field-input" id="location" placeholder="Mumbai, India" oninput="debouncePreview()">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">About Me</label>
+                        <textarea class="field-input" id="aboutMe" rows="3" placeholder="A brief description about yourself..." oninput="debouncePreview()"></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">GitHub</label>
+                            <input type="text" class="field-input" id="github" placeholder="username" oninput="debouncePreview()">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">LinkedIn</label>
+                            <input type="text" class="field-input" id="linkedin" placeholder="linkedin.com/in/..." oninput="debouncePreview()">
                         </div>
                     </div>
                 </div>
-
-                <!-- Skills -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSkills">Skills</button></h2>
-                    <div id="collapseSkills" class="accordion-collapse collapse">
-                        <div class="accordion-body">
-                            <div class="input-group mb-2">
-                                <input type="text" id="newSkillName" class="form-control" placeholder="e.g. C#">
-                                <input type="text" id="newSkillLevel" class="form-control" placeholder="Level (Beginner/Expert)" style="max-width:140px;">
-                                <button class="btn btn-outline-success" type="button" onclick="addSkill()">Add</button>
-                            </div>
-                            <ul class="list-group" id="skillsList"></ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Projects -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProjects">Projects</button></h2>
-                    <div id="collapseProjects" class="accordion-collapse collapse">
-                        <div class="accordion-body">
-                            <div class="add-form">
-                                <input type="text" id="projTitle" class="form-control mb-2" placeholder="Project Title">
-                                <textarea id="projDesc" class="form-control mb-2" rows="2" placeholder="Description"></textarea>
-                                <input type="text" id="projTech" class="form-control mb-2" placeholder="Tech Stack (e.g. .NET, React)">
-                                <input type="text" id="projGitHub" class="form-control mb-2" placeholder="GitHub Link">
-                                <input type="text" id="projLive" class="form-control mb-2" placeholder="Live Demo Link">
-                                <button class="btn btn-sm btn-success w-100" type="button" onclick="addProject()">Add Project</button>
-                            </div>
-                            <ul class="list-group" id="projectsList"></ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Experience -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExp">Experience</button></h2>
-                    <div id="collapseExp" class="accordion-collapse collapse">
-                        <div class="accordion-body">
-                            <div class="add-form">
-                                <input type="text" id="expCompany" class="form-control mb-2" placeholder="Company Name">
-                                <input type="text" id="expRole" class="form-control mb-2" placeholder="Role / Position">
-                                <div class="row mb-2">
-                                    <div class="col"><label class="form-label small">Start Date</label><input type="date" id="expStart" class="form-control"></div>
-                                    <div class="col"><label class="form-label small">End Date</label><input type="date" id="expEnd" class="form-control"></div>
-                                </div>
-                                <textarea id="expDesc" class="form-control mb-2" rows="2" placeholder="Description"></textarea>
-                                <button class="btn btn-sm btn-success w-100" type="button" onclick="addExperience()">Add Experience</button>
-                            </div>
-                            <ul class="list-group" id="expList"></ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Education -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEdu">Education</button></h2>
-                    <div id="collapseEdu" class="accordion-collapse collapse">
-                        <div class="accordion-body">
-                            <div class="add-form">
-                                <input type="text" id="eduDegree" class="form-control mb-2" placeholder="Degree (e.g. B.Sc Computer Science)">
-                                <input type="text" id="eduInstitution" class="form-control mb-2" placeholder="Institution Name">
-                                <input type="text" id="eduYear" class="form-control mb-2" placeholder="Year (e.g. 2020 - 2024)">
-                                <button class="btn btn-sm btn-success w-100" type="button" onclick="addEducation()">Add Education</button>
-                            </div>
-                            <ul class="list-group" id="eduList"></ul>
-                        </div>
-                    </div>
-                </div>
-
             </div>
+
+            <!-- Section: Skills -->
+            <div class="mb-2">
+                <div class="section-toggle flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" onclick="toggleSection('skills')">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                            <i data-lucide="zap" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
+                        </div>
+                        <span class="text-sm font-semibold">Skills</span>
+                        <span class="text-[11px] text-gray-400 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full" id="skillsCount">0</span>
+                    </div>
+                    <i data-lucide="chevron-down" id="chevron-skills" class="section-chevron w-4 h-4 text-gray-400"></i>
+                </div>
+                <div class="section-body pl-11 pr-1 pb-3" id="body-skills">
+                    <div class="flex gap-2 mb-3">
+                        <input type="text" id="newSkillName" class="field-input" placeholder="e.g. C#, React">
+                        <input type="text" id="newSkillLevel" class="field-input" placeholder="Level" style="max-width:110px;">
+                        <button type="button" onclick="addSkill()" class="p-2.5 rounded-xl bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors flex-shrink-0">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div id="skillsList"></div>
+                </div>
+            </div>
+
+            <!-- Section: Projects -->
+            <div class="mb-2">
+                <div class="section-toggle flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" onclick="toggleSection('projects')">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center">
+                            <i data-lucide="briefcase" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+                        </div>
+                        <span class="text-sm font-semibold">Projects</span>
+                        <span class="text-[11px] text-gray-400 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full" id="projectsCount">0</span>
+                    </div>
+                    <i data-lucide="chevron-down" id="chevron-projects" class="section-chevron w-4 h-4 text-gray-400"></i>
+                </div>
+                <div class="section-body pl-11 pr-1 pb-3" id="body-projects">
+                    <div class="add-form space-y-2">
+                        <input type="text" id="projTitle" class="field-input" placeholder="Project Title">
+                        <textarea id="projDesc" class="field-input" rows="2" placeholder="Description"></textarea>
+                        <input type="text" id="projTech" class="field-input" placeholder="Tech Stack (e.g. .NET, React)">
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="projGitHub" class="field-input" placeholder="GitHub Link">
+                            <input type="text" id="projLive" class="field-input" placeholder="Live Demo Link">
+                        </div>
+                        <button type="button" onclick="addProject()" class="w-full py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors">
+                            Add Project
+                        </button>
+                    </div>
+                    <div id="projectsList" class="mt-2"></div>
+                </div>
+            </div>
+
+            <!-- Section: Experience -->
+            <div class="mb-2">
+                <div class="section-toggle flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" onclick="toggleSection('exp')">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center">
+                            <i data-lucide="building-2" class="w-4 h-4 text-orange-600 dark:text-orange-400"></i>
+                        </div>
+                        <span class="text-sm font-semibold">Experience</span>
+                        <span class="text-[11px] text-gray-400 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full" id="expCount">0</span>
+                    </div>
+                    <i data-lucide="chevron-down" id="chevron-exp" class="section-chevron w-4 h-4 text-gray-400"></i>
+                </div>
+                <div class="section-body pl-11 pr-1 pb-3" id="body-exp">
+                    <div class="add-form space-y-2">
+                        <input type="text" id="expCompany" class="field-input" placeholder="Company Name">
+                        <input type="text" id="expRole" class="field-input" placeholder="Role / Position">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] text-gray-400 mb-1 uppercase">Start Date</label>
+                                <input type="date" id="expStart" class="field-input">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-gray-400 mb-1 uppercase">End Date</label>
+                                <input type="date" id="expEnd" class="field-input">
+                            </div>
+                        </div>
+                        <textarea id="expDesc" class="field-input" rows="2" placeholder="Description"></textarea>
+                        <button type="button" onclick="addExperience()" class="w-full py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-orange-500/10 text-orange-600 hover:bg-orange-500/20 transition-colors">
+                            Add Experience
+                        </button>
+                    </div>
+                    <div id="expList" class="mt-2"></div>
+                </div>
+            </div>
+
+            <!-- Section: Education -->
+            <div class="mb-2">
+                <div class="section-toggle flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" onclick="toggleSection('edu')">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-violet-50 dark:bg-violet-900/20 flex items-center justify-center">
+                            <i data-lucide="graduation-cap" class="w-4 h-4 text-violet-600 dark:text-violet-400"></i>
+                        </div>
+                        <span class="text-sm font-semibold">Education</span>
+                        <span class="text-[11px] text-gray-400 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full" id="eduCount">0</span>
+                    </div>
+                    <i data-lucide="chevron-down" id="chevron-edu" class="section-chevron w-4 h-4 text-gray-400"></i>
+                </div>
+                <div class="section-body pl-11 pr-1 pb-3" id="body-edu">
+                    <div class="add-form space-y-2">
+                        <input type="text" id="eduDegree" class="field-input" placeholder="Degree (e.g. B.Sc Computer Science)">
+                        <input type="text" id="eduInstitution" class="field-input" placeholder="Institution Name">
+                        <input type="text" id="eduYear" class="field-input" placeholder="Year (e.g. 2020 - 2024)">
+                        <button type="button" onclick="addEducation()" class="w-full py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-violet-500/10 text-violet-600 hover:bg-violet-500/20 transition-colors">
+                            Add Education
+                        </button>
+                    </div>
+                    <div id="eduList" class="mt-2"></div>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <div class="preview-area">
-        <div class="p-2 border-bottom bg-white d-flex justify-content-between align-items-center">
-            <span class="text-muted small fw-bold">Live Preview: @ViewBag.TemplateName</span>
-            <span id="previewStatus" class="badge bg-success">Ready</span>
+    <!-- ===== PREVIEW ===== -->
+    <div class="preview-area bg-gray-100 dark:bg-[#050505]">
+        <!-- Preview Header -->
+        <div class="px-5 py-3 bg-white dark:bg-[#111] border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="status-dot live" id="statusDot"></span>
+                <span class="text-xs font-semibold text-gray-500 dark:text-gray-400" id="statusText">Live Preview</span>
+            </div>
+            <span class="text-[11px] text-gray-400 dark:text-gray-500">@ViewBag.TemplateName</span>
         </div>
-        <div class="iframe-container">
-            <iframe id="previewFrame" src="about:blank"></iframe>
+        <!-- Preview iframe -->
+        <div class="flex-1 p-5">
+            <iframe id="previewFrame" src="about:blank"
+                    class="w-full h-full border-0 bg-white rounded-2xl shadow-2xl"></iframe>
         </div>
     </div>
 
@@ -157,19 +420,26 @@
     </form>
 
     <script>
-        // State object matching PortfolioData C# model
+        // ==== State ====
         const state = {
             FullName: '', Profession: '', Email: '', Phone: '', Location: '',
             AboutMe: '', GitHub: '', LinkedIn: '',
-            Skills: [],
-            Projects: [],
-            Experience: [],
-            Education: []
+            Skills: [], Projects: [], Experience: [], Education: []
         };
         const templateId = @ViewBag.TemplateId;
         let previewTimer = null;
 
-        // --- Read inputs into state ---
+        function el(id) { return document.getElementById(id); }
+
+        // ==== Section Toggle ====
+        function toggleSection(name) {
+            var body = el('body-' + name);
+            var chevron = el('chevron-' + name);
+            body.classList.toggle('open');
+            chevron.classList.toggle('open');
+        }
+
+        // ==== Sync State ====
         function syncState() {
             state.FullName = el('fullName').value;
             state.Profession = el('profession').value;
@@ -180,19 +450,22 @@
             state.GitHub = el('github').value;
             state.LinkedIn = el('linkedin').value;
         }
-        function el(id) { return document.getElementById(id); }
 
-        // --- Skills ---
+        // ==== Skills ====
         function addSkill() {
-            const name = el('newSkillName').value.trim();
-            const level = el('newSkillLevel').value.trim();
-            if (name) { state.Skills.push({ SkillName: name, SkillLevel: level }); el('newSkillName').value = ''; el('newSkillLevel').value = ''; renderLists(); debouncePreview(); }
+            var name = el('newSkillName').value.trim();
+            var level = el('newSkillLevel').value.trim();
+            if (name) {
+                state.Skills.push({ SkillName: name, SkillLevel: level });
+                el('newSkillName').value = ''; el('newSkillLevel').value = '';
+                renderLists(); debouncePreview();
+            }
         }
         function removeSkill(i) { state.Skills.splice(i, 1); renderLists(); debouncePreview(); }
 
-        // --- Projects ---
+        // ==== Projects ====
         function addProject() {
-            const t = el('projTitle').value;
+            var t = el('projTitle').value;
             if (t) {
                 state.Projects.push({ ProjectTitle: t, Description: el('projDesc').value, TechStack: el('projTech').value, GitHubLink: el('projGitHub').value, LiveLink: el('projLive').value });
                 el('projTitle').value = ''; el('projDesc').value = ''; el('projTech').value = ''; el('projGitHub').value = ''; el('projLive').value = '';
@@ -201,9 +474,9 @@
         }
         function removeProject(i) { state.Projects.splice(i, 1); renderLists(); debouncePreview(); }
 
-        // --- Experience ---
+        // ==== Experience ====
         function addExperience() {
-            const c = el('expCompany').value;
+            var c = el('expCompany').value;
             if (c) {
                 state.Experience.push({ CompanyName: c, Role: el('expRole').value, StartDate: el('expStart').value, EndDate: el('expEnd').value, Description: el('expDesc').value });
                 el('expCompany').value = ''; el('expRole').value = ''; el('expStart').value = ''; el('expEnd').value = ''; el('expDesc').value = '';
@@ -212,9 +485,9 @@
         }
         function removeExperience(i) { state.Experience.splice(i, 1); renderLists(); debouncePreview(); }
 
-        // --- Education ---
+        // ==== Education ====
         function addEducation() {
-            const d = el('eduDegree').value;
+            var d = el('eduDegree').value;
             if (d) {
                 state.Education.push({ Degree: d, Institution: el('eduInstitution').value, Year: el('eduYear').value });
                 el('eduDegree').value = ''; el('eduInstitution').value = ''; el('eduYear').value = '';
@@ -223,56 +496,87 @@
         }
         function removeEducation(i) { state.Education.splice(i, 1); renderLists(); debouncePreview(); }
 
-        // --- Render dynamic lists ---
+        // ==== Render Lists ====
         function renderLists() {
-            el('skillsList').innerHTML = state.Skills.map((s, i) =>
-                `<li class="list-group-item d-flex justify-content-between py-1 px-2"><span>${s.SkillName} ${s.SkillLevel ? '<small class="text-muted">(' + s.SkillLevel + ')</small>' : ''}</span><button class="btn btn-sm btn-danger py-0 px-1" onclick="removeSkill(${i})">&times;</button></li>`).join('');
+            // Skills
+            el('skillsList').innerHTML = state.Skills.map(function(s, i) {
+                return '<div class="item-chip"><div><span class="text-xs font-semibold text-gray-800 dark:text-gray-200">' + s.SkillName + '</span>' +
+                    (s.SkillLevel ? ' <span class="text-[10px] text-gray-400">· ' + s.SkillLevel + '</span>' : '') +
+                    '</div><button class="remove-btn" onclick="removeSkill(' + i + ')">×</button></div>';
+            }).join('');
+            el('skillsCount').textContent = state.Skills.length;
 
-            el('projectsList').innerHTML = state.Projects.map((p, i) =>
-                `<li class="list-group-item d-flex justify-content-between p-2"><div><strong>${p.ProjectTitle}</strong><br><small class="text-muted">${p.TechStack || ''}</small></div><button class="btn btn-sm btn-danger py-0 px-1" onclick="removeProject(${i})">&times;</button></li>`).join('');
+            // Projects
+            el('projectsList').innerHTML = state.Projects.map(function(p, i) {
+                return '<div class="item-chip"><div><span class="text-xs font-semibold text-gray-800 dark:text-gray-200">' + p.ProjectTitle + '</span>' +
+                    (p.TechStack ? '<br><span class="text-[10px] text-gray-400">' + p.TechStack + '</span>' : '') +
+                    '</div><button class="remove-btn" onclick="removeProject(' + i + ')">×</button></div>';
+            }).join('');
+            el('projectsCount').textContent = state.Projects.length;
 
-            el('expList').innerHTML = state.Experience.map((e, i) =>
-                `<li class="list-group-item d-flex justify-content-between p-2"><div><strong>${e.Role}</strong> at ${e.CompanyName}<br><small class="text-muted">${e.StartDate} - ${e.EndDate}</small></div><button class="btn btn-sm btn-danger py-0 px-1" onclick="removeExperience(${i})">&times;</button></li>`).join('');
+            // Experience
+            el('expList').innerHTML = state.Experience.map(function(e, i) {
+                return '<div class="item-chip"><div><span class="text-xs font-semibold text-gray-800 dark:text-gray-200">' + e.Role + '</span>' +
+                    ' <span class="text-[10px] text-gray-400">at ' + e.CompanyName + '</span>' +
+                    '<br><span class="text-[10px] text-gray-400">' + (e.StartDate || '') + ' — ' + (e.EndDate || 'Present') + '</span>' +
+                    '</div><button class="remove-btn" onclick="removeExperience(' + i + ')">×</button></div>';
+            }).join('');
+            el('expCount').textContent = state.Experience.length;
 
-            el('eduList').innerHTML = state.Education.map((e, i) =>
-                `<li class="list-group-item d-flex justify-content-between p-2"><div><strong>${e.Degree}</strong><br><small class="text-muted">${e.Institution} · ${e.Year}</small></div><button class="btn btn-sm btn-danger py-0 px-1" onclick="removeEducation(${i})">&times;</button></li>`).join('');
+            // Education
+            el('eduList').innerHTML = state.Education.map(function(e, i) {
+                return '<div class="item-chip"><div><span class="text-xs font-semibold text-gray-800 dark:text-gray-200">' + e.Degree + '</span>' +
+                    '<br><span class="text-[10px] text-gray-400">' + (e.Institution || '') + ' · ' + (e.Year || '') + '</span>' +
+                    '</div><button class="remove-btn" onclick="removeEducation(' + i + ')">×</button></div>';
+            }).join('');
+            el('eduCount').textContent = state.Education.length;
+
+            // Re-initialize icons for newly added elements
+            lucide.createIcons();
         }
 
-        // --- Preview ---
+        // ==== Preview ====
         function debouncePreview() {
             syncState();
-            el('previewStatus').className = "badge bg-warning text-dark";
-            el('previewStatus').innerText = "Updating...";
+            el('statusDot').className = 'status-dot updating';
+            el('statusText').textContent = 'Updating...';
             clearTimeout(previewTimer);
             previewTimer = setTimeout(fetchPreview, 500);
         }
 
         async function fetchPreview() {
             try {
-                const fd = new FormData();
+                var fd = new FormData();
                 fd.append('templateId', templateId);
                 fd.append('jsonData', JSON.stringify(state));
-                const resp = await fetch('@Url.Action("Preview", "Portfolio")', { method: 'POST', body: fd });
-                const html = await resp.text();
+                var resp = await fetch('@Url.Action("Preview", "Portfolio")', { method: 'POST', body: fd });
+                var html = await resp.text();
                 el('previewFrame').srcdoc = html;
-                el('previewStatus').className = "badge bg-success";
-                el('previewStatus').innerText = "Live";
+                el('statusDot').className = 'status-dot live';
+                el('statusText').textContent = 'Live Preview';
             } catch (e) {
-                el('previewStatus').className = "badge bg-danger";
-                el('previewStatus').innerText = "Error";
+                el('statusDot').className = 'status-dot error';
+                el('statusText').textContent = 'Preview Error';
             }
         }
 
-        // --- Save ---
+        // ==== Save ====
         function savePortfolio() {
             syncState();
-            const title = el('portfolioTitle').value || "My Portfolio";
+            var title = el('portfolioTitle').value || 'My Portfolio';
             el('hiddenTitle').value = title;
             el('hiddenData').value = JSON.stringify(state);
+
+            // Disable button and show saving state
+            var btn = el('saveBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="opacity-25"></circle><path d="M4 12a8 8 0 018-8" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="opacity-75"></path></svg> Saving...';
+
             el('saveForm').submit();
         }
 
-        // Init
+        // ==== Init ====
+        lucide.createIcons();
         fetchPreview();
     </script>
 </body>

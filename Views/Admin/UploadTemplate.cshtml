@@ -1,44 +1,287 @@
 @model Portify.Models.Template
 @{
-    ViewBag.Title = "Upload Template";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null;
 }
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Template | Portify Admin</title>
 
-<div class="container mt-5">
-    <h2>Upload New Template</h2>
-    
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success mt-3">@TempData["SuccessMessage"]</div>
-    }
-    
-    @if (ViewBag.ErrorMessage != null)
-    {
-        <div class="alert alert-danger mt-3">@ViewBag.ErrorMessage</div>
-    }
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-    <div class="card mt-4 p-4 shadow-sm border-0" style="max-width: 600px;">
-        @using (Html.BeginForm("UploadTemplate", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
-        {
-            @Html.AntiForgeryToken()
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
-            <div class="form-group mb-3">
-                <label for="Name" class="form-label fw-bold">Template Name</label>
-                @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @required = "required" })
-            </div>
-
-            <div class="form-group mb-3">
-                <label for="Description" class="form-label fw-bold">Description</label>
-                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 3 })
-            </div>
-
-            <div class="form-group mb-4">
-                <label for="TemplateFile" class="form-label fw-bold">Template File (.zip or .html)</label>
-                <input type="file" name="TemplateFile" id="TemplateFile" class="form-control text-dark" accept=".zip,.html" required />
-                <small class="form-text text-muted">Upload a .zip file containing the template files or a single .html file.</small>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">Upload</button>
+    <script>
+        (function () {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            300: '#d8b4fe',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            900: '#581c87'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
         }
+    </script>
+
+    <style>
+        .noise-bg {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .glass {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #a855f7; border-radius: 10px; }
+
+        /* File drop zone */
+        .file-drop-zone {
+            transition: all 0.3s ease;
+        }
+        .file-drop-zone.dragover {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.05);
+        }
+
+        /* Toast */
+        .toast {
+            animation: toastIn 0.5s ease forwards, toastOut 0.4s ease 3s forwards;
+        }
+        @@keyframes toastIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @@keyframes toastOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+    </style>
+</head>
+
+<body class="bg-white dark:bg-[#050505] text-gray-900 dark:text-white transition-colors duration-500 selection:bg-brand-500 selection:text-white min-h-screen flex flex-col">
+
+    <!-- Background Ambient Effects -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute top-[20%] left-[20%] w-[40%] h-[40%] bg-brand-500/10 rounded-full blur-[120px] animate-pulse-slow"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px] animate-pulse-slow" style="animation-delay: 1s;"></div>
+        <div class="absolute inset-0 noise-bg opacity-30 dark:opacity-20"></div>
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
     </div>
-</div>
+
+    <div class="relative z-10 flex-grow flex flex-col">
+        @Html.Partial("~/Views/Shared/_AdminNavbar.cshtml")
+
+        <main class="flex-grow flex items-center justify-center p-6">
+            <div class="max-w-xl w-full">
+
+                <!-- Success Toast -->
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="toast fixed top-28 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl glass shadow-2xl border border-green-500/20">
+                        <div class="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i>
+                        </div>
+                        <span class="text-sm font-medium text-green-600 dark:text-green-400">@TempData["SuccessMessage"]</span>
+                    </div>
+                }
+
+                <!-- Error Toast -->
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="toast fixed top-28 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl glass shadow-2xl border border-red-500/20">
+                        <div class="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center">
+                            <i data-lucide="alert-circle" class="w-4 h-4 text-red-500"></i>
+                        </div>
+                        <span class="text-sm font-medium text-red-600 dark:text-red-400">@ViewBag.ErrorMessage</span>
+                    </div>
+                }
+
+                <!-- Back link -->
+                <a href="@Url.Action("ManageTemplates", "Dashboard")"
+                   class="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors mb-6 group">
+                    <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
+                    Back to Manage Templates
+                </a>
+
+                <!-- Upload Card -->
+                <div class="glass rounded-3xl p-10 shadow-2xl relative overflow-hidden">
+
+                    <!-- Decorative Gradient Top -->
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-brand-500 to-transparent opacity-50"></div>
+
+                    <!-- Icon -->
+                    <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/20 dark:to-brand-800/20 flex items-center justify-center">
+                        <i data-lucide="upload-cloud" class="w-8 h-8 text-brand-600 dark:text-brand-400"></i>
+                    </div>
+
+                    <h2 class="text-xs uppercase tracking-[0.4em] text-brand-500 font-bold mb-2 text-center">New Template</h2>
+                    <h1 class="text-3xl md:text-4xl font-serif italic text-gray-900 dark:text-white mb-8 text-center">Upload Template</h1>
+
+                    @using (Html.BeginForm("UploadTemplate", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <!-- Template Name -->
+                        <div class="mb-5">
+                            <label for="Name" class="block text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 font-semibold mb-2">
+                                Template Name
+                            </label>
+                            @Html.TextBoxFor(m => m.Name, new {
+                                @class = "w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border border-gray-200/50 dark:border-white/10 text-gray-900 dark:text-white text-sm font-medium placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all",
+                                @required = "required",
+                                placeholder = "e.g. Modern Dark Portfolio"
+                            })
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-5">
+                            <label for="Description" class="block text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 font-semibold mb-2">
+                                Description
+                            </label>
+                            @Html.TextAreaFor(m => m.Description, new {
+                                @class = "w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-white/5 border border-gray-200/50 dark:border-white/10 text-gray-900 dark:text-white text-sm font-medium placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all resize-none",
+                                rows = 3,
+                                placeholder = "Brief description of this template..."
+                            })
+                        </div>
+
+                        <!-- File Upload -->
+                        <div class="mb-8">
+                            <label class="block text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 font-semibold mb-2">
+                                Template File
+                            </label>
+                            <div id="fileDropZone" class="file-drop-zone relative rounded-xl border-2 border-dashed border-gray-200 dark:border-white/10 p-8 text-center cursor-pointer hover:border-brand-500/50 dark:hover:border-brand-500/50 transition-all">
+                                <input type="file" name="TemplateFile" id="TemplateFile"
+                                       accept=".zip,.html"
+                                       required
+                                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+
+                                <div id="fileUploadIcon">
+                                    <i data-lucide="file-up" class="w-10 h-10 mx-auto mb-3 text-gray-300 dark:text-gray-600"></i>
+                                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                                        Drag & drop or <span class="text-brand-500 font-bold">browse</span>
+                                    </p>
+                                    <p class="text-xs text-gray-400 dark:text-gray-500">
+                                        Supports <span class="font-semibold">.zip</span> or <span class="font-semibold">.html</span> files
+                                    </p>
+                                </div>
+                                <div id="fileSelectedInfo" class="hidden">
+                                    <i data-lucide="check-circle" class="w-10 h-10 mx-auto mb-3 text-green-500"></i>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white mb-1" id="selectedFileName"></p>
+                                    <p class="text-xs text-gray-400 dark:text-gray-500" id="selectedFileSize"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit -->
+                        <button type="submit" id="btn-submit-upload"
+                                class="w-full inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider
+                                       bg-gradient-to-r from-brand-600 to-brand-500 text-white
+                                       hover:from-brand-500 hover:to-brand-600 hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]
+                                       hover:-translate-y-0.5
+                                       transition-all duration-300 shadow-lg">
+                            <i data-lucide="upload" class="w-4 h-4"></i>
+                            Upload Template
+                        </button>
+                    }
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // File input UX
+        var fileInput = document.getElementById('TemplateFile');
+        var dropZone = document.getElementById('fileDropZone');
+        var iconSection = document.getElementById('fileUploadIcon');
+        var infoSection = document.getElementById('fileSelectedInfo');
+        var fileNameEl = document.getElementById('selectedFileName');
+        var fileSizeEl = document.getElementById('selectedFileSize');
+
+        fileInput.addEventListener('change', function () {
+            if (this.files.length > 0) {
+                var file = this.files[0];
+                fileNameEl.textContent = file.name;
+                var sizeKb = (file.size / 1024).toFixed(1);
+                fileSizeEl.textContent = sizeKb > 1024 ? (sizeKb / 1024).toFixed(1) + ' MB' : sizeKb + ' KB';
+                iconSection.classList.add('hidden');
+                infoSection.classList.remove('hidden');
+                dropZone.classList.add('border-green-500/50', 'dark:border-green-500/30');
+                dropZone.classList.remove('border-gray-200', 'dark:border-white/10');
+            }
+        });
+
+        // Drag and drop visual feedback
+        ['dragenter', 'dragover'].forEach(function (evtName) {
+            dropZone.addEventListener(evtName, function (e) {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+        });
+        ['dragleave', 'drop'].forEach(function (evtName) {
+            dropZone.addEventListener(evtName, function (e) {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+            });
+        });
+
+        // Auto-hide toast
+        var toast = document.querySelector('.toast');
+        if (toast) {
+            setTimeout(function () { toast.remove(); }, 4000);
+        }
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>

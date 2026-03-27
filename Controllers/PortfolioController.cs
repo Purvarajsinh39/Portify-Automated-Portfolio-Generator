@@ -24,6 +24,7 @@ namespace Portify.Controllers
             var template = db.GetTemplateById(templateId);
             if (template == null || !template.IsActive)
             {
+                TempData["ErrorMessage"] = "This template is no longer available.";
                 return RedirectToAction("Explore", "Dashboard");
             }
 
@@ -139,36 +140,9 @@ namespace Portify.Controllers
                 }
             }
 
-            // 8. Generate ZIP file with the rendered HTML and download it
-            var template = db.GetTemplateById(templateId);
-            if (template == null) return HttpNotFound("Template not found.");
-
-            string templatePath = Server.MapPath(template.FilePath);
-            if (!System.IO.File.Exists(templatePath))
-            {
-                return HttpNotFound("Template file missing from disk.");
-            }
-
-            string html = System.IO.File.ReadAllText(templatePath);
-            html = RenderTemplate(html, data);
-
-            string safeName = (portfolioTitle ?? "Portfolio").Replace(" ", "_");
-
-            using (var memoryStream = new MemoryStream())
-            {
-                using (var archive = new System.IO.Compression.ZipArchive(memoryStream, System.IO.Compression.ZipArchiveMode.Create, true))
-                {
-                    var entry = archive.CreateEntry("index.html");
-                    using (var entryStream = entry.Open())
-                    {
-                        byte[] htmlBytes = Encoding.UTF8.GetBytes(html);
-                        entryStream.Write(htmlBytes, 0, htmlBytes.Length);
-                    }
-                }
-
-                memoryStream.Position = 0;
-                return File(memoryStream.ToArray(), "application/zip", safeName + ".zip");
-            }
+            // 8. Redirect to Dashboard with success message
+            TempData["SuccessMessage"] = "Portfolio \"" + (portfolioTitle ?? "My Portfolio") + "\" saved successfully!";
+            return RedirectToAction("Index", "Dashboard");
         }
 
         // POST: Portfolio/Preview — live preview via AJAX
