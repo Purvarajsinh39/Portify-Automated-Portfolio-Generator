@@ -607,5 +607,125 @@ namespace Portify.Models
             }
             return list;
         }
+
+        // --- OTP Verification Methods ---
+
+        public void SaveOtp(string email, string code, string purpose)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                // Expire any existing un-used OTPs for this user and purpose
+                string expireQuery = "UPDATE Otps SET IsUsed = 1 WHERE Email = @Email AND Purpose = @Purpose AND IsUsed = 0";
+                SqlCommand expireCmd = new SqlCommand(expireQuery, conn);
+                expireCmd.Parameters.AddWithValue("@Email", email);
+                expireCmd.Parameters.AddWithValue("@Purpose", purpose);
+                
+                string insertQuery = "INSERT INTO Otps (Email, Code, Purpose, ExpiresAt, IsUsed) VALUES (@Email, @Code, @Purpose, @ExpiresAt, 0)";
+                SqlCommand insertCmd = new SqlCommand(insertQuery, conn);
+                insertCmd.Parameters.AddWithValue("@Email", email);
+                insertCmd.Parameters.AddWithValue("@Code", code);
+                insertCmd.Parameters.AddWithValue("@Purpose", purpose);
+                insertCmd.Parameters.AddWithValue("@ExpiresAt", DateTime.Now.AddMinutes(5));
+
+                conn.Open();
+                expireCmd.ExecuteNonQuery();
+                insertCmd.ExecuteNonQuery();
+            }
+        }
+
+        public bool VerifyOtp(string email, string code, string purpose)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT TOP 1 * FROM Otps WHERE Email = @Email AND Purpose = @Purpose AND IsUsed = 0 AND ExpiresAt > GETDATE() ORDER BY CreatedAt DESC";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Email", email);
+                cmd.Parameters.AddWithValue("@Purpose", purpose);
+                
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        var dbCode = reader["Code"].ToString();
+                        var id = (int)reader["Id"];
+                        if (dbCode == code)
+                        {
+                            reader.Close();
+                            // Mark as used
+                            string updateQuery = "UPDATE Otps SET IsUsed = 1 WHERE Id = @Id";
+                            SqlCommand updateCmd = new SqlCommand(updateQuery, conn);
+                            updateCmd.Parameters.AddWithValue("@Id", id);
+                            updateCmd.ExecuteNonQuery();
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        // --- Pending Registrations Methods ---
+
+        public void AddPendingRegistration(string fullName, string email, string passwordHash)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "INSERT INTO PendingRegistrations (FullName, Email, PasswordHash, CreatedAt) VALUES (@FullName, @Email, @PasswordHash, GETDATE())";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@FullName", fullName);
+                cmd.Parameters.AddWithValue("@Email", email);
+                cmd.Parameters.AddWithValue("@PasswordHash", passwordHash);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public PendingRegistration GetLatestPendingRegistration(string email)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT TOP 1 * FROM PendingRegistrations WHERE Email = @Email ORDER BY CreatedAt DESC";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Email", email);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return new PendingRegistration
+                        {
+                            Id = (int)reader["Id"],
+                            FullName = reader["FullName"].ToString(),
+                            Email = reader["Email"].ToString(),
+                            PasswordHash = reader["PasswordHash"].ToString(),
+                            CreatedAt = (DateTime)reader["CreatedAt"]
+                        };
+                    }
+                }
+            }
+            return null;
+        }
+
+        public void DeletePendingRegistration(int id)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "DELETE FROM PendingRegistrations WHERE Id = @Id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+    }
+
+    public class PendingRegistration
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string PasswordHash { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }
