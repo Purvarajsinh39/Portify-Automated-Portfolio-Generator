@@ -90,6 +90,7 @@
         }
         .section-body.open {
             max-height: 2000px;
+            overflow: visible;
         }
         .section-chevron {
             transition: transform 0.3s ease;
@@ -97,6 +98,17 @@
         .section-chevron.open {
             transform: rotate(180deg);
         }
+
+        /* --- Header Fixes --- */
+        .sidebar-header, .preview-header {
+            position: relative;
+            z-index: 20;
+            background: white;
+        }
+        .dark .sidebar-header, .dark .preview-header {
+            background: #111;
+        }
+
 
         /* --- Input --- */
         .field-input {
@@ -194,12 +206,13 @@
 </head>
 
 <body class="bg-gray-50 dark:bg-[#0a0a0a] text-gray-900 dark:text-white font-sans">
+    @Html.Partial("~/Views/Shared/_PageTransitions.cshtml")
 
     <!-- ===== SIDEBAR ===== -->
     <div class="editor-sidebar bg-white dark:bg-[#111] border-r border-gray-200 dark:border-white/5 shadow-xl">
 
         <!-- Header -->
-        <div class="px-5 py-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
+        <div class="sidebar-header px-5 py-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <a href="@Url.Action("Explore", "Dashboard")" class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" title="Back to Explore">
                     <i data-lucide="arrow-left" class="w-4 h-4 text-gray-400"></i>
@@ -239,44 +252,47 @@
                     </div>
                     <i data-lucide="chevron-down" id="chevron-bio" class="section-chevron w-4 h-4 text-gray-400 open"></i>
                 </div>
-                <div class="section-body open pl-11 pr-1 pb-3 space-y-3" id="body-bio">
-                    <div>
-                        <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Full Name</label>
-                        <input type="text" class="field-input" id="fullName" placeholder="John Doe" oninput="debouncePreview()">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Profession</label>
-                        <input type="text" class="field-input" id="profession" placeholder="Full Stack Developer" oninput="debouncePreview()">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
+                <div class="section-body open" id="body-bio">
+                    <div class="pl-11 pr-1 py-3 space-y-3">
                         <div>
-                            <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Email</label>
-                            <input type="email" class="field-input" id="email" placeholder="john@example.com" oninput="debouncePreview()">
+                            <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Full Name</label>
+                            <input type="text" class="field-input" id="fullName" placeholder="John Doe" oninput="debouncePreview()">
                         </div>
                         <div>
-                            <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Phone</label>
-                            <input type="tel" class="field-input" id="phone" placeholder="+91 9876543210" oninput="debouncePreview()">
+                            <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Profession</label>
+                            <input type="text" class="field-input" id="profession" placeholder="Full Stack Developer" oninput="debouncePreview()">
                         </div>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Location</label>
-                        <input type="text" class="field-input" id="location" placeholder="Mumbai, India" oninput="debouncePreview()">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">About Me</label>
-                        <textarea class="field-input" id="aboutMe" rows="3" placeholder="A brief description about yourself..." oninput="debouncePreview()"></textarea>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">GitHub</label>
-                            <input type="text" class="field-input" id="github" placeholder="username" oninput="debouncePreview()">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Email</label>
+                                <input type="email" class="field-input" id="email" placeholder="john@example.com" oninput="debouncePreview()">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Phone</label>
+                                <input type="tel" class="field-input" id="phone" placeholder="+91 9876543210" oninput="debouncePreview()">
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">LinkedIn</label>
-                            <input type="text" class="field-input" id="linkedin" placeholder="linkedin.com/in/..." oninput="debouncePreview()">
+                            <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">Location</label>
+                            <input type="text" class="field-input" id="location" placeholder="Mumbai, India" oninput="debouncePreview()">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">About Me</label>
+                            <textarea class="field-input" id="aboutMe" rows="3" placeholder="A brief description about yourself..." oninput="debouncePreview()"></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">GitHub</label>
+                                <input type="text" class="field-input" id="github" placeholder="username" oninput="debouncePreview()">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-1">LinkedIn</label>
+                                <input type="text" class="field-input" id="linkedin" placeholder="linkedin.com/in/..." oninput="debouncePreview()">
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- Section: Skills -->
@@ -291,16 +307,19 @@
                     </div>
                     <i data-lucide="chevron-down" id="chevron-skills" class="section-chevron w-4 h-4 text-gray-400"></i>
                 </div>
-                <div class="section-body pl-11 pr-1 pb-3" id="body-skills">
-                    <div class="flex gap-2 mb-3">
-                        <input type="text" id="newSkillName" class="field-input" placeholder="e.g. C#, React">
-                        <input type="text" id="newSkillLevel" class="field-input" placeholder="Level" style="max-width:110px;">
-                        <button type="button" onclick="addSkill()" class="p-2.5 rounded-xl bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors flex-shrink-0">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                        </button>
+                <div class="section-body" id="body-skills">
+                    <div class="pl-11 pr-1 py-3">
+                        <div class="flex gap-2 mb-3">
+                            <input type="text" id="newSkillName" class="field-input" placeholder="e.g. C#, React">
+                            <input type="text" id="newSkillLevel" class="field-input" placeholder="Level" style="max-width:110px;">
+                            <button type="button" onclick="addSkill()" class="p-2.5 rounded-xl bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors flex-shrink-0">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div id="skillsList"></div>
                     </div>
-                    <div id="skillsList"></div>
                 </div>
+
             </div>
 
             <!-- Section: Projects -->
@@ -315,21 +334,24 @@
                     </div>
                     <i data-lucide="chevron-down" id="chevron-projects" class="section-chevron w-4 h-4 text-gray-400"></i>
                 </div>
-                <div class="section-body pl-11 pr-1 pb-3" id="body-projects">
-                    <div class="add-form space-y-2">
-                        <input type="text" id="projTitle" class="field-input" placeholder="Project Title">
-                        <textarea id="projDesc" class="field-input" rows="2" placeholder="Description"></textarea>
-                        <input type="text" id="projTech" class="field-input" placeholder="Tech Stack (e.g. .NET, React)">
-                        <div class="grid grid-cols-2 gap-2">
-                            <input type="text" id="projGitHub" class="field-input" placeholder="GitHub Link">
-                            <input type="text" id="projLive" class="field-input" placeholder="Live Demo Link">
+                <div class="section-body" id="body-projects">
+                    <div class="pl-11 pr-1 py-3">
+                        <div class="add-form space-y-2">
+                            <input type="text" id="projTitle" class="field-input" placeholder="Project Title">
+                            <textarea id="projDesc" class="field-input" rows="2" placeholder="Description"></textarea>
+                            <input type="text" id="projTech" class="field-input" placeholder="Tech Stack (e.g. .NET, React)">
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="projGitHub" class="field-input" placeholder="GitHub Link">
+                                <input type="text" id="projLive" class="field-input" placeholder="Live Demo Link">
+                            </div>
+                            <button type="button" onclick="addProject()" class="w-full py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors">
+                                Add Project
+                            </button>
                         </div>
-                        <button type="button" onclick="addProject()" class="w-full py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors">
-                            Add Project
-                        </button>
+                        <div id="projectsList" class="mt-2"></div>
                     </div>
-                    <div id="projectsList" class="mt-2"></div>
                 </div>
+
             </div>
 
             <!-- Section: Experience -->
@@ -344,27 +366,30 @@
                     </div>
                     <i data-lucide="chevron-down" id="chevron-exp" class="section-chevron w-4 h-4 text-gray-400"></i>
                 </div>
-                <div class="section-body pl-11 pr-1 pb-3" id="body-exp">
-                    <div class="add-form space-y-2">
-                        <input type="text" id="expCompany" class="field-input" placeholder="Company Name">
-                        <input type="text" id="expRole" class="field-input" placeholder="Role / Position">
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-[10px] text-gray-400 mb-1 uppercase">Start Date</label>
-                                <input type="date" id="expStart" class="field-input">
+                <div class="section-body" id="body-exp">
+                    <div class="pl-11 pr-1 py-3">
+                        <div class="add-form space-y-2">
+                            <input type="text" id="expCompany" class="field-input" placeholder="Company Name">
+                            <input type="text" id="expRole" class="field-input" placeholder="Role / Position">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 mb-1 uppercase">Start Date</label>
+                                    <input type="date" id="expStart" class="field-input">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 mb-1 uppercase">End Date</label>
+                                    <input type="date" id="expEnd" class="field-input">
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-[10px] text-gray-400 mb-1 uppercase">End Date</label>
-                                <input type="date" id="expEnd" class="field-input">
-                            </div>
+                            <textarea id="expDesc" class="field-input" rows="2" placeholder="Description"></textarea>
+                            <button type="button" onclick="addExperience()" class="w-full py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-orange-500/10 text-orange-600 hover:bg-orange-500/20 transition-colors">
+                                Add Experience
+                            </button>
                         </div>
-                        <textarea id="expDesc" class="field-input" rows="2" placeholder="Description"></textarea>
-                        <button type="button" onclick="addExperience()" class="w-full py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-orange-500/10 text-orange-600 hover:bg-orange-500/20 transition-colors">
-                            Add Experience
-                        </button>
+                        <div id="expList" class="mt-2"></div>
                     </div>
-                    <div id="expList" class="mt-2"></div>
                 </div>
+
             </div>
 
             <!-- Section: Education -->
@@ -379,17 +404,20 @@
                     </div>
                     <i data-lucide="chevron-down" id="chevron-edu" class="section-chevron w-4 h-4 text-gray-400"></i>
                 </div>
-                <div class="section-body pl-11 pr-1 pb-3" id="body-edu">
-                    <div class="add-form space-y-2">
-                        <input type="text" id="eduDegree" class="field-input" placeholder="Degree (e.g. B.Sc Computer Science)">
-                        <input type="text" id="eduInstitution" class="field-input" placeholder="Institution Name">
-                        <input type="text" id="eduYear" class="field-input" placeholder="Year (e.g. 2020 - 2024)">
-                        <button type="button" onclick="addEducation()" class="w-full py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-violet-500/10 text-violet-600 hover:bg-violet-500/20 transition-colors">
-                            Add Education
-                        </button>
+                <div class="section-body" id="body-edu">
+                    <div class="pl-11 pr-1 py-3">
+                        <div class="add-form space-y-2">
+                            <input type="text" id="eduDegree" class="field-input" placeholder="Degree (e.g. B.Sc Computer Science)">
+                            <input type="text" id="eduInstitution" class="field-input" placeholder="Institution Name">
+                            <input type="text" id="eduYear" class="field-input" placeholder="Year (e.g. 2020 - 2024)">
+                            <button type="button" onclick="addEducation()" class="w-full py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-violet-500/10 text-violet-600 hover:bg-violet-500/20 transition-colors">
+                                Add Education
+                            </button>
+                        </div>
+                        <div id="eduList" class="mt-2"></div>
                     </div>
-                    <div id="eduList" class="mt-2"></div>
                 </div>
+
             </div>
 
         </div>
@@ -398,7 +426,7 @@
     <!-- ===== PREVIEW ===== -->
     <div class="preview-area bg-gray-100 dark:bg-[#050505]">
         <!-- Preview Header -->
-        <div class="px-5 py-3 bg-white dark:bg-[#111] border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
+        <div class="preview-header px-5 py-3 bg-white dark:bg-[#111] border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <span class="status-dot live" id="statusDot"></span>
                 <span class="text-xs font-semibold text-gray-500 dark:text-gray-400" id="statusText">Live Preview</span>
