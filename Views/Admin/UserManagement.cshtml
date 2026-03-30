@@ -90,17 +90,77 @@
             background: #a855f7;
             border-radius: 10px;
         }
+        /* Modal Overlay */
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            transform: scale(0.95);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        /* Toast notifications */
+        #toast-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .toast {
+            animation: toastIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        @@keyframes toastIn {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
     </style>
 </head>
 
 <body class="bg-white dark:bg-[#050505] text-gray-900 dark:text-white transition-colors duration-500 selection:bg-brand-500 selection:text-white min-h-screen">
+    @Html.Partial("~/Views/Shared/_PageTransitions.cshtml")
+
+    <!-- Toast Container -->
+    <div id="toast-container">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="toast glass px-6 py-4 rounded-2xl shadow-xl flex items-center gap-3 border-l-4 border-green-500">
+                <i data-lucide="check-circle" class="text-green-500 w-5 h-5"></i>
+                <span class="text-sm font-medium">@TempData["SuccessMessage"]</span>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="toast glass px-6 py-4 rounded-2xl shadow-xl flex items-center gap-3 border-l-4 border-red-500">
+                <i data-lucide="alert-circle" class="text-red-500 w-5 h-5"></i>
+                <span class="text-sm font-medium">@TempData["ErrorMessage"]</span>
+            </div>
+        }
+    </div>
 
     <!-- Background Ambient Effects -->
     <div class="fixed inset-0 z-0 pointer-events-none">
         <div class="absolute top-[-10%] right-[10%] w-[40%] h-[40%] bg-brand-500/10 rounded-full blur-[120px] animate-pulse-slow"></div>
         <div class="absolute bottom-[-10%] left-[10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px] animate-pulse-slow"></div>
         <div class="absolute inset-0 noise-bg opacity-30 dark:opacity-20"></div>
-        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
     </div>
 
     <div class="relative z-10">
@@ -115,7 +175,6 @@
                     <h1 class="text-4xl md:text-5xl font-serif italic text-gray-900 dark:text-white">User Management</h1>
                 </div>
 
-                <!-- Optional: Add a subtle stat counter or filter here if needed later -->
                 <div class="text-sm text-gray-500 dark:text-gray-400 font-sans">
                     Total Users: <span class="font-bold text-gray-900 dark:text-white">@Model.Count</span>
                 </div>
@@ -132,10 +191,10 @@
                         <thead>
                             <tr class="border-b border-gray-200/50 dark:border-white/5 text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 font-sans">
                                 <th class="p-6 font-semibold">ID</th>
-                                <th class="p-6 font-semibold">Full Name</th>
+                                <th class="p-6 font-semibold">User</th>
                                 <th class="p-6 font-semibold">Email</th>
-                                <th class="p-6 font-semibold">Role</th>
                                 <th class="p-6 font-semibold">Status</th>
+                                <th class="p-6 font-semibold">Reason</th>
                                 <th class="p-6 font-semibold text-right">Actions</th>
                             </tr>
                         </thead>
@@ -149,10 +208,13 @@
 
                                     <td class="p-6">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-white/10 dark:to-white/5 flex items-center justify-center text-xs font-bold font-serif italic">
-                                                @user.FullName.Substring(0, 1)
+                                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-white/10 dark:to-white/5 flex items-center justify-center text-sm font-bold font-serif italic border border-gray-200 dark:border-white/10 shadow-sm">
+                                                @(string.IsNullOrEmpty(user.FullName) ? "U" : user.FullName.Substring(0, 1))
                                             </div>
-                                            <span class="font-medium text-gray-900 dark:text-gray-200">@user.FullName</span>
+                                            <div class="flex flex-col">
+                                                <span class="font-medium text-gray-900 dark:text-gray-200">@user.FullName</span>
+                                                <span class="text-[10px] uppercase tracking-tighter @(user.Role == "Admin" ? "text-brand-500 font-bold" : "text-gray-400")">@user.Role</span>
+                                            </div>
                                         </div>
                                     </td>
 
@@ -161,16 +223,10 @@
                                     </td>
 
                                     <td class="p-6">
-                                        <span class="@(user.Role == "Admin" ? "text-brand-600 dark:text-brand-400 font-bold drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]" : "text-gray-500 dark:text-gray-500")">
-                                            @user.Role
-                                        </span>
-                                    </td>
-
-                                    <td class="p-6">
                                         @if (user.IsBlocked)
                                         {
                                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-2"></span>
+                                                <span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-2 animate-pulse"></span>
                                                 Blocked
                                             </span>
                                         }
@@ -183,6 +239,19 @@
                                         }
                                     </td>
 
+                                    <td class="p-6">
+                                        @if (!string.IsNullOrEmpty(user.BlockReason))
+                                        {
+                                            <div class="max-w-[200px] truncate text-xs italic text-gray-500 dark:text-gray-400" title="@user.BlockReason">
+                                                "@user.BlockReason"
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-gray-300 dark:text-white/10">—</span>
+                                        }
+                                    </td>
+
                                     <td class="p-6 text-right">
                                         @if (user.Role != "Admin")
                                         {
@@ -190,26 +259,25 @@
                                             {
                                                 <form action="@Url.Action("UnblockUser", "Dashboard")" method="post" class="inline">
                                                     <input type="hidden" name="userId" value="@user.Id" />
-                                                    <button type="submit" class="group/btn relative inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-green-500 dark:text-gray-400 dark:hover:text-green-400 transition-colors">
+                                                    <button type="submit" class="group/btn relative inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-green-500 dark:text-gray-400 dark:hover:text-green-400 transition-all hover:-translate-y-0.5">
                                                         <span class="group-hover/btn:underline decoration-green-500/50 underline-offset-4">Unblock</span>
-                                                        <i data-lucide="unlock" class="w-3 h-3 group-hover/btn:scale-110 transition-transform"></i>
+                                                        <i data-lucide="unlock" class="w-4 h-4 group-hover/btn:rotate-12 transition-transform"></i>
                                                     </button>
                                                 </form>
                                             }
                                             else
                                             {
-                                                <form action="@Url.Action("BlockUser", "Dashboard")" method="post" class="inline">
-                                                    <input type="hidden" name="userId" value="@user.Id" />
-                                                    <button type="submit" class="group/btn relative inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors">
-                                                        <span class="group-hover/btn:underline decoration-red-500/50 underline-offset-4">Block</span>
-                                                        <i data-lucide="lock" class="w-3 h-3 group-hover/btn:scale-110 transition-transform"></i>
-                                                    </button>
-                                                </form>
+                                                <button type="button" 
+                                                        onclick="openBlockModal(@user.Id, '@user.FullName')"
+                                                        class="group/btn relative inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-all hover:-translate-y-0.5">
+                                                    <span class="group-hover/btn:underline decoration-red-500/50 underline-offset-4">Block</span>
+                                                    <i data-lucide="lock" class="w-4 h-4 group-hover/btn:-rotate-12 transition-transform"></i>
+                                                </button>
                                             }
                                         }
                                         else
                                         {
-                                            <span class="text-gray-300 dark:text-gray-700 text-xs italic cursor-not-allowed">Protected</span>
+                                            <span class="text-gray-300 dark:text-gray-700 text-xs italic cursor-not-allowed">Protected Account</span>
                                         }
                                     </td>
                                 </tr>
@@ -220,32 +288,90 @@
 
                 @if (Model.Count == 0)
                 {
-                    <div class="p-12 text-center text-gray-500 dark:text-gray-400">
-                        <i data-lucide="users" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
-                        <p class="text-lg font-serif italic">No users found in the system.</p>
+                    <div class="p-20 text-center text-gray-500 dark:text-gray-400">
+                        <div class="relative inline-block mb-6">
+                            <i data-lucide="users-round" class="w-16 h-16 opacity-10"></i>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <i data-lucide="search" class="w-6 h-6 opacity-30"></i>
+                            </div>
+                        </div>
+                        <p class="text-xl font-serif italic text-gray-400 dark:text-gray-600">No users found in the system.</p>
                     </div>
                 }
             </div>
-
         </main>
     </div>
 
-    <!-- Theme Toggle logic reserved from original setup -->
+    <!-- Block User Modal -->
+    <div id="blockModal" class="modal-overlay fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="modal-content glass w-full max-w-md rounded-3xl p-8 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-6">
+                <button onclick="closeBlockModal()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <div class="flex flex-col items-center text-center mb-8">
+                <div class="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-500 mb-4">
+                    <i data-lucide="shield-alert" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-2xl font-serif italic text-gray-900 dark:text-white">Suspend Account</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">You are about to block <span id="blockUserName" class="font-bold text-gray-900 dark:text-white"></span>. They will be notified via email.</p>
+            </div>
+
+            <form action="@Url.Action("BlockUser", "Dashboard")" method="post" class="space-y-6">
+                <input type="hidden" id="blockUserId" name="userId" value="" />
+                
+                <div class="space-y-2">
+                    <label class="text-xs uppercase tracking-widest font-bold text-gray-500 dark:text-gray-400 ml-1">Reason for suspension</label>
+                    <textarea name="reason" required
+                              placeholder="e.g. Violation of community guidelines, suspicious activity..."
+                              class="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all min-h-[120px] resize-none text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600"></textarea>
+                </div>
+
+                <div class="flex flex-col gap-3 pt-2">
+                    <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-red-500/20 active:scale-[0.98]">
+                        Confirm Suspension
+                    </button>
+                    <button type="button" onclick="closeBlockModal()" class="w-full bg-transparent hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 font-bold py-4 rounded-2xl transition-all">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        function toggleTheme() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
+        function openBlockModal(id, name) {
+            document.getElementById('blockUserId').value = id;
+            document.getElementById('blockUserName').innerText = name;
+            document.getElementById('blockModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
 
-        // Initial Theme Load handled in <head> for FOUC prevention
+        function closeBlockModal() {
+            document.getElementById('blockModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeBlockModal();
+        });
 
         // Initialize Icons
         lucide.createIcons();
+
+        // Auto-hide toasts after 5 seconds
+        setTimeout(() => {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => {
+                toast.style.transition = 'all 0.5s ease-out';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100px)';
+                setTimeout(() => toast.remove(), 500);
+            });
+        }, 5000);
     </script>
 </body>
 </html>

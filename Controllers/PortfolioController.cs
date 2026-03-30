@@ -335,5 +335,31 @@ namespace Portify.Controllers
 
             return html;
         }
+        [HttpPost]
+        public ActionResult SubmitFeedback(int templateId, int rating, string message)
+        {
+            if (!GuardUser()) return Json(new { success = false, message = "User not logged in." });
+
+            int userId = (int)Session["UserId"];
+            PortifyDbContext db = new PortifyDbContext();
+
+            try
+            {
+                db.AddFeedback(new Feedback
+                {
+                    UserId = userId,
+                    TemplateId = templateId,
+                    Rating = rating,
+                    Message = message,
+                    CreatedAt = DateTime.Now
+                });
+
+                return Json(new { success = true, message = "Feedback submitted successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+        }
     }
 }

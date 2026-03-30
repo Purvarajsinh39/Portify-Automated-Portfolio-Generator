@@ -41,13 +41,14 @@ namespace Portify.Models
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                string query = "INSERT INTO Users (FullName, Email, PasswordHash, Role, IsBlocked, CreatedAt) VALUES (@FullName, @Email, @PasswordHash, @Role, @IsBlocked, @CreatedAt)";
+                string query = "INSERT INTO Users (FullName, Email, PasswordHash, Role, IsBlocked, BlockReason, CreatedAt) VALUES (@FullName, @Email, @PasswordHash, @Role, @IsBlocked, @BlockReason, @CreatedAt)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@FullName", user.FullName);
                 cmd.Parameters.AddWithValue("@Email", user.Email);
                 cmd.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
                 cmd.Parameters.AddWithValue("@Role", user.Role);
                 cmd.Parameters.AddWithValue("@IsBlocked", user.IsBlocked);
+                cmd.Parameters.AddWithValue("@BlockReason", user.BlockReason ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@CreatedAt", user.CreatedAt);
                 
                 conn.Open();
@@ -74,13 +75,14 @@ namespace Portify.Models
             return users;
         }
 
-        public void UpdateUserStatus(int userId, bool isBlocked)
+        public void UpdateUserStatus(int userId, bool isBlocked, string reason = null)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                string query = "UPDATE Users SET IsBlocked = @IsBlocked WHERE Id = @Id";
+                string query = "UPDATE Users SET IsBlocked = @IsBlocked, BlockReason = @BlockReason WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@IsBlocked", isBlocked);
+                cmd.Parameters.AddWithValue("@BlockReason", reason ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Id", userId);
                 conn.Open();
                 cmd.ExecuteNonQuery();
@@ -130,6 +132,7 @@ namespace Portify.Models
                 PasswordHash = reader["PasswordHash"].ToString(),
                 Role = reader["Role"].ToString(),
                 IsBlocked = (bool)reader["IsBlocked"],
+                BlockReason = reader["BlockReason"] != DBNull.Value ? reader["BlockReason"].ToString() : null,
                 CreatedAt = (DateTime)reader["CreatedAt"]
             };
         }
@@ -717,6 +720,68 @@ namespace Portify.Models
                 conn.Open();
                 cmd.ExecuteNonQuery();
             }
+        }
+
+        // --- Feedback Methods ---
+
+        public void AddFeedback(Feedback feedback)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "INSERT INTO Feedback (UserId, TemplateId, PortfolioId, Rating, Message, CreatedAt) VALUES (@UserId, @TemplateId, @PortfolioId, @Rating, @Message, @CreatedAt)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", feedback.UserId);
+                cmd.Parameters.AddWithValue("@TemplateId", feedback.TemplateId ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@PortfolioId", feedback.PortfolioId ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Rating", feedback.Rating);
+                cmd.Parameters.AddWithValue("@Message", feedback.Message ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@CreatedAt", feedback.CreatedAt == DateTime.MinValue ? DateTime.Now : feedback.CreatedAt);
+                
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public List<Feedback> GetAllFeedback()
+        {
+            List<Feedback> feedbackList = new List<Feedback>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                // Join with Users and Templates to get names
+                string query = @"
+                    SELECT f.*, u.FullName as UserName, t.TemplateName 
+                    FROM Feedback f
+                    LEFT JOIN Users u ON f.UserId = u.Id
+                    LEFT JOIN Templates t ON f.TemplateId = t.Id
+                    ORDER BY f.CreatedAt DESC";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var feedback = MapFeedback(reader);
+                        feedback.UserName = reader["UserName"].ToString();
+                        feedback.TemplateName = reader["TemplateName"] != DBNull.Value ? reader["TemplateName"].ToString() : "N/A";
+                        feedbackList.Add(feedback);
+                    }
+                }
+            }
+            return feedbackList;
+        }
+
+        private Feedback MapFeedback(SqlDataReader reader)
+        {
+            return new Feedback
+            {
+                Id = (int)reader["Id"],
+                UserId = (int)reader["UserId"],
+                TemplateId = reader["TemplateId"] != DBNull.Value ? (int?)reader["TemplateId"] : null,
+                PortfolioId = reader["PortfolioId"] != DBNull.Value ? (int?)reader["PortfolioId"] : null,
+                Rating = reader["Rating"] != DBNull.Value ? (int)reader["Rating"] : 0,
+                Message = reader["Message"] != DBNull.Value ? reader["Message"].ToString() : null,
+                CreatedAt = (DateTime)reader["CreatedAt"]
+            };
         }
     }
 

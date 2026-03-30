@@ -102,10 +102,88 @@ namespace Portify.Models
     </div>
 </body>
 </html>";
+            SendEmail(toEmail, subject, htmlBody);
+        }
 
+        public void SendBlockNotification(string toEmail, string userName, string reason)
+        {
+            string htmlBody = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; color: #333; }}
+        .container {{ max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-top: 4px solid #ef4444; }}
+        .header {{ background-color: #ef4444; padding: 25px; text-align: center; color: #ffffff; }}
+        .content {{ padding: 30px; }}
+        .reason-box {{ margin: 20px 0; background-color: #fff1f2; border-left: 4px solid #ef4444; padding: 15px; font-style: italic; color: #991b1b; }}
+        .footer {{ background-color: #f4f7f6; padding: 20px; text-align: center; font-size: 12px; color: #aaa; border-top: 1px solid #eee; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1 style='margin:0; font-size:20px;'>Account Access Suspended</h1>
+        </div>
+        <div class='content'>
+            <p>Dear {userName},</p>
+            <p>We are writing to inform you that your Portify account has been suspended by an administrator.</p>
+            <p><strong>Reason for suspension:</strong></p>
+            <div class='reason-box'>
+                {reason}
+            </div>
+            <p>While your account is suspended, you will not be able to log in or manage your portfolios. If you believe this is a mistake, please reach out to our support team.</p>
+        </div>
+        <div class='footer'>
+            &copy; {DateTime.Now.Year} Portify. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>";
+            SendEmail(toEmail, "Account Access Suspended - Portify", htmlBody);
+        }
+
+        public void SendUnblockNotification(string toEmail, string userName)
+        {
+            string htmlBody = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; color: #333; }}
+        .container {{ max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-top: 4px solid #22c55e; }}
+        .header {{ background-color: #22c55e; padding: 25px; text-align: center; color: #ffffff; }}
+        .content {{ padding: 30px; }}
+        .footer {{ background-color: #f4f7f6; padding: 20px; text-align: center; font-size: 12px; color: #aaa; border-top: 1px solid #eee; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1 style='margin:0; font-size:20px;'>Account Access Restored</h1>
+        </div>
+        <div class='content'>
+            <p>Hi {userName},</p>
+            <p>Good news! Your Portify account access has been restored by an administrator.</p>
+            <p>You can now log in and continue building your professional portfolios.</p>
+            <div style='text-align: center; margin-top: 30px;'>
+                <a href='#' style='background-color: #22c55e; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;'>Login to Portify</a>
+            </div>
+        </div>
+        <div class='footer'>
+            &copy; {DateTime.Now.Year} Portify. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>";
+            SendEmail(toEmail, "Account Access Restored - Portify", htmlBody);
+        }
+
+        private void SendEmail(string toEmail, string subject, string htmlBody)
+        {
             using (MailMessage mail = new MailMessage())
             {
-                mail.From = new MailAddress("portify.support@gmail.com", "Portify Verification");
+                mail.From = new MailAddress("portify.support@gmail.com", "Portify Support");
                 mail.To.Add(toEmail);
                 mail.Subject = subject;
                 mail.Body = htmlBody;

@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using Portify.Models;
 using System.Linq;
+using Hangfire;
 
 namespace Portify.Controllers
 {
@@ -298,12 +299,26 @@ namespace Portify.Controllers
         }
 
         [HttpPost]
-        public ActionResult BlockUser(int userId)
+        public ActionResult BlockUser(int userId, string reason)
         {
             if (Session["UserRole"] != null && Session["UserRole"].ToString() == "Admin")
             {
                 PortifyDbContext db = new PortifyDbContext();
-                db.UpdateUserStatus(userId, true);
+                var user = db.GetUserById(userId);
+                if (user != null)
+                {
+                    db.UpdateUserStatus(userId, true, reason);
+                    
+                    try
+                    {
+                        BackgroundJob.Enqueue<EmailService>(x => x.SendBlockNotification(user.Email, user.FullName, reason));
+                        TempData["SuccessMessage"] = $"User {user.FullName} has been blocked. Notification enqueued.";
+                    }
+                    catch (Exception ex)
+                    {
+                        TempData["ErrorMessage"] = "User blocked, but failed to enqueue notification: " + ex.Message;
+                    }
+                }
             }
             return RedirectToAction("UserManagement");
         }
@@ -314,9 +329,37 @@ namespace Portify.Controllers
             if (Session["UserRole"] != null && Session["UserRole"].ToString() == "Admin")
             {
                 PortifyDbContext db = new PortifyDbContext();
-                db.UpdateUserStatus(userId, false);
+                var user = db.GetUserById(userId);
+                if (user != null)
+                {
+                    db.UpdateUserStatus(userId, false, null); // Clear reason on unblock
+                    
+                    try
+                    {
+                        BackgroundJob.Enqueue<EmailService>(x => x.SendUnblockNotification(user.Email, user.FullName));
+                        TempData["SuccessMessage"] = $"User {user.FullName} has been unblocked. Notification enqueued.";
+                    }
+                    catch (Exception ex)
+                    {
+                        TempData["ErrorMessage"] = "User unblocked, but failed to enqueue notification: " + ex.Message;
+                    }
+                }
             }
             return RedirectToAction("UserManagement");
+        }
+
+        // GET: Dashboard/AdminFeedback
+        public ActionResult AdminFeedback()
+        {
+            if (Session["UserId"] == null || Session["UserRole"]?.ToString() != "Admin")
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            PortifyDbContext db = new PortifyDbContext();
+            var feedbackList = db.GetAllFeedback();
+
+            return View("~/Views/Admin/AdminFeedback.cshtml", feedbackList);
         }
     }
 }
