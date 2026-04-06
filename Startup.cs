@@ -2,6 +2,7 @@ using System;
 using Hangfire;
 using Microsoft.Owin;
 using Owin;
+using Portify.Models;
 
 [assembly: OwinStartup(typeof(Portify.Startup))]
 
@@ -26,7 +27,12 @@ namespace Portify
                     UseRecommendedIsolationLevel = true
                 });
 
-            app.UseHangfireDashboard();
+
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new HangfireAuthorizationFilter() }
+            });
+
             app.UseHangfireServer();
         }
     }
