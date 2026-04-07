@@ -5,7 +5,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: #ffffff;
+        background-color: #050505; /* Default to dark to prevent white flash */
         z-index: 10000;
         transition: opacity 0.3s ease-in-out, visibility 0.3s;
         pointer-events: auto;
@@ -14,10 +14,9 @@
         justify-content: center;
     }
 
-    /* Support for dark mode if class 'dark' is on html/body */
-    .dark #page-transition-overlay,
-    [data-theme='dark'] #page-transition-overlay {
-        background-color: #050505;
+    /* Support for light mode if class 'dark' is NOT on html */
+    :root:not(.dark) #page-transition-overlay:not([data-theme='dark']) {
+        background-color: #ffffff;
     }
 
     #page-transition-overlay.fade-out {
