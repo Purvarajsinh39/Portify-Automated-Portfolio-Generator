@@ -50,7 +50,7 @@
         </div>
 
         <!-- Right Section -->
-        <div class="flex items-center gap-4 relative z-50">
+        <div class="flex items-center gap-2 md:gap-4 relative z-50">
 
             <!-- Theme Toggle -->
             <button onclick="toggleTheme()"
@@ -64,12 +64,51 @@
                 @Session["UserName"]
             </span>
 
-            <!-- Logout Button -->
+            <!-- Logout Button (Desktop) -->
             <a href="@Url.Action("Logout", "Home")"
-               class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-black bg-white rounded-lg transition-all duration-200 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600 shadow-md">
+               class="hidden md:inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-black bg-white rounded-lg transition-all duration-200 hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600 shadow-md">
                 Logout
             </a>
 
+            <!-- Mobile Menu Toggle -->
+            <button onclick="toggleMobileMenu()"
+                    class="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors focus:outline-none">
+                <i data-lucide="menu" id="menu-icon" class="w-6 h-6"></i>
+                <i data-lucide="x" id="close-icon" class="hidden w-6 h-6"></i>
+            </button>
+
+        </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" 
+         class="fixed inset-0 z-40 md:hidden invisible opacity-0 transition-all duration-300 pointer-events-none">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-white/95 dark:bg-[#050505]/95 backdrop-blur-xl"></div>
+        
+        <!-- Menu Content -->
+        <div class="relative h-full flex flex-col justify-center items-center p-8 gap-8">
+            <nav class="flex flex-col items-center gap-8 text-center w-full max-w-sm">
+                <a href="@Url.Action("Index", "Home")" onclick="toggleMobileMenu()"
+                   class="text-2xl font-serif italic text-gray-900 dark:text-white hover:text-brand-500 transition-colors">Home</a>
+                <a href="@Url.Action("Explore", "Dashboard")" onclick="toggleMobileMenu()"
+                   class="text-2xl font-serif italic text-gray-900 dark:text-white hover:text-brand-500 transition-colors">Explore</a>
+                <a href="@Url.Action("Index", "Dashboard")" onclick="toggleMobileMenu()"
+                   class="text-2xl font-serif italic text-gray-900 dark:text-white hover:text-brand-500 transition-colors">Dashboard</a>
+                <a href="@Url.Action("MyProfile", "Dashboard")" onclick="toggleMobileMenu()"
+                   class="text-2xl font-serif italic text-gray-900 dark:text-white hover:text-brand-500 transition-colors">My Profile</a>
+                
+                <div class="w-12 h-px bg-gray-200 dark:bg-white/10 my-2"></div>
+                
+                <div class="flex flex-col items-center gap-2">
+                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Signed in as</span>
+                    <span class="text-lg font-bold text-gray-900 dark:text-white mb-4">@Session["UserName"]</span>
+                    <a href="@Url.Action("Logout", "Home")"
+                       class="text-lg font-semibold text-red-600 dark:text-red-400 hover:text-red-700 transition-colors">
+                        Sign Out
+                    </a>
+                </div>
+            </nav>
         </div>
     </div>
 </nav>
@@ -95,4 +134,28 @@
             });
         }
     });
+
+    // --- MOBILE MENU LOGIC ---
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+        const isHidden = menu.classList.contains('invisible');
+
+        if (isHidden) {
+            // Open
+            menu.classList.remove('invisible', 'opacity-0', 'pointer-events-none');
+            menu.classList.add('opacity-100', 'pointer-events-auto');
+            menuIcon.classList.add('hidden');
+            closeIcon.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        } else {
+            // Close
+            menu.classList.add('invisible', 'opacity-0', 'pointer-events-none');
+            menu.classList.remove('opacity-100', 'pointer-events-auto');
+            menuIcon.classList.remove('hidden');
+            closeIcon.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+    }
 </script>
