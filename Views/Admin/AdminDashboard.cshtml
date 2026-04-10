@@ -1,3 +1,4 @@
+@model Portify.Models.AdminDashboardViewModel
 @{
     Layout = null;
 }
@@ -6,10 +7,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Portify Admin</title>
+    <title>Analytics | Portify Admin</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -75,113 +77,232 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #050505;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #a855f7;
-            border-radius: 10px;
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #a855f7; border-radius: 10px; }
     </style>
 </head>
 
 <body class="bg-white dark:bg-[#050505] text-gray-900 dark:text-white transition-colors duration-500 selection:bg-brand-500 selection:text-white min-h-screen flex flex-col">
     @Html.Partial("~/Views/Shared/_PageTransitions.cshtml")
 
-    <!-- Background Ambient Effects -->
     <div class="fixed inset-0 z-0 pointer-events-none">
         <div class="absolute top-[20%] left-[20%] w-[40%] h-[40%] bg-brand-500/10 rounded-full blur-[120px] animate-pulse-slow"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px] animate-pulse-slow" style="animation-delay: 1s;"></div>
         <div class="absolute inset-0 noise-bg opacity-30 dark:opacity-20"></div>
-        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
     </div>
 
     <div class="relative z-10 flex-grow flex flex-col">
         @Html.Partial("~/Views/Shared/_AdminNavbar.cshtml")
 
-        <main class="flex-grow flex items-center justify-center p-6">
-            <div class="max-w-3xl w-full">
-
-                <!-- Main Welcome Card -->
-                <div class="glass rounded-3xl p-12 text-center shadow-2xl relative overflow-hidden group animate-float">
-
-                    <!-- Decorative Gradient Top -->
-                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-brand-500 to-transparent opacity-50"></div>
-
-                    <!-- Icon Container -->
-                    <div class="w-20 h-20 mx-auto mb-8 rounded-2xl bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900/20 dark:to-brand-800/20 flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform duration-500">
-                        <i data-lucide="layout-dashboard" class="w-10 h-10 text-brand-600 dark:text-brand-400"></i>
+        <main class="flex-grow p-6 lg:p-12">
+            <div class="max-w-7xl mx-auto space-y-8">
+                
+                <!-- Page Header -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+                    <div>
+                        <h2 class="text-xs uppercase tracking-[0.4em] text-brand-500 font-bold mb-2">Platform Overview</h2>
+                        <h1 class="text-4xl font-serif italic text-gray-900 dark:text-white">Admin Dashboard</h1>
                     </div>
-
-                    <h2 class="text-xs uppercase tracking-[0.4em] text-brand-500 font-bold mb-4">Overview</h2>
-
-                    <h1 class="text-4xl md:text-5xl font-serif italic text-gray-900 dark:text-white mb-6">
-                        Welcome to the <br />
-                        <span class="not-italic text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-blue-600 dark:from-brand-400 dark:to-blue-400">Admin Dashboard</span>
-                    </h1>
-
-                    <p class="text-lg text-gray-600 dark:text-gray-400 max-w-lg mx-auto leading-relaxed mb-10">
-                        Manage users, configure settings, and oversee platform performance from the navigation bar above.
-                    </p>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto">
-                        <!-- Quick Action Placeholder 1 -->
-                        <a href="@Url.Action("UserManagement", "Dashboard")" class="p-4 rounded-xl border border-gray-200/50 dark:border-white/5 bg-white/50 dark:bg-white/5 hover:bg-brand-50 dark:hover:bg-brand-500/10 transition-colors flex items-center gap-3 group/item">
-                            <div class="p-2 rounded-lg bg-gray-100 dark:bg-white/5 group-hover/item:bg-white dark:group-hover/item:bg-brand-500/20 transition-colors">
-                                <i data-lucide="users" class="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover/item:text-brand-500 dark:group-hover/item:text-brand-300"></i>
-                            </div>
-                            <div class="text-left">
-                                <div class="text-sm font-bold text-gray-900 dark:text-white">Users</div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400">View All</div>
-                            </div>
-                        </a>
-
-                        <!-- Quick Action: Manage Templates -->
-                        <a href="@Url.Action("ManageTemplates", "Dashboard")" class="p-4 rounded-xl border border-gray-200/50 dark:border-white/5 bg-white/50 dark:bg-white/5 hover:bg-brand-50 dark:hover:bg-brand-500/10 transition-colors flex items-center gap-3 group/item">
-                            <div class="p-2 rounded-lg bg-gray-100 dark:bg-white/5 group-hover/item:bg-white dark:group-hover/item:bg-brand-500/20 transition-colors">
-                                <i data-lucide="layout-template" class="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover/item:text-brand-500 dark:group-hover/item:text-brand-300"></i>
-                            </div>
-                            <div class="text-left">
-                                <div class="text-sm font-bold text-gray-900 dark:text-white">Templates</div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400">Manage All</div>
-                            </div>
-                        </a>
-
-                        <!-- Quick Action: Feedback -->
-                        <a href="@Url.Action("AdminFeedback", "Dashboard")" class="p-4 rounded-xl border border-gray-200/50 dark:border-white/5 bg-white/50 dark:bg-white/5 hover:bg-brand-50 dark:hover:bg-brand-500/10 transition-colors flex items-center gap-3 group/item">
-                            <div class="p-2 rounded-lg bg-gray-100 dark:bg-white/5 group-hover/item:bg-white dark:group-hover/item:bg-brand-500/20 transition-colors">
-                                <i data-lucide="star" class="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover/item:text-brand-500 dark:group-hover/item:text-brand-300"></i>
-                            </div>
-                            <div class="text-left">
-                                <div class="text-sm font-bold text-gray-900 dark:text-white">Feedback</div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400">View Ratings</div>
-                            </div>
-                        </a>
+                    <div class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                        Last synced: @DateTime.Now.ToString("HH:mm")
                     </div>
-
                 </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Total Users -->
+                    <div class="glass p-6 rounded-3xl border border-white/20 shadow-xl group hover:scale-[1.02] transition-transform duration-300">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Users</p>
+                                <h3 class="text-3xl font-bold mt-1 text-gray-900 dark:text-white">@Model.TotalUsers</h3>
+                            </div>
+                            <div class="p-3 rounded-2xl bg-brand-500/10 text-brand-500">
+                                <i data-lucide="users" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Portfolios Created -->
+                    <div class="glass p-6 rounded-3xl border border-white/20 shadow-xl group hover:scale-[1.02] transition-transform duration-300">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Portfolios</p>
+                                <h3 class="text-3xl font-bold mt-1 text-gray-900 dark:text-white">@Model.TotalPortfolios</h3>
+                            </div>
+                            <div class="p-3 rounded-2xl bg-blue-500/10 text-blue-500">
+                                <i data-lucide="briefcase" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Templates -->
+                    <div class="glass p-6 rounded-3xl border border-white/20 shadow-xl group hover:scale-[1.02] transition-transform duration-300">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Templates</p>
+                                <h3 class="text-3xl font-bold mt-1 text-gray-900 dark:text-white">@Model.TotalTemplates</h3>
+                            </div>
+                            <div class="p-3 rounded-2xl bg-purple-500/10 text-purple-500">
+                                <i data-lucide="layout" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Platform Rating -->
+                    <div class="glass p-6 rounded-3xl border border-white/20 shadow-xl group hover:scale-[1.02] transition-transform duration-300">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Avg Rating</p>
+                                <h3 class="text-3xl font-bold mt-1 text-gray-900 dark:text-white">@Model.AverageRating.ToString("F1")<span class="text-lg text-gray-400"> / 5</span></h3>
+                            </div>
+                            <div class="p-3 rounded-2xl bg-amber-500/10 text-amber-500">
+                                <i data-lucide="star" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Growth Trends (Line Chart) -->
+                    <div class="lg:col-span-2 glass p-8 rounded-3xl shadow-xl">
+                        <div class="flex items-center justify-between mb-8">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Growth Trends</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">New creations & registrations over last 14 days</p>
+                            </div>
+                            <i data-lucide="trending-up" class="w-6 h-6 text-brand-500"></i>
+                        </div>
+                        <div class="h-[300px] w-full">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Template Performance (Doughnut Chart) -->
+                    <div class="glass p-8 rounded-3xl shadow-xl">
+                        <div class="flex items-center justify-between mb-8">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Popularity</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Template usage share</p>
+                            </div>
+                            <i data-lucide="pie-chart" class="w-6 h-6 text-purple-500"></i>
+                        </div>
+                        <div class="h-[300px] w-full flex items-center justify-center">
+                            <canvas id="templateChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Area -->
+                <div class="glass p-8 rounded-3xl shadow-xl flex flex-wrap items-center justify-center gap-6">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white w-full text-center lg:text-left lg:w-auto">Quick Shortcuts</h3>
+                    
+                    <a href="@Url.Action("UserManagement", "Dashboard")" class="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/50 dark:bg-white/5 hover:bg-brand-50 dark:hover:bg-brand-500/10 border border-gray-200/50 dark:border-white/5 transition-all group">
+                        <i data-lucide="users" class="w-5 h-5 text-brand-500"></i>
+                        <span class="font-medium">User Directory</span>
+                    </a>
+
+                    <a href="@Url.Action("ManageTemplates", "Dashboard")" class="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/50 dark:bg-white/5 hover:bg-brand-50 dark:hover:bg-brand-500/10 border border-gray-200/50 dark:border-white/5 transition-all group">
+                        <i data-lucide="layout-template" class="w-5 h-5 text-blue-500"></i>
+                        <span class="font-medium">Template Studio</span>
+                    </a>
+
+                    <a href="@Url.Action("AdminFeedback", "Dashboard")" class="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/50 dark:bg-white/5 hover:bg-brand-50 dark:hover:bg-brand-500/10 border border-gray-200/50 dark:border-white/5 transition-all group">
+                        <i data-lucide="message-square" class="w-5 h-5 text-purple-500"></i>
+                        <span class="font-medium">User Feedback</span>
+                    </a>
+                </div>
+
             </div>
         </main>
     </div>
 
     <script>
-        function toggleTheme() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
+        // Data Preparation from Model
+        const dailyLabels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DailyPortfolios.Select(s => s.Date.ToString("MMM dd")).ToList()));
+        const portfolioData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DailyPortfolios.Select(s => s.Count).ToList()));
+        const registrationData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DailyRegistrations.Select(s => s.Count).ToList()));
 
-        // Theme handled in <head> for FOUC prevention
+        const templateLabels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.TemplateUsage.Select(s => s.TemplateName).ToList()));
+        const templateCounts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.TemplateUsage.Select(s => s.UsageCount).ToList()));
+
+        // Theme-aware colors
+        const isDark = document.documentElement.classList.contains('dark');
+        const textColor = isDark ? '#9ca3af' : '#4b5563';
+        const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+
+        // Common Chart Defaults
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = textColor;
+
+        // Growth Chart (Line)
+        new Chart(document.getElementById('growthChart'), {
+            type: 'line',
+            data: {
+                labels: dailyLabels,
+                datasets: [
+                    {
+                        label: 'Portfolios Created',
+                        data: portfolioData,
+                        borderColor: '#a855f7',
+                        backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#a855f7'
+                    },
+                    {
+                        label: 'New Users',
+                        data: registrationData,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#3b82f6'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', align: 'end', labels: { boxWidth: 10, usePointStyle: true } }
+                },
+                scales: {
+                    y: { grid: { color: gridColor }, border: { display: false } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Template Chart (Doughnut)
+        new Chart(document.getElementById('templateChart'), {
+            type: 'doughnut',
+            data: {
+                labels: templateLabels,
+                datasets: [{
+                    data: templateCounts,
+                    backgroundColor: [
+                        '#a855f7', '#3b82f6', '#8b5cf6', '#6366f1', '#ec4899', '#f43f5e'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 20
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 10, usePointStyle: true, padding: 20 } }
+                }
+            }
+        });
 
         lucide.createIcons();
     </script>

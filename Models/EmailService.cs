@@ -179,6 +179,50 @@ namespace Portify.Models
             SendEmail(toEmail, "Account Access Restored - Portify", htmlBody);
         }
 
+        public void SendTemplateNotification(string toEmail, string userName, string templateName)
+        {
+            string htmlBody = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; color: #333; }}
+        .container {{ max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); border-top: 6px solid #a855f7; }}
+        .header {{ background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); padding: 40px 20px; text-align: center; color: #ffffff; }}
+        .content {{ padding: 40px; text-align: center; }}
+        .template-card {{ background-color: #faf5ff; border: 1px solid #f3e8ff; border-radius: 12px; padding: 25px; margin: 25px 0; }}
+        .footer {{ background-color: #f8fafc; padding: 25px; text-align: center; font-size: 13px; color: #64748b; border-top: 1px solid #f1f5f9; }}
+        .btn {{ background: #a855f7; color: white; padding: 14px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block; transition: all 0.3s ease; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1 style='margin:0; font-size:24px; font-family: serif; font-style: italic;'>New Template Available</h1>
+        </div>
+        <div class='content'>
+            <p style='font-size: 18px; color: #1e293b;'>Hi {userName},</p>
+            <p>Exciting news! A brand new portfolio template has just been added to Portify.</p>
+            
+            <div class='template-card'>
+                <h2 style='margin:0; color: #9333ea; font-size: 20px;'>{templateName}</h2>
+                <p style='color: #64748b; margin-top: 10px;'>Ready for your next professional showcase.</p>
+            </div>
+
+            <p style='margin-bottom: 35px;'>Log in now to explore the new design and update your portfolio!</p>
+            
+            <a href='https://portify-demo.azurewebsites.net/Dashboard/Explore' class='btn'>Explore Templates</a>
+        </div>
+        <div class='footer'>
+            &copy; {DateTime.Now.Year} Portify. Helping you build your digital identity.<br>
+            <span style='font-size: 11px; opacity: 0.7;'>You received this email because you're a registered Portify user. You can manage your notification settings in your profile.</span>
+        </div>
+    </div>
+</body>
+</html>";
+            SendEmail(toEmail, "New Portfolio Template Available! - Portify", htmlBody);
+        }
+
         private void SendEmail(string toEmail, string subject, string htmlBody)
         {
             using (MailMessage mail = new MailMessage())

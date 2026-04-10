@@ -52,6 +52,15 @@
         <!-- Right Section -->
         <div class="flex items-center gap-2 md:gap-4 relative z-50">
 
+            <!-- Notification Bell -->
+            <a href="@Url.Action("Notifications", "Dashboard")" 
+               class="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 transition-colors focus:outline-none group">
+                <i data-lucide="bell" class="w-5 h-5 group-hover:shake"></i>
+                <span id="unread-count" class="hidden absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white dark:border-[#050505]">
+                    0
+                </span>
+            </a>
+
             <!-- Theme Toggle -->
             <button onclick="toggleTheme()"
                     class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500">
@@ -157,5 +166,32 @@
             closeIcon.classList.add('hidden');
             document.body.style.overflow = ''; // Restore scrolling
         }
+    }
+
+    // --- NOTIFICATION LOGIC ---
+    document.addEventListener("DOMContentLoaded", function () {
+        fetchUnreadCount();
+        // Check every 30 seconds for new notifications
+        setInterval(fetchUnreadCount, 30000);
+    });
+
+    function fetchUnreadCount() {
+        fetch('@Url.Action("GetUnreadCount", "Dashboard")', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(count => {
+            const badge = document.getElementById('unread-count');
+            if (count > 0) {
+                badge.innerText = count > 9 ? '9+' : count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        })
+        .catch(err => console.error('Error fetching unread count:', err));
     }
 </script>

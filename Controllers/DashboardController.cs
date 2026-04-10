@@ -83,6 +83,9 @@ namespace Portify.Controllers
                     PortifyDbContext db = new PortifyDbContext();
                     db.AddTemplate(template);
 
+                    // Trigger notifications for users
+                    TriggerTemplateNotifications(template);
+
                     TempData["SuccessMessage"] = "Template uploaded successfully!";
                     return RedirectToAction("ManageTemplates");
                 }
@@ -258,13 +261,15 @@ namespace Portify.Controllers
             }
 
             // Update User
-            db.UpdateUserProfile(userId, FullName, passwordToSave);
+            bool receiveNotifications = Request.Form["ReceiveNotifications"] == "on";
+            db.UpdateUserProfile(userId, FullName, passwordToSave, receiveNotifications);
             
             // Update Session Name if changed
             Session["UserName"] = FullName;
 
             ViewBag.Message = "Profile updated successfully.";
             user.FullName = FullName; // Update model for view
+            user.ReceiveNotifications = receiveNotifications;
             return View("~/Views/User/MyProfile.cshtml", user);
         }
 
@@ -281,7 +286,10 @@ namespace Portify.Controllers
                 return RedirectToAction("Index");
             }
 
-            return View("~/Views/Admin/AdminDashboard.cshtml");
+            PortifyDbContext db = new PortifyDbContext();
+            var model = db.GetAdminDashboardStats();
+
+            return View("~/Views/Admin/AdminDashboard.cshtml", model);
         }
 
         // GET: Dashboard/UserManagement
@@ -360,6 +368,69 @@ namespace Portify.Controllers
             var feedbackList = db.GetAllFeedback();
 
             return View("~/Views/Admin/AdminFeedback.cshtml", feedbackList);
+        }
+
+        // --- Notification Actions ---
+
+        public ActionResult Notifications()
+        {
+            if (Session["UserId"] == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            int userId = (int)Session["UserId"];
+            PortifyDbContext db = new PortifyDbContext();
+            
+            // Mark all as read when viewing the page
+            db.MarkAllNotificationsAsRead(userId);
+            
+            var notifications = db.GetNotificationsByUserId(userId);
+            
+            return View("~/Views/User/Notifications.cshtml", notifications);
+        }
+
+        [HttpPost]
+        public JsonResult GetUnreadCount()
+        {
+            if (Session["UserId"] == null) return Json(0);
+            
+            int userId = (int)Session["UserId"];
+            PortifyDbContext db = new PortifyDbContext();
+            int count = db.GetUnreadNotificationCount(userId);
+            
+            return Json(count);
+        }
+
+        private void TriggerTemplateNotifications(Template template)
+        {
+            try
+            {
+                PortifyDbContext db = new PortifyDbContext();
+                var users = db.GetAllUsers().Where(u => u.Role != "Admin").ToList();
+                
+                foreach (var user in users)
+                {
+                    // 1. Add In-App Notification
+                    db.AddNotification(new Notification
+                    {
+                        UserId = user.Id,
+                        Message = $"A new template '{template.Name}' is now available! Explore it to give your portfolio a fresh look.",
+                        IsRead = false,
+                        CreatedAt = DateTime.Now
+                    });
+
+                    // 2. Enqueue Email if preferred
+                    if (user.ReceiveNotifications)
+                    {
+                        BackgroundJob.Enqueue<EmailService>(x => x.SendTemplateNotification(user.Email, user.FullName, template.Name));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log or handle notification failure (non-critical to upload)
+            }
         }
     }
 }
