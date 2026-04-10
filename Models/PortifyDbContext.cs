@@ -41,7 +41,7 @@ namespace Portify.Models
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                string query = "INSERT INTO Users (FullName, Email, PasswordHash, Role, IsBlocked, BlockReason, CreatedAt) VALUES (@FullName, @Email, @PasswordHash, @Role, @IsBlocked, @BlockReason, @CreatedAt)";
+                string query = "INSERT INTO Users (FullName, Email, PasswordHash, Role, IsBlocked, BlockReason, ReceiveNotifications, CreatedAt) VALUES (@FullName, @Email, @PasswordHash, @Role, @IsBlocked, @BlockReason, @ReceiveNotifications, @CreatedAt)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@FullName", user.FullName);
                 cmd.Parameters.AddWithValue("@Email", user.Email);
@@ -49,6 +49,7 @@ namespace Portify.Models
                 cmd.Parameters.AddWithValue("@Role", user.Role);
                 cmd.Parameters.AddWithValue("@IsBlocked", user.IsBlocked);
                 cmd.Parameters.AddWithValue("@BlockReason", user.BlockReason ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ReceiveNotifications", user.ReceiveNotifications);
                 cmd.Parameters.AddWithValue("@CreatedAt", user.CreatedAt);
                 
                 conn.Open();
@@ -108,14 +109,15 @@ namespace Portify.Models
             }
         }
 
-        public void UpdateUserProfile(int userId, string fullName, string passwordHash)
+        public void UpdateUserProfile(int userId, string fullName, string passwordHash, bool receiveNotifications)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                string query = "UPDATE Users SET FullName = @FullName, PasswordHash = @PasswordHash WHERE Id = @Id";
+                string query = "UPDATE Users SET FullName = @FullName, PasswordHash = @PasswordHash, ReceiveNotifications = @ReceiveNotifications WHERE Id = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@FullName", fullName);
                 cmd.Parameters.AddWithValue("@PasswordHash", passwordHash);
+                cmd.Parameters.AddWithValue("@ReceiveNotifications", receiveNotifications);
                 cmd.Parameters.AddWithValue("@Id", userId);
                 conn.Open();
                 cmd.ExecuteNonQuery();
@@ -133,6 +135,7 @@ namespace Portify.Models
                 Role = reader["Role"].ToString(),
                 IsBlocked = (bool)reader["IsBlocked"],
                 BlockReason = reader["BlockReason"] != DBNull.Value ? reader["BlockReason"].ToString() : null,
+                ReceiveNotifications = reader["ReceiveNotifications"] != DBNull.Value ? (bool)reader["ReceiveNotifications"] : true,
                 CreatedAt = (DateTime)reader["CreatedAt"]
             };
         }
@@ -782,6 +785,208 @@ namespace Portify.Models
                 Message = reader["Message"] != DBNull.Value ? reader["Message"].ToString() : null,
                 CreatedAt = (DateTime)reader["CreatedAt"]
             };
+        }
+
+        // --- Notification Methods ---
+
+        public void AddNotification(Notification notification)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "INSERT INTO Notifications (UserId, Message, IsRead, CreatedAt) VALUES (@UserId, @Message, @IsRead, @CreatedAt)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", notification.UserId);
+                cmd.Parameters.AddWithValue("@Message", notification.Message);
+                cmd.Parameters.AddWithValue("@IsRead", notification.IsRead);
+                cmd.Parameters.AddWithValue("@CreatedAt", notification.CreatedAt == DateTime.MinValue ? DateTime.Now : notification.CreatedAt);
+                
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public List<Notification> GetNotificationsByUserId(int userId)
+        {
+            var notifications = new List<Notification>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM Notifications WHERE UserId = @UserId ORDER BY CreatedAt DESC";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        notifications.Add(new Notification
+                        {
+                            Id = (int)reader["Id"],
+                            UserId = (int)reader["UserId"],
+                            Message = reader["Message"].ToString(),
+                            IsRead = (bool)reader["IsRead"],
+                            CreatedAt = (DateTime)reader["CreatedAt"]
+                        });
+                    }
+                }
+            }
+            return notifications;
+        }
+
+        public void MarkNotificationAsRead(int notificationId)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "UPDATE Notifications SET IsRead = 1 WHERE Id = @Id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", notificationId);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void MarkAllNotificationsAsRead(int userId)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "UPDATE Notifications SET IsRead = 1 WHERE UserId = @UserId AND IsRead = 0";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public int GetUnreadNotificationCount(int userId)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT COUNT(*) FROM Notifications WHERE UserId = @UserId AND IsRead = 0";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+                conn.Open();
+                // Ensure we handle possible null return or cast errors
+                var result = cmd.ExecuteScalar();
+                return result != null ? (int)result : 0;
+            }
+        }
+        // --- Admin Dashboard Stats Methods ---
+
+        public AdminDashboardViewModel GetAdminDashboardStats()
+        {
+            AdminDashboardViewModel stats = new AdminDashboardViewModel();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = @"
+                    SELECT 
+                        (SELECT COUNT(*) FROM Users WHERE Role <> 'Admin') as TotalUsers,
+                        (SELECT COUNT(*) FROM Portfolios) as TotalPortfolios,
+                        (SELECT COUNT(*) FROM Templates) as TotalTemplates,
+                        (SELECT COALESCE(AVG(CAST(Rating AS FLOAT)), 0) FROM Feedback) as AverageRating";
+                
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        stats.TotalUsers = (int)reader["TotalUsers"];
+                        stats.TotalPortfolios = (int)reader["TotalPortfolios"];
+                        stats.TotalTemplates = (int)reader["TotalTemplates"];
+                        stats.AverageRating = Convert.ToDouble(reader["AverageRating"]);
+                    }
+                }
+            }
+
+            stats.TemplateUsage = GetTemplateUsageStats();
+            stats.DailyPortfolios = GetDailyPortfolioStats(14);
+            stats.DailyRegistrations = GetDailyRegistrationStats(14);
+
+            return stats;
+        }
+
+        private List<TemplateUsageStat> GetTemplateUsageStats()
+        {
+            var list = new List<TemplateUsageStat>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = @"
+                    SELECT t.TemplateName, COUNT(p.Id) as UsageCount
+                    FROM Templates t
+                    LEFT JOIN Portfolios p ON t.Id = p.TemplateId
+                    GROUP BY t.TemplateName";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new TemplateUsageStat
+                        {
+                            TemplateName = reader["TemplateName"].ToString(),
+                            UsageCount = (int)reader["UsageCount"]
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        private List<DailyStat> GetDailyPortfolioStats(int days)
+        {
+            var list = new List<DailyStat>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = @"
+                    SELECT CAST(CreatedAt AS DATE) as [Date], COUNT(*) as [Count]
+                    FROM Portfolios
+                    WHERE CreatedAt >= DATEADD(day, -@Days, GETDATE())
+                    GROUP BY CAST(CreatedAt AS DATE)
+                    ORDER BY [Date]";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Days", days);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new DailyStat
+                        {
+                            Date = (DateTime)reader["Date"],
+                            Count = (int)reader["Count"]
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        private List<DailyStat> GetDailyRegistrationStats(int days)
+        {
+            var list = new List<DailyStat>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = @"
+                    SELECT CAST(CreatedAt AS DATE) as [Date], COUNT(*) as [Count]
+                    FROM Users
+                    WHERE Role <> 'Admin' AND CreatedAt >= DATEADD(day, -@Days, GETDATE())
+                    GROUP BY CAST(CreatedAt AS DATE)
+                    ORDER BY [Date]";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Days", days);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new DailyStat
+                        {
+                            Date = (DateTime)reader["Date"],
+                            Count = (int)reader["Count"]
+                        });
+                    }
+                }
+            }
+            return list;
         }
     }
 

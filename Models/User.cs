@@ -29,6 +29,7 @@ namespace Portify.Models
 
         public bool IsBlocked { get; set; }
         public string BlockReason { get; set; }
+        public bool ReceiveNotifications { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

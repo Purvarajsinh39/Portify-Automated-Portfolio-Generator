@@ -140,7 +140,14 @@
 
 <body class="bg-[#050505] text-white overflow-hidden h-screen w-screen selection:bg-brand-500 selection:text-white">
     @Html.Partial("~/Views/Shared/_PageTransitions.cshtml")
-
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <div id="g_id_onload"
+         data-client_id="722982674708-s4oc259pedb9b5ol6ins8ajigpbk2f2c.apps.googleusercontent.com"
+         data-context="signin"
+         data-ux_mode="popup"
+         data-callback="handleGoogleLogin"
+         data-auto_prompt="false">
+    </div>
     <!-- DESKTOP SLIDER & BACKGROUND (Hidden on Mobile) -->
     <div id="desktop-slider-view" class="hidden md:block fixed inset-0 z-0">
         <div id="main-view" class="group relative w-full h-full transition-all duration-500">
@@ -190,6 +197,13 @@
                         </div>
                         <button type="submit" class="w-full bg-brand-500 hover:bg-brand-900 text-white font-bold py-4 rounded-xl mt-4 transition-all shadow-[0_8px_30px_rgba(168,85,247,0.3)] active:scale-[0.98]">Sign In</button>
                     </form>
+                    <div class="mt-4 relative flex items-center justify-center">
+                        <div class="absolute w-full border-t border-white/5 left-0 top-1/2 -translate-y-1/2"></div>
+                        <span class="text-xs text-gray-500 uppercase tracking-widest bg-[#171717] px-2 relative z-10 w-fit shrink-0">Or log in with</span>
+                    </div>
+                    <div class="mt-4 flex justify-center w-full">
+                        <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_black" data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="380"></div>
+                    </div>
                     <div class="mt-8 text-center text-xs text-gray-600">
                         <a href="#" onclick="toggleForms(); return false;" class="hover:text-brand-500 transition-colors">New here? Create Account</a>
                     </div>
@@ -215,6 +229,13 @@
                         </div>
                         <button type="submit" class="w-full bg-brand-500 hover:bg-brand-900 text-white font-bold py-4 rounded-xl mt-4 transition-all shadow-[0_8px_30px_rgba(168,85,247,0.3)] active:scale-[0.98]">Create Account</button>
                     </form>
+                    <div class="mt-4 relative flex items-center justify-center">
+                        <div class="absolute w-full border-t border-white/5 left-0 top-1/2 -translate-y-1/2"></div>
+                        <span class="text-xs text-gray-500 uppercase tracking-widest bg-[#171717] px-2 relative z-10 w-fit shrink-0">Or sign up with</span>
+                    </div>
+                    <div class="mt-4 flex justify-center w-full">
+                        <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_black" data-text="signup_with" data-size="large" data-logo_alignment="left" data-width="380"></div>
+                    </div>
                     <div class="mt-8 text-center text-xs text-gray-600">
                         <a href="#" onclick="toggleForms(); return false;" class="hover:text-brand-500 transition-colors">Already have an account? Sign In</a>
                     </div>
@@ -253,6 +274,13 @@
                     </div>
                     <button type="submit" class="w-full bg-brand-500 text-white font-bold py-4 rounded-xl mt-4 active:scale-[0.98]">Sign In</button>
                 </form>
+                <div class="mt-4 relative flex items-center justify-center">
+                    <div class="absolute w-full border-t border-white/5 left-0 top-1/2 -translate-y-1/2"></div>
+                    <span class="text-xs text-gray-500 uppercase tracking-widest bg-[#0a0a0a] px-2 relative z-10 w-fit shrink-0">Or log in with</span>
+                </div>
+                <div class="mt-4 flex justify-center w-full">
+                    <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_black" data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="330"></div>
+                </div>
                 <div class="mt-8 text-center text-xs text-gray-600">
                     <a href="#" onclick="toggleForms(); return false;" class="hover:text-brand-500 transition-colors">New here? Create Account</a>
                 </div>
@@ -278,6 +306,13 @@
                     </div>
                     <button type="submit" class="w-full bg-brand-500 text-white font-bold py-4 rounded-xl mt-4 active:scale-[0.98]">Create Account</button>
                 </form>
+                <div class="mt-4 relative flex items-center justify-center">
+                    <div class="absolute w-full border-t border-white/5 left-0 top-1/2 -translate-y-1/2"></div>
+                    <span class="text-xs text-gray-500 uppercase tracking-widest bg-[#0a0a0a] px-2 relative z-10 w-fit shrink-0">Or sign up with</span>
+                </div>
+                <div class="mt-4 flex justify-center w-full">
+                    <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_black" data-text="signup_with" data-size="large" data-logo_alignment="left" data-width="330"></div>
+                </div>
                 <div class="mt-8 text-center text-xs text-gray-600">
                     <a href="#" onclick="toggleForms(); return false;" class="hover:text-brand-500 transition-colors">Already have an account? Sign In</a>
                 </div>
@@ -286,6 +321,23 @@
     </div>
 
 <script>
+function handleGoogleLogin(response) {
+    if (response.credential) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '@Url.Action("GoogleLogin", "Home")';
+
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'credential';
+        input.value = response.credential;
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
 // --- LOGIN LOGIC (Added) ---
 function openLogin() {
     const modal = document.getElementById('login-modal');

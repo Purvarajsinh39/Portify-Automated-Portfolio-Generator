@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Threading.Tasks;
 using Portify.Models;
+using Google.Apis.Auth;
 
 namespace Portify.Controllers
 {
@@ -61,6 +63,67 @@ namespace Portify.Controllers
 
             ViewBag.Error = "Invalid Email or Password.";
             return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GoogleLogin(string credential)
+        {
+            try
+            {
+                var payload = await GoogleJsonWebSignature.ValidateAsync(credential, new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[] { "722982674708-s4oc259pedb9b5ol6ins8ajigpbk2f2c.apps.googleusercontent.com" }
+                });
+
+                if (payload != null)
+                {
+                    PortifyDbContext db = new PortifyDbContext();
+                    var user = db.GetUserByEmail(payload.Email);
+
+                    if (user == null)
+                    {
+                        // Create user in DB
+                        string plainTextRandomPass = Guid.NewGuid().ToString().Substring(0, 8); // temporary random password in plaintext
+                        var newUser = new Models.User
+                        {
+                            FullName = payload.Name ?? "Google User",
+                            Email = payload.Email,
+                            PasswordHash = plainTextRandomPass,
+                            Role = "User",
+                            IsBlocked = false,
+                            CreatedAt = DateTime.Now
+                        };
+                        db.AddUser(newUser);
+
+                        user = db.GetUserByEmail(payload.Email);
+                    }
+
+                    if (user != null)
+                    {
+                        if (user.IsBlocked)
+                        {
+                            ViewBag.Error = "You are blocked from admin.";
+                            return View("Login");
+                        }
+
+                        Session["UserId"] = user.Id;
+                        Session["UserRole"] = user.Role;
+                        Session["UserName"] = user.FullName;
+
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+            }
+            catch (InvalidJwtException)
+            {
+                ViewBag.Error = "Invalid Google Authentication token.";
+            }
+            catch (Exception)
+            {
+                ViewBag.Error = "An error occurred during Google Login.";
+            }
+
+            return View("Login");
         }
 
         [HttpPost]
@@ -227,8 +290,8 @@ namespace Portify.Controllers
             if (user != null)
             {
                 // Note: user requires updating, Add method UpdateUserProfile in PortifyDbContext if not present
-                // Luckily it exists UpdateUserProfile(userId, fullName, passwordHash )
-                db.UpdateUserProfile(user.Id, user.FullName, Password);
+                // Luckily it exists UpdateUserProfile(userId, fullName, passwordHash, receiveNotifications)
+                db.UpdateUserProfile(user.Id, user.FullName, Password, user.ReceiveNotifications);
                 
                 Session.Remove("ResetPasswordEmail");
                 
