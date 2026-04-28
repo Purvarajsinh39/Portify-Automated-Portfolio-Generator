@@ -167,7 +167,7 @@ namespace Portify.Models
             <p>Good news! Your Portify account access has been restored by an administrator.</p>
             <p>You can now log in and continue building your professional portfolios.</p>
             <div style='text-align: center; margin-top: 30px;'>
-                <a href='#' style='background-color: #22c55e; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;'>Login to Portify</a>
+                <a href='https://portify-ewgkd3cue8esfvae.centralindia-01.azurewebsites.net/Home/Login' style='background-color: #22c55e; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;'>Login to Portify</a>
             </div>
         </div>
         <div class='footer'>
