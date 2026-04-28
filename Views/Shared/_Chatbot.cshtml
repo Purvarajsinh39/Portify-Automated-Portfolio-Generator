@@ -1,0 +1,51 @@
+<!-- Chatbot HTML -->
+<div id="chatbot-container">
+    
+    <!-- Window -->
+    <div id="chatbot-window">
+        <div class="chatbot-header">
+            <div class="cb-header-title">
+                <h3>
+                    <!-- Header Tiny Gemini Icon -->
+                    <div class="gemini-wrapper gemini-idle">
+                        <div class="gemini-layer gemini-glow"><div class="gemini-gradient gemini-gradient-anim"></div></div>
+                        <div class="gemini-layer gemini-primary"><div class="gemini-gradient gemini-gradient-anim"></div></div>
+                    </div>
+                    Portify AI
+                </h3>
+                <div class="cb-status">
+                    <span class="cb-status-dot"></span>
+                    Online
+                </div>
+            </div>
+            <div class="close-btn" id="cb-close"><i class="fas fa-times"></i></div>
+        </div>
+        
+        <div id="chatbot-messages">
+            <!-- Initial AI Greeting will be added by JS -->
+        </div>
+
+        <div class="chatbot-input-area">
+            <div class="cb-input-wrapper">
+                <input type="text" id="chatbot-input" placeholder="Ask me anything..." autocomplete="off">
+            </div>
+            <button id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+    
+    <!-- FAB -->
+    <div id="chatbot-fab">
+        <!-- Main FAB Gemini Icon (Idle) -->
+        <div class="gemini-wrapper gemini-idle">
+            <div class="gemini-layer gemini-glow"><div class="gemini-gradient gemini-gradient-anim"></div></div>
+            <div class="gemini-layer gemini-primary"><div class="gemini-gradient gemini-gradient-anim"></div></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Chatbot Dependencies -->
+<link href="/Content/chatbot.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+<script src="/Scripts/chatbot.js"></script>
