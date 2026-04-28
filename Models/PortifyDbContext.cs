@@ -13,19 +13,29 @@ namespace Portify.Models
     {
         private string _connectionString;
 
-        public PortifyDbContext()
+        public static string GetConnectionString()
         {
             // Pick connection string based on environment flag in AppSettings.config
             bool isDev = ConfigurationManager.AppSettings["dev"] == "true";
-            _connectionString = isDev 
+            string conn = isDev 
                 ? ConfigurationManager.AppSettings["DevConnectionString"] 
                 : ConfigurationManager.AppSettings["ProdConnectionString"];
 
             // Fallback to default if not found in AppSettings
-            if (string.IsNullOrEmpty(_connectionString))
+            if (string.IsNullOrEmpty(conn))
             {
-                _connectionString = ConfigurationManager.ConnectionStrings["PortifyDB"].ConnectionString;
+                var connSettings = ConfigurationManager.ConnectionStrings["PortifyDB"];
+                if (connSettings != null)
+                {
+                    conn = connSettings.ConnectionString;
+                }
             }
+            return conn;
+        }
+
+        public PortifyDbContext()
+        {
+            _connectionString = GetConnectionString();
         }
 
         public User GetUserByEmail(string email)

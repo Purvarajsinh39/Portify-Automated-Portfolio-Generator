@@ -13,7 +13,7 @@ namespace Portify
         public void Configuration(IAppBuilder app)
         {
             // Configure Hangfire to use SQL Server
-            string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PortifyDB"].ConnectionString;
+            string connectionString = Portify.Models.PortifyDbContext.GetConnectionString();
             
             GlobalConfiguration.Configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
