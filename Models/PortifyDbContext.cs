@@ -330,11 +330,46 @@ namespace Portify.Models
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                string query = "DELETE FROM Portfolios WHERE Id = @Id";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@Id", id);
                 conn.Open();
-                cmd.ExecuteNonQuery();
+                SqlTransaction trans = conn.BeginTransaction();
+                try
+                {
+                    // Delete from all tables that reference PortfolioId
+                    string[] relatedTables = { 
+                        "PortfolioPersonalInfo", 
+                        "Skills", 
+                        "Projects", 
+                        "Experiences", 
+                        "SocialLinks", 
+                        "Education", 
+                        "Feedback" 
+                    };
+
+                    foreach (var table in relatedTables)
+                    {
+                        string deleteRelated = $"DELETE FROM {table} WHERE PortfolioId = @Id";
+                        using (SqlCommand cmdTable = new SqlCommand(deleteRelated, conn, trans))
+                        {
+                            cmdTable.Parameters.AddWithValue("@Id", id);
+                            cmdTable.ExecuteNonQuery();
+                        }
+                    }
+
+                    // Delete the main portfolio record
+                    string query = "DELETE FROM Portfolios WHERE Id = @Id";
+                    using (SqlCommand cmd = new SqlCommand(query, conn, trans))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", id);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    trans.Commit();
+                }
+                catch
+                {
+                    trans.Rollback();
+                    throw;
+                }
             }
         }
 
