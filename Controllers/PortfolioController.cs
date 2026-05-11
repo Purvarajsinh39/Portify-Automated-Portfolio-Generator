@@ -5,11 +5,18 @@ using Portify.Models;
 using System.IO;
 using System.Text;
 using System.Web.Script.Serialization;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Configuration;
+using System.Collections.Generic;
 
 namespace Portify.Controllers
 {
     public class PortfolioController : Controller
     {
+        private static readonly HttpClient client = new HttpClient();
+
         private bool GuardUser()
         {
             return Session["UserId"] != null;
@@ -355,6 +362,77 @@ namespace Portify.Controllers
                 });
 
                 return Json(new { success = true, message = "Feedback submitted successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+        }
+        [HttpPost]
+        public async Task<ActionResult> GenerateAboutMe(string jsonData)
+        {
+            if (!GuardUser()) return Json(new { success = false, message = "Session expired. Please login again." });
+
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            PortfolioData data = js.Deserialize<PortfolioData>(jsonData);
+
+            if (data == null) return Json(new { success = false, message = "Invalid data." });
+
+            string apiKey = ConfigurationManager.AppSettings["GeminiApiKey"];
+            string model = ConfigurationManager.AppSettings["GeminiModel"] ?? "gemini-1.5-flash";
+
+            // Construct the prompt
+            StringBuilder prompt = new StringBuilder();
+            prompt.AppendLine("You are an expert career coach and professional writer.");
+            prompt.AppendLine("Generate a short, compelling 'About Me' or 'Professional Summary' for a portfolio website based on the following details:");
+            prompt.AppendLine($"- Name: {data.FullName}");
+            prompt.AppendLine($"- Profession: {data.Profession}");
+            
+            if (data.Skills != null && data.Skills.Count > 0)
+                prompt.AppendLine($"- Skills: {string.Join(", ", data.Skills.Select(s => s.SkillName))}");
+            
+            if (data.Projects != null && data.Projects.Count > 0)
+                prompt.AppendLine($"- Projects: {string.Join(", ", data.Projects.Select(p => p.ProjectTitle + " (" + p.Description + ")"))}");
+            
+            if (data.Experience != null && data.Experience.Count > 0)
+                prompt.AppendLine($"- Experience: {string.Join(", ", data.Experience.Select(e => e.Role + " at " + e.CompanyName))}");
+
+            prompt.AppendLine("\nRequirements:");
+            prompt.AppendLine("1. Use casual, everyday language (tech-startup vibe).");
+            prompt.AppendLine("2. Keep it VERY short (1 to 2 sentences max).");
+            prompt.AppendLine("3. Write in the first person.");
+            prompt.AppendLine("4. Give it a slightly 'robotic' but friendly and cool personality.");
+            prompt.AppendLine("5. Output ONLY the generated text. No intro/outro.");
+
+            try
+            {
+                var requestBody = new
+                {
+                    contents = new[]
+                    {
+                        new { 
+                            parts = new[] { new { text = prompt.ToString() } } 
+                        }
+                    }
+                };
+
+                string jsonRequest = JsonConvert.SerializeObject(requestBody);
+                string url = $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}";
+
+                var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(url, content);
+                string responseString = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    dynamic result = JsonConvert.DeserializeObject(responseString);
+                    string aiResponse = result.candidates[0].content.parts[0].text;
+                    return Json(new { success = true, data = aiResponse.Trim() });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "AI service error: " + responseString });
+                }
             }
             catch (Exception ex)
             {
