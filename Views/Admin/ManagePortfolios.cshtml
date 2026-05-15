@@ -1,0 +1,241 @@
+@model List<Portify.Models.Portfolio>
+@{
+    Layout = null;
+    var templates = ViewBag.Templates as Dictionary<int, string> ?? new Dictionary<int, string>();
+    var users = ViewBag.Users as Dictionary<int, string> ?? new Dictionary<int, string>();
+}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Portfolios | Admin</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <script>
+        (function () {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            300: '#d8b4fe',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            900: '#581c87'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .noise-bg {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .glass {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Toast animations */
+        @@keyframes toastIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @@keyframes toastOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+    </style>
+</head>
+
+<body class="bg-white dark:bg-[#050505] text-gray-900 dark:text-white transition-colors duration-500 selection:bg-brand-500 selection:text-white min-h-screen flex flex-col">
+    <!-- Background Ambient Effects -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute top-[20%] left-[20%] w-[40%] h-[40%] bg-brand-500/10 rounded-full blur-[120px] animate-pulse"></div>
+        <div class="absolute inset-0 noise-bg opacity-30 dark:opacity-20"></div>
+    </div>
+
+    <div class="relative z-10 flex-grow flex flex-col">
+        @Html.Partial("~/Views/Shared/_AdminNavbar.cshtml")
+
+        <main class="flex-grow p-6 sm:p-10 max-w-7xl mx-auto w-full">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                <div>
+                    <h2 class="text-xs uppercase tracking-[0.4em] text-brand-500 font-bold mb-2">Management</h2>
+                    <h1 class="text-4xl md:text-5xl font-serif italic text-gray-900 dark:text-white">
+                        User <span class="not-italic text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-blue-600 dark:from-brand-400 dark:to-blue-400">Portfolios</span>
+                    </h1>
+                </div>
+                <div class="text-sm text-gray-500 dark:text-gray-400 font-sans">
+                    Total Portfolios: <span class="font-bold text-gray-900 dark:text-white">@Model.Count</span>
+                </div>
+            </div>
+
+            <div class="glass rounded-3xl overflow-hidden shadow-xl border border-gray-100 dark:border-white/5">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50/50 dark:bg-white/5 border-b border-gray-100 dark:border-white/5">
+                                <th class="px-6 py-4 text-xs uppercase tracking-wider font-bold text-gray-500">ID</th>
+                                <th class="px-6 py-4 text-xs uppercase tracking-wider font-bold text-gray-500">Portfolio Title</th>
+                                <th class="px-6 py-4 text-xs uppercase tracking-wider font-bold text-gray-500">User</th>
+                                <th class="px-6 py-4 text-xs uppercase tracking-wider font-bold text-gray-500">Template</th>
+                                <th class="px-6 py-4 text-xs uppercase tracking-wider font-bold text-gray-500">Created At</th>
+                                <th class="px-6 py-4 text-xs uppercase tracking-wider font-bold text-gray-500 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-white/5">
+                            @foreach (var p in Model)
+                            {
+                                var uName = users.ContainsKey(p.UserId) ? users[p.UserId] : "Unknown User";
+                                var tName = templates.ContainsKey(p.TemplateId) ? templates[p.TemplateId] : "Unknown";
+                                
+                                // Generate filename for copying
+                                string pTitle = p.Title ?? "Portfolio";
+                                char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
+                                string safeTitle = string.Join("_", pTitle.Split(invalidChars)).Replace(" ", "_");
+                                string fileName = "Portfolios/" + safeTitle + "_" + p.Id + ".html";
+
+                                <tr class="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors group">
+                                    <td class="px-6 py-4 font-mono text-xs text-gray-400">#@p.Id</td>
+                                    <td class="px-6 py-4">
+                                        <div class="font-bold text-gray-900 dark:text-white">@pTitle</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-7 h-7 rounded-full bg-brand-500/10 flex items-center justify-center text-[10px] font-bold text-brand-500">
+                                                @(uName.Length > 0 ? uName[0].ToString() : "?")
+                                            </div>
+                                            <span class="text-sm text-gray-600 dark:text-gray-300">@uName</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-white/10 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                            @tName
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-xs text-gray-500">@p.CreatedAt.ToString("dd MMM yyyy, HH:mm")</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button onclick="copyPortfolioLink('@fileName', '@(pTitle.Replace("'", "\\'"))')"
+                                                    class="p-2 rounded-lg bg-brand-500/10 text-brand-500 hover:bg-brand-500 hover:text-white transition-all"
+                                                    title="Copy Link">
+                                                <i data-lucide="link" class="w-4 h-4"></i>
+                                            </button>
+                                            <a href="@Url.Action("Download", "Portfolio", new { id = p.Id })" 
+                                               class="p-2 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-500 hover:bg-gray-200 dark:hover:bg-white/20 transition-all"
+                                               title="Download HTML">
+                                                <i data-lucide="download" class="w-4 h-4"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function copyPortfolioLink(relativeUrl, title) {
+            const url = window.location.origin + "/" + relativeUrl;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast(`Link for "${title}" copied!`);
+            }).catch(err => {
+                const textArea = document.createElement("textarea");
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast(`Link for "${title}" copied!`);
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            // Higher Z-index to stay above modals
+            toast.className = 'fixed top-6 right-6 z-[200] flex items-center gap-4 px-6 py-4 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] border transition-all duration-500 transform translate-y-[-20px] opacity-0';
+            
+            // Theme aware styling
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                toast.style.background = 'rgba(20, 20, 20, 0.8)';
+                toast.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                toast.style.color = 'white';
+            } else {
+                toast.style.background = 'rgba(255, 255, 255, 0.95)';
+                toast.style.borderColor = 'rgba(0, 0, 0, 0.05)';
+                toast.style.color = '#1a1a1a';
+            }
+            toast.style.backdropFilter = 'blur(16px)';
+            
+            const iconColor = type === 'success' ? 'text-green-500' : 'text-amber-500';
+            const iconBg = type === 'success' ? 'bg-green-500/10' : 'bg-amber-500/10';
+            const iconName = type === 'success' ? 'check-circle' : 'info';
+
+            toast.innerHTML = `
+                <div class="w-10 h-10 rounded-xl ${iconBg} flex items-center justify-center">
+                    <i data-lucide="${iconName}" class="w-5 h-5 ${iconColor}"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-50">${type}</span>
+                    <span class="text-sm font-medium tracking-tight">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            lucide.createIcons();
+
+            // Animate In
+            setTimeout(() => {
+                toast.classList.remove('translate-y-[-20px]', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            }, 10);
+
+            // Animate Out
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-20px]', 'opacity-0');
+                setTimeout(() => toast.remove(), 500);
+            }, 3500);
+        }
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>

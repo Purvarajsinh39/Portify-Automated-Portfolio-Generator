@@ -203,7 +203,21 @@ namespace Portify.Controllers
             // Only allow deletion if the portfolio belongs to this user
             if (portfolio != null && portfolio.UserId == userId)
             {
+                // Delete the static file from disk
+                try
+                {
+                    string safeTitle = string.Join("_", (portfolio.Title ?? "Portfolio").Split(Path.GetInvalidFileNameChars()));
+                    string fileName = safeTitle.Replace(" ", "_") + "_" + portfolio.Id + ".html";
+                    string filePath = Server.MapPath("~/Portfolios/" + fileName);
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+                }
+                catch { /* Log or ignore file system errors */ }
+
                 db.DeletePortfolio(portfolioId);
+                TempData["SuccessMessage"] = "Portfolio deleted successfully.";
             }
 
             return RedirectToAction("Index");
@@ -271,6 +285,27 @@ namespace Portify.Controllers
             user.FullName = FullName; // Update model for view
             user.ReceiveNotifications = receiveNotifications;
             return View("~/Views/User/MyProfile.cshtml", user);
+        }
+
+        // GET: Dashboard/ManagePortfolios
+        public ActionResult ManagePortfolios()
+        {
+            if (Session["UserId"] == null || Session["UserRole"]?.ToString() != "Admin")
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            PortifyDbContext db = new PortifyDbContext();
+            var portfolios = db.GetAllPortfolios();
+
+            // Build dictionaries for template and user names
+            var templates = db.GetAllTemplates().ToDictionary(t => t.Id, t => t.Name);
+            var users = db.GetAllUsers().ToDictionary(u => u.Id, u => u.FullName);
+
+            ViewBag.Templates = templates;
+            ViewBag.Users = users;
+
+            return View("~/Views/Admin/ManagePortfolios.cshtml", portfolios);
         }
 
         // GET: Dashboard/Admin (Admin Dashboard)

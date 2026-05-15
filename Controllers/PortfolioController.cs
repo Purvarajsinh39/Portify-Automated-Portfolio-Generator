@@ -147,8 +147,43 @@ namespace Portify.Controllers
                 }
             }
 
-            // 8. Redirect to Dashboard with success message
-            TempData["SuccessMessage"] = "Portfolio \"" + (portfolioTitle ?? "My Portfolio") + "\" saved successfully!";
+            // 8. Generate and save the static HTML file for deployment
+            try
+            {
+                var template = db.GetTemplateById(templateId);
+                if (template != null)
+                {
+                    string templatePath = Server.MapPath(template.FilePath);
+                    if (System.IO.File.Exists(templatePath))
+                    {
+                        string html = System.IO.File.ReadAllText(templatePath);
+                        html = RenderTemplate(html, data);
+
+                        // Ensure the Portfolios directory exists
+                        string folderPath = Server.MapPath("~/Portfolios/");
+                        if (!Directory.Exists(folderPath))
+                        {
+                            Directory.CreateDirectory(folderPath);
+                        }
+
+                        // Sanitize filename: replace spaces and invalid chars with underscores
+                        string safeTitle = string.Join("_", (portfolioTitle ?? "Portfolio").Split(Path.GetInvalidFileNameChars()));
+                        string fileName = safeTitle.Replace(" ", "_") + "_" + portfolioId + ".html";
+                        string savePath = Path.Combine(folderPath, fileName);
+
+                        System.IO.File.WriteAllText(savePath, html);
+
+                        // Store metadata for the post-save popup (only if generation succeeded)
+                        TempData["NewlyCreatedPortfolioId"] = portfolioId;
+                        TempData["NewlyCreatedFileName"] = "Portfolios/" + fileName;
+                        TempData["NewlyCreatedTemplateId"] = templateId;
+                    }
+                }
+            }
+            catch { /* Log or ignore file generation errors to avoid breaking the save flow */ }
+
+            // 9. Redirect to Dashboard with success message
+            TempData["SuccessMessage"] = "Portfolio \"" + (portfolioTitle ?? "My Portfolio") + "\" saved and deployed successfully!";
             return RedirectToAction("Index", "Dashboard");
         }
 
@@ -343,7 +378,7 @@ namespace Portify.Controllers
             return html;
         }
         [HttpPost]
-        public ActionResult SubmitFeedback(int templateId, int rating, string message)
+        public ActionResult SubmitFeedback(int templateId, int rating, string message, int? portfolioId = null)
         {
             if (!GuardUser()) return Json(new { success = false, message = "User not logged in." });
 
@@ -356,6 +391,7 @@ namespace Portify.Controllers
                 {
                     UserId = userId,
                     TemplateId = templateId,
+                    PortfolioId = portfolioId,
                     Rating = rating,
                     Message = message,
                     CreatedAt = DateTime.Now

@@ -287,6 +287,25 @@ namespace Portify.Models
             }
         }
 
+        public List<Portfolio> GetAllPortfolios()
+        {
+            List<Portfolio> portfolios = new List<Portfolio>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM Portfolios ORDER BY CreatedAt DESC";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        portfolios.Add(MapPortfolio(reader));
+                    }
+                }
+            }
+            return portfolios;
+        }
+
         public List<Portfolio> GetPortfoliosByUserId(int userId)
         {
             List<Portfolio> portfolios = new List<Portfolio>();
