@@ -91,6 +91,18 @@
             from { opacity: 1; transform: translateY(0); }
             to { opacity: 0; transform: translateY(-20px); }
         }
+
+        /* Sweet Popup Animation */
+        @@keyframes sweetPopup {
+            0% { opacity: 0; transform: scale(0.9) translateY(30px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-animate-in {
+            animation: sweetPopup 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .modal-animate-out {
+            animation: sweetPopup 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) reverse forwards;
+        }
     </style>
 </head>
 
@@ -113,13 +125,13 @@
             <!-- Success Toast -->
             @if (TempData["SuccessMessage"] != null)
             {
-                <div class="toast fixed top-28 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl border border-green-500/20"
-                     style="background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);animation:toastIn 0.5s ease forwards, toastOut 0.4s ease 3s forwards;">
-                    <div class="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
-                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i>
-                    </div>
-                    <span class="text-sm font-medium text-green-700 dark:text-green-400">@TempData["SuccessMessage"]</span>
-                </div>
+                <script>
+                    window.addEventListener('load', () => {
+                        setTimeout(() => {
+                            showToast("@TempData["SuccessMessage"]", "success");
+                        }, 500);
+                    });
+                </script>
             }
 
             <!-- Page Header -->
@@ -197,6 +209,25 @@
                                         <i data-lucide="download" class="w-3.5 h-3.5"></i>
                                         Download
                                     </a>
+
+                                    @{
+                                        string pTitle = portfolio.Title ?? "Portfolio";
+                                        // Match backend sanitization: replace invalid filename chars and spaces with underscores
+                                        char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
+                                        string safeTitle = string.Join("_", pTitle.Split(invalidChars)).Replace(" ", "_");
+                                        string fileName = "Portfolios/" + safeTitle + "_" + portfolio.Id + ".html";
+                                    }
+
+                                    <button type="button"
+                                            onclick="copyPortfolioLink('@fileName', '@(pTitle.Replace("'", "\\'"))')"
+                                            class="inline-flex items-center justify-center p-2.5 rounded-xl
+                                                   border border-gray-200 dark:border-white/10
+                                                   text-gray-400 hover:text-brand-500 hover:border-brand-500/30 dark:hover:border-brand-500/30
+                                                   transition-all duration-200"
+                                            title="Copy live link">
+                                        <i data-lucide="link" class="w-3.5 h-3.5"></i>
+                                    </button>
+
                                     <button type="button"
                                             onclick="openDeleteModal(@portfolio.Id, '@(portfolio.Title?.Replace("'", "\\'") ?? "Untitled Portfolio")')"
                                             class="inline-flex items-center justify-center p-2.5 rounded-xl
@@ -242,9 +273,10 @@
         </main>
     </div>
 
-    <!-- Deletion Modal -->
-    <div id="deleteModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm transition-all duration-300 opacity-0">
-        <div class="glass max-w-md w-full rounded-3xl overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300" id="modalContent">
+    <!-- Deletion Modal (existing) -->
+    <!-- Deletion Modal (existing) -->
+    <div id="deleteModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm transition-all duration-500 opacity-0">
+        <div class="glass max-w-md w-full rounded-3xl overflow-hidden shadow-2xl p-8 text-center" id="modalContent">
             <div class="p-8 text-center">
                 <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-red-500/10 flex items-center justify-center">
                     <i data-lucide="alert-triangle" class="w-8 h-8 text-red-500"></i>
@@ -274,6 +306,74 @@
         </div>
     </div>
 
+    <!-- Creation Success Modal -->
+    <div id="successModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm transition-all duration-500 opacity-0">
+        <div class="glass max-w-lg w-full rounded-3xl overflow-hidden shadow-2xl p-8 text-center" id="successModalContent">
+            <div class="w-20 h-20 mx-auto mb-6 rounded-3xl bg-green-500/10 flex items-center justify-center">
+                <i data-lucide="check-circle" class="w-10 h-10 text-green-500"></i>
+            </div>
+            <h2 class="text-3xl font-serif italic text-gray-900 dark:text-white mb-2">Deployed Successfully!</h2>
+            <p class="text-gray-500 dark:text-gray-400 mb-8">
+                Your portfolio has been created and is now live. What would you like to do next?
+            </p>
+            
+            <div class="grid grid-cols-1 gap-3">
+                <a id="successDownloadBtn" href="#" class="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-brand-600 text-white font-bold uppercase tracking-wider hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20">
+                    <i data-lucide="download" class="w-5 h-5"></i>
+                    Download Portfolio
+                </a>
+                <button id="successCopyBtn" class="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-gray-100 dark:bg-white/5 text-gray-900 dark:text-white font-bold uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-white/10 transition-all border border-gray-200 dark:border-white/5">
+                    <i data-lucide="link" class="w-5 h-5"></i>
+                    Copy Live Link
+                </button>
+                <button id="successReviewBtn" onclick="openReviewModal()" class="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl border-2 border-brand-500/20 text-brand-500 font-bold uppercase tracking-wider hover:bg-brand-500/5 transition-all">
+                    <i data-lucide="star" class="w-5 h-5"></i>
+                    Submit Review
+                </button>
+            </div>
+            
+            <button onclick="closeSuccessModal()" class="mt-6 text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 underline underline-offset-4">
+                Maybe later
+            </button>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="fixed inset-0 z-[120] hidden flex items-center justify-center px-4 bg-black/70 backdrop-blur-md transition-all duration-500 opacity-0">
+        <div class="glass max-w-md w-full rounded-3xl overflow-hidden shadow-2xl p-8" id="reviewModalContent">
+            <h3 class="text-2xl font-serif italic text-gray-900 dark:text-white mb-2">Submit Review</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">How was your experience with this template?</p>
+            
+            <form id="reviewForm" onsubmit="submitReview(event)">
+                <input type="hidden" name="portfolioId" id="reviewPortfolioId" />
+                <input type="hidden" name="templateId" id="reviewTemplateId" />
+                
+                <div class="mb-6">
+                    <label class="block text-xs uppercase tracking-widest text-gray-400 mb-3 font-bold">Rating</label>
+                    <div class="flex items-center gap-2" id="starRating">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <button type="button" onclick="setRating(@i)" class="star-btn p-1 text-gray-300 hover:text-amber-400 transition-all hover:scale-110" data-value="@i">
+                                <i data-lucide="star" class="w-8 h-8 pointer-events-none"></i>
+                            </button>
+                        }
+                    </div>
+                    <input type="hidden" name="rating" id="reviewRating" value="0" />
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-xs uppercase tracking-widest text-gray-400 mb-2 font-bold">Your Feedback</label>
+                    <textarea name="message" required class="w-full h-32 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-4 text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all dark:text-white" placeholder="Tell us what you liked or how we can improve..."></textarea>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button type="button" onclick="closeReviewModal()" class="flex-1 px-6 py-3 rounded-xl text-sm font-bold uppercase tracking-wider bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400">Cancel</button>
+                    <button type="submit" class="flex-1 px-6 py-3 rounded-xl text-sm font-bold uppercase tracking-wider bg-brand-600 text-white hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         function toggleTheme() {
             if (document.documentElement.classList.contains('dark')) {
@@ -285,35 +385,225 @@
             }
         }
 
-        // Modal Logic
-        function openDeleteModal(id, name) {
-            const modal = document.getElementById('deleteModal');
-            const content = document.getElementById('modalContent');
-            const placeholder = document.getElementById('portfolioNamePlaceholder');
-            const hiddenId = document.getElementById('modalPortfolioId');
+        // Copy Link Logic
+        function copyPortfolioLink(relativeUrl, title) {
+            const url = window.location.origin + "/" + relativeUrl;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast(`Link for "${title}" copied!`);
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                // Fallback for non-HTTPS if needed
+                const textArea = document.createElement("textarea");
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast(`Link for "${title}" copied!`);
+                } catch (e) {
+                    console.error('Fallback copy failed', e);
+                }
+                document.body.removeChild(textArea);
+            });
+        }
 
-            placeholder.textContent = name;
-            hiddenId.value = id;
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            // Higher Z-index to stay above modals (130+)
+            toast.className = 'fixed top-6 right-6 z-[200] flex items-center gap-4 px-6 py-4 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] border transition-all duration-500 transform translate-y-[-20px] opacity-0';
+            
+            // Theme aware styling
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                toast.style.background = 'rgba(20, 20, 20, 0.8)';
+                toast.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                toast.style.color = 'white';
+            } else {
+                toast.style.background = 'rgba(255, 255, 255, 0.95)';
+                toast.style.borderColor = 'rgba(0, 0, 0, 0.05)';
+                toast.style.color = '#1a1a1a';
+            }
+            toast.style.backdropFilter = 'blur(16px)';
+            
+            const iconColor = type === 'success' ? 'text-green-500' : 'text-amber-500';
+            const iconBg = type === 'success' ? 'bg-green-500/10' : 'bg-amber-500/10';
+            const iconName = type === 'success' ? 'check-circle' : 'info';
+
+            toast.innerHTML = `
+                <div class="w-10 h-10 rounded-xl ${iconBg} flex items-center justify-center">
+                    <i data-lucide="${iconName}" class="w-5 h-5 ${iconColor}"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-50">${type}</span>
+                    <span class="text-sm font-medium tracking-tight">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            lucide.createIcons();
+
+            // Animate In
+            setTimeout(() => {
+                toast.classList.remove('translate-y-[-20px]', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            }, 10);
+
+            // Animate Out
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-20px]', 'opacity-0');
+                setTimeout(() => toast.remove(), 500);
+            }, 3500);
+        }
+
+        // --- Success Modal Logic ---
+        function openSuccessModal(portfolioId, fileName, templateId) {
+            const modal = document.getElementById('successModal');
+            const content = document.getElementById('successModalContent');
+            const downloadBtn = document.getElementById('successDownloadBtn');
+            const copyBtn = document.getElementById('successCopyBtn');
+            
+            // Setup buttons
+            downloadBtn.href = `/Portfolio/Download?id=${portfolioId}`;
+            copyBtn.onclick = () => {
+                copyPortfolioLink(fileName, 'Your new portfolio');
+            };
+            
+            // Setup review data
+            document.getElementById('reviewPortfolioId').value = portfolioId;
+            document.getElementById('reviewTemplateId').value = templateId;
 
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.add('opacity-100');
-                content.classList.remove('scale-95');
-                content.classList.add('scale-100');
+                content.classList.add('modal-animate-in');
+            }, 10);
+        }
+
+        function closeSuccessModal() {
+            const modal = document.getElementById('successModal');
+            const content = document.getElementById('successModalContent');
+            modal.classList.remove('opacity-100');
+            content.classList.remove('modal-animate-in');
+            content.classList.add('modal-animate-out');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                content.classList.remove('modal-animate-out');
+            }, 500);
+        }
+
+        // --- Review Logic ---
+        function openReviewModal() {
+            closeSuccessModal();
+            const modal = document.getElementById('reviewModal');
+            const content = document.getElementById('reviewModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.add('opacity-100');
+                content.classList.add('modal-animate-in');
+            }, 10);
+            setRating(0); // Start with empty stars
+        }
+
+        function closeReviewModal() {
+            const modal = document.getElementById('reviewModal');
+            const content = document.getElementById('reviewModalContent');
+            modal.classList.remove('opacity-100');
+            content.classList.remove('modal-animate-in');
+            content.classList.add('modal-animate-out');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                content.classList.remove('modal-animate-out');
+            }, 500);
+        }
+
+        function setRating(rating) {
+            document.getElementById('reviewRating').value = rating;
+            const stars = document.querySelectorAll('.star-btn');
+            stars.forEach((star, index) => {
+                const lucideIcon = star.querySelector('i');
+                if (index < rating) {
+                    star.classList.add('text-amber-400');
+                    star.classList.remove('text-gray-300');
+                    // Force re-render of lucide icon if needed or use class
+                    star.innerHTML = `<i data-lucide="star" class="w-8 h-8 fill-current pointer-events-none"></i>`;
+                } else {
+                    star.classList.remove('text-amber-400');
+                    star.classList.add('text-gray-300');
+                    star.innerHTML = `<i data-lucide="star" class="w-8 h-8 pointer-events-none"></i>`;
+                }
+            });
+            lucide.createIcons();
+        }
+
+        async function submitReview(event) {
+            event.preventDefault();
+            const rating = document.getElementById('reviewRating').value;
+            
+            if (rating == "0") {
+                showToast("Please select a star rating", "warning");
+                return;
+            }
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch('/Portfolio/SubmitFeedback', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast("Thank you for your review!");
+                    closeReviewModal();
+                } else {
+                    alert("Error: " + result.message);
+                }
+            } catch (error) {
+                console.error("Error submitting review:", error);
+            }
+        }
+
+        // Check for newly created portfolio on load
+        window.addEventListener('load', () => {
+            @if (TempData["NewlyCreatedPortfolioId"] != null)
+            {
+                <text>
+                setTimeout(() => {
+                    openSuccessModal(
+                        @TempData["NewlyCreatedPortfolioId"], 
+                        '@TempData["NewlyCreatedFileName"]', 
+                        @TempData["NewlyCreatedTemplateId"]
+                    );
+                }, 800);
+                </text>
+            }
+        });
+
+        // Modal Logic
+        function openDeleteModal(id, name) {
+            const modal = document.getElementById('deleteModal');
+            const content = document.getElementById('modalContent');
+            document.getElementById('modalPortfolioId').value = id;
+            document.getElementById('portfolioNamePlaceholder').innerText = name;
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.add('opacity-100');
+                content.classList.add('modal-animate-in');
             }, 10);
         }
 
         function closeDeleteModal() {
             const modal = document.getElementById('deleteModal');
             const content = document.getElementById('modalContent');
-
             modal.classList.remove('opacity-100');
-            content.classList.remove('scale-100');
-            content.classList.add('scale-95');
-            
+            content.classList.remove('modal-animate-in');
+            content.classList.add('modal-animate-out');
             setTimeout(() => {
                 modal.classList.add('hidden');
-            }, 300);
+                content.classList.remove('modal-animate-out');
+            }, 500);
         }
 
         // Close modal on escape key
